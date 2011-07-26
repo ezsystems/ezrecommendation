@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<software>
+    <metadata>
+        <name>eZyoochoose</name>
+        <version>1.0.0</version>
+        <copyright>2011 yoochoose GmbH</copyright>
+        <license>eZ Proprietary Extension License (PEL), Version 1.3</license>
+        <info_url></info_url>
+    </metadata>
+
+    <dependencies>
+    
+    </dependencies>
+
+</software>
