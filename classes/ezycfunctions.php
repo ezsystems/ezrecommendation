@@ -3,9 +3,9 @@
 /**
  * File containing the eZyoochooseFunctions class for sending requests to the yoochoose server
  *
- * @copyright Copyright (C) 2010-2011 yoochoose GmbH. All rights reserved.
- * @license eZ Proprietary Extension License (PEL), Version 1.3
- * @version 1.0.0
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
  * @package ezyoochoose
  */
 
