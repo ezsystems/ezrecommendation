@@ -104,7 +104,7 @@
     <target name="dist-clean" description="Removes the dist directory with zips and tarballs">
         <delete dir="dist"/>
     </target>
-    
+
     <!-- Builds the extension -->
     <target name="build" depends="init" description="Builds the extension">
         <delete dir="${build.dir}/${extension.name}/ant"/>
@@ -125,7 +125,7 @@
         <antcall target="clean"/>
         <antcall target="dist-clean"/>
     </target>
-    
+
     <!-- Prepares the build directory -->
     <!-- Creates the build/ directory if it does not already exists -->
     <target name="init" description="Prepares the extension to be built">
@@ -192,7 +192,7 @@
     <!-- lib version numbers, if you use more than 25 spaces the version number will  -->
     <!-- not be updated correctly                                                     -->
     <target name="update-extensioninfo" description="Updates ezinfo.php and extension.xml">
-        
+
         <echo message="Updating ezinfo.php"/>
 
         <!-- ezinfo.php support : 'Version' => '//autogen//' -->
@@ -204,7 +204,7 @@
             <substitution expression='\1${version.alias}${releasenr.separator}${version.release}\3'/>
             <fileset dir="${build.dir}" includes="**/*ezinfo.php"/>
         </replaceregexp>
-        
+
         <!-- ezinfo.php support : 'License' => '//autogen//' -->
         <replaceregexp byline="true">
             <!-- 'Version' => 'xxxxxx', -->
@@ -214,7 +214,7 @@
             <substitution expression='\1${license.shorttext}\3'/>
             <fileset dir="${build.dir}" includes="**/*ezinfo.php"/>
         </replaceregexp>
-        
+
         <!-- ezinfo.php support : 'Copyright' => '//autogen//' -->
         <replaceregexp byline="true">
             <!-- 'Version' => 'xxxxxx', -->
@@ -225,7 +225,7 @@
             <fileset dir="${build.dir}" includes="**/*ezinfo.php"/>
         </replaceregexp>
 
-		<echo message="Updating extension.xml"/>
+        <echo message="Updating extension.xml"/>
 
         <!-- extension.xml support : <version>//autogen//</version> -->
         <replaceregexp byline="true">
@@ -240,7 +240,7 @@
             <substitution expression="&lt;license&gt;${license.shorttext}&lt;/license&gt;"/>
             <fileset dir="${build.dir}"  includes="**/extension.xml"/>
         </replaceregexp>
-        
+
         <!-- extension.xml support : <copyright>//autogen//</copyright>-->
         <replaceregexp byline="true">
             <regexp pattern="&lt;copyright&gt;//autogen//&lt;/copyright&gt;"/>
@@ -290,5 +290,5 @@
             <fileset dir="${build.dir}/${extension.name}" includes="${file.to.purge}"/>
         </delete>
     </target>
-    
+
 </project>
