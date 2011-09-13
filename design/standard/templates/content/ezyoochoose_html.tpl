@@ -1,6 +1,6 @@
 {if $track}
 	
-	{def $request_url = generate_html($content, $solution, 'click')}
+	{def $request_url = generate_html($content, 'click')}
 	{if eq($request_url, false())}
 		{set $request_url = 'yc.gif'|ezimage()}
 	{else}

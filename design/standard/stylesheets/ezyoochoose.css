@@ -1,3 +1,27 @@
 div#ezyoochoose{
 	display:none;
 }
+
+div#ezyc-consume-event, div#ezyc-consume-event-userid{
+	display:none;
+}
+
+div.element_mapping {
+    float: left;
+    padding: 1em 0 0;
+    width: 10em;
+}
+fieldset.mapping_block_required{
+	float:left;
+	margin-right: 2em;
+    width: 25em;
+	
+}
+fieldset.mapping_block_required small{
+	color: #FF0000;
+}
+
+fieldset.mapping_block_second{
+    width: 25em;
+	
+}

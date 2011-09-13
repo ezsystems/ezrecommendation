@@ -51,34 +51,6 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 	$eventtype = $http->getVariable('eventtype');
 	$path .= '/'.$eventtype;
 	
-	$itemtypeid = $http->getVariable('itemtypeid');
-	
-	if ($eventtype == 'consume'){
-		
-		if ( $http->hasGetVariable('elapsedtime') ){
-			
-			$elapsedtime = $http->getVariable('elapsedtime');
-			
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
-			
-			if (count($arr['result']) > 0)
-			{
-			
-				$itemtypeid = $arr['result']['ycItemType'];
-				$ttl = $arr['result']['ycTimeTrigger'];
-				if ($elapsedtime<$ttl){
-					return false;
-				}
-			}else {
-				return false;
-			}
-			
-		}else{
-			return false;
-		}
-		
-	}
-	
 	$user = eZUser::currentuser();
 	
 	if ($user->Login == 'anonymous' && $http->hasGetVariable('sid')){
@@ -116,8 +88,7 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 		$path .= '/'.$itemid;	
 	
 	if ($http->hasGetVariable('categorypath')){
-		$tmp_categorypath = $http->getVariable('categorypath');
-		$params['categorypath'] = str_replace($itemid.'/', '', $tmp_categorypath);
+		$params['categorypath'] = $http->getVariable('categorypath');
 	}
 
 	if ($http->hasGetVariable('quantity')){
@@ -150,9 +121,7 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 		$params_data = '?';
 		$params_data .= implode("&", $params_array);	
 	}
- 	
 	
-	eZLog::write('eZYoochoose: required variable not set in request.', 'error.log', 'var/log');
 	ezYCFunctions::send_http_request($url, $path.$params_data);
 		
 }else{

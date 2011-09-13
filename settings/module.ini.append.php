@@ -3,5 +3,7 @@
 [ModuleSettings] 
 ExtensionRepositories[]=ezyoochoose
 ModuleList[]=ezyoochoose
+ModuleList[]=ezrecommendation
+
 
 */ ?>

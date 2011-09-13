@@ -101,4 +101,62 @@ ezycClass.prototype.evt = function(src, userid) {
 	return true;
 }
 
+ezycClass.prototype.consevt = function(src, userid, elapsedtime) {
+	
+	var params = ezyc.get_ezyc_params(userid);
+	
+	if (src.indexOf('?') == -1){
+		params = '?'+params + '&elapsedtime=' + elapsedtime;
+	}else{
+		params = '&'+params + '&elapsedtime=' + elapsedtime;
+	}
+	
+	src = src + params;
+	
+	var e = document.getElementById('ezyc-image');
+	if (e != null) {
+		e.src = src.replace(/&amp;/g, "&");
+		setTimeout('sleep(1)', 100); //the page should wait a bit of time until the module has sent the request
+	}
+	return true;
+}
+
+
+function sleep(milliseconds) {
+	  var start = new Date().getTime();
+	  for (var i = 0; i < 1e7; i++) {
+	    if ((new Date().getTime() - start) > milliseconds){
+	      break;
+	    }
+	  }
+	}
+
+
+
 var ezyc = new ezycClass(); 
+
+
+ 
+
+
+
+ var startTime = new Date(); 
+ var startTimePageVisit = startTime.getTime();
+ window.onbeforeunload = function(){
+	 var endTime = new Date();
+	 var endTimePageVisit = endTime.getTime();
+	 var timeSpent=(endTimePageVisit - startTimePageVisit); 
+	 var timeelapsed = Math.round(timeSpent/1000);
+	 var e = document.getElementById('ezyc-consume-event');
+	 var e2 = document.getElementById('ezyc-consume-event-userid');
+	 
+	 if (e != null && e2 != null) {
+		 ezyc.consevt(e.innerHTML, e2.innerHTML, timeelapsed);
+	 } 
+	 
+	  
+ }
+ 
+
+
+
