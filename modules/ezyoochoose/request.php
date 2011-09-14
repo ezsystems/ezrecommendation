@@ -18,7 +18,7 @@ if ( $ini->hasVariable( 'URLSettings', 'RequestURL' ) ){
 
 }else{
 	
-	eZLog::write('eZYoochoose: no url found for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');	
+	eZLog::write('[ezyoochoose] no url found for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');	
 	return false;
 	
 }
@@ -34,7 +34,7 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 		 
 	}else{
 		
-		eZLog::write('eZYoochoose: no CustomerID found for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');	
+		eZLog::write('[ezyoochoose] no CustomerID found for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');	
 		return false;
 		
 	}
@@ -67,13 +67,16 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 				$itemtypeid = $arr['result']['ycItemType'];
 				$ttl = $arr['result']['ycTimeTrigger'];
 				if ($elapsedtime<$ttl){
+					eZLog::write('[ezyoochoose] customer-event not triggered because of to low elapsed time.', 'error.log', 'var/log');
 					return false;
 				}
 			}else {
+				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
 				return false;
 			}
 			
 		}else{
+			eZLog::write('[ezyoochoose] customer-event not triggered because of no elapsed time.', 'error.log', 'var/log');
 			return false;
 		}
 		
@@ -152,12 +155,12 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 	}
  	
 	
-	eZLog::write('eZYoochoose: required variable not set in request.', 'error.log', 'var/log');
+	
 	ezYCFunctions::send_http_request($url, $path.$params_data);
 		
 }else{
 
-	eZLog::write('eZYoochoose: required variable not set in request.', 'error.log', 'var/log');	
+	eZLog::write('[ezyoochoose] required variable not set in request.', 'error.log', 'var/log');	
 	return false;
 	
 }
