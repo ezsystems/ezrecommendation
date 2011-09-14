@@ -4,8 +4,8 @@
  * File containing the eZyoochooseFunctions class for generating the html output
  *
  * @copyright Copyright (C) 2010-2011 yoochoose GmbH. All rights reserved.
- * @license eZ Proprietary Extension License (PEL), Version 1.3
- * @version 1.0.0
+ * @license //autogen//
+ * @version //autogen//
  * @package ezyoochoose
  */
  
