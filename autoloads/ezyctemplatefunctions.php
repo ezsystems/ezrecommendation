@@ -304,8 +304,10 @@ class ezYCTemplateFunctions {
 		
 		if (!empty($recommendations_array))
 			return $recommendations_array;
-		else
+		else{
+			eZLog::write('[ezyoochoose] no recommendations received.', 'error.log', 'var/log');
 			return false;
+		}
 	}
 	
 	
@@ -325,7 +327,7 @@ class ezYCTemplateFunctions {
 			
 			}else{
 					
-				eZLog::write('eZYoochoose: missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
+				eZLog::write('[ezyoochoose] missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
 				return false;				
 				
 			}
@@ -375,12 +377,14 @@ class ezYCTemplateFunctions {
 			}
 			else
 			{
+				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
 				return false;
 			
 			}
 	
 		}else{
-			eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');			
+			eZLog::write('[ezyoochoose] missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			return false;	
 			
 		}
 		
@@ -405,7 +409,7 @@ class ezYCTemplateFunctions {
 			
 			}else{
 					
-				eZLog::write('eZYoochoose: missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
+				eZLog::write('[ezyoochoose] missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
 				return false;				
 				
 			}
@@ -456,12 +460,14 @@ class ezYCTemplateFunctions {
 			}
 			else
 			{
+				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
 				return false;
 			
 			}
 	
 		}else{
-			eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');			
+			eZLog::write('[ezyoochoose] missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			return false;
 			
 		}
 		
@@ -484,14 +490,14 @@ class ezYCTemplateFunctions {
 			
 			}else{
 					
-				eZLog::write('eZYoochoose: missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
-				return false;				
+				eZLog::write('[ezyoochoose] missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
+				return false;					
 				
 			}
 			
 			if (!is_int($price)){
 				
-				eZLog::write('eZYoochoose: use only integer for price', 'error.log', 'var/log');
+				eZLog::write('[ezyoochoose] use only integer for price', 'error.log', 'var/log');
 				return false;
 				
 			}
@@ -527,12 +533,14 @@ class ezYCTemplateFunctions {
 				$res = $this->get_html_for_event( $params, $current_user_id );
 				
 			}else{
-			
+				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
 				return false;
 			}	
 		}else{
 			
 			eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			return false;
 			
 		}
 		
@@ -555,14 +563,14 @@ class ezYCTemplateFunctions {
 			
 			}else{
 					
-				eZLog::write('eZYoochoose: missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
-				return false;				
+				eZLog::write('[ezyoochoose] missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
+				return false;					
 				
 			}
 			
 			if ( !is_int( $rating ) || ( $rating <= 0 ) || ( $rating>=100 ) ) {
 				
-				eZLog::write('eZYoochoose: use only integer between 0 and 100 for rating', 'error.log', 'var/log');
+				eZLog::write('[ezyoochoose] use only integer between 0 and 100 for rating', 'error.log', 'var/log');
 				return false;
 				
 			}
@@ -593,12 +601,14 @@ class ezYCTemplateFunctions {
 				
 				$res = $this->get_html_for_event( $params, $current_user_id );
 			}else{
-			
+				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
 				return false;
 			}	
 		}else{
 			
-			eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			eZLog::write('[ezyoochoose] missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			return false;
 			
 		}
 
@@ -655,12 +665,14 @@ class ezYCTemplateFunctions {
 									
 						$res = $this->get_html( $params );
 					}else{
-			
+						eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
 						return false;
 					}
 					
 				}else{
-					
+					eZLog::write('[ezyoochoose] could not generate ezyoochoose-pixel. please check the include call in your pagelayout.tpl.', 'error.log', 'var/log');	
+
 					$res = false;
 					
 				}
@@ -668,6 +680,8 @@ class ezYCTemplateFunctions {
 			}else{
 				
 				eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+				return false;
+
 				
 			}
 		
@@ -744,7 +758,8 @@ class ezYCTemplateFunctions {
 					
 					
 				}else{
-			
+					eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
 					return false;
 				}
 			 
@@ -793,8 +808,8 @@ class ezYCTemplateFunctions {
 			
 			}else{
 					
-				eZLog::write('eZYoochoose: missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
-				return false;				
+				eZLog::write('[ezyoochoose] missing CustomerID in ClientIdSettings in ezyoochoose.ini.', 'error.log', 'var/log');
+				return false;			
 				
 			}
 			
@@ -804,7 +819,6 @@ class ezYCTemplateFunctions {
 			$i = 0;
 			foreach ($sorted_array as $key => $value){
 				
-				$i++;
 				$ycitemtypeid = '';
 	
 				$arr = eZRecommendationClassAttribute::fetchClassAttributeList($key);
@@ -817,6 +831,7 @@ class ezYCTemplateFunctions {
 				
 				if (!empty($ycitemtypeid))
 				{
+					$i++;
 					
 					$current_user_id = $this->get_current_user_id();
 						
@@ -840,7 +855,7 @@ class ezYCTemplateFunctions {
 		else
 		{
 			
-			eZLog::write('eZYoochoose: missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
+			eZLog::write('[ezyoochoose] missing MapSettings in generate_html_from_module_result function for ezyoochoose extension in ezyoochoose.ini.', 'error.log', 'var/log');
 			return false;
 			
 		}
