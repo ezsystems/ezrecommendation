@@ -14,7 +14,8 @@ $ViewList = array();
 $ViewList['request'] = array( 'script' => 'request.php',
                                'functions' => array( 'request' ));
 $ViewList['statistics'] = array( 'script' => 'statistics.php',
-                               'functions' => array( 'statistics' ));
+								'default_navigation_part' => 'ezsetupnavigationpart',
+                               	'functions' => array( 'statistics' ));
 							   
 $ViewList['consume'] = array( 'script' => 'consume.php',
                                'functions' => array( 'consume' ));

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezyoochoose
+ */
+
+
 include_once( 'kernel/classes/ezworkflowtype.php' );
 
 
@@ -122,7 +130,7 @@ class exportEventType extends eZWorkflowEventType
 			//price
 				$elementPriceTypeContent = $doc->createElement( 'price' );
 				$elementPriceTypeContent->setAttribute( 'currency', $ezymappingArray['currency'] );
-				$elementPriceTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , 'preis',$ezymappingArray['currency'] )) );
+				$elementPriceTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['price'],$ezymappingArray['currency'] )) );
 				$elementType->appendChild( $elementPriceTypeContent);
 			}
 			//validfrom-valid-to

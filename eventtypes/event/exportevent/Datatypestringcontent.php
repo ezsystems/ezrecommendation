@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezyoochoose
+ */
+
+
 class dataTypeContent
 {
 

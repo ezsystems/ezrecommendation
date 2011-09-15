@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezyoochoose
+ */
+
+
 $FunctionList = array();
 
 $FunctionList['attribute_list'] = array( 'name' => 'attribute_list',

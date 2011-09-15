@@ -47,12 +47,12 @@
 							<td>purchased recommendations:</td>
 							<td>{$stat.purchasedRecommendations}</td>
 						</tr>
-						{if ne($stat.cuurency, '')}
+						{*if ne($stat.cuurency, '')*}
 							<tr class="bglight">
 								<td>currency:</td>
 								<td>{$stat.cuurency}</td>
 							</tr>
-						{/if}
+						{*/if*}
 					</table>
 				{/foreach}
 				

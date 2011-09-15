@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezyoochoose
+ */
+
 include_once( 'kernel/classes/ezworkflowtype.php' );
 
 
@@ -28,7 +35,7 @@ class deleteEventType extends eZWorkflowEventType
 		
     	$parameters = $process->attribute( 'parameter_list' );
     	
-    	if ($parameters['move_to_trash'] === 1){
+    	if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the yoochoose engine
     		
     		return eZWorkflowType::STATUS_ACCEPTED;
     		

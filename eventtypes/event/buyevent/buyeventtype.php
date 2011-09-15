@@ -1,5 +1,13 @@
 <?php
 
+
+/**
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezyoochoose
+ */
+
 include_once( 'kernel/classes/ezworkflowtype.php' );
 
 
