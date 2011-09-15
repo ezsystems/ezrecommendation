@@ -1,0 +1,35 @@
+div.odoscope{
+	
+	}
+
+div.odoscope table{
+	width:450px;
+	margin-top:20px;
+	}
+div.odoscope table td.odoscope-text-field{
+	text-align: right;
+	}
+div.odoscope input.button{
+	margin-top:10px;
+}
+div.odoscope input.odoscope-text-field{
+	width:250px;
+}
+div.warning{
+	margin-top:10px;
+	padding:20px;
+	border:red 1px solid;
+	width:500px;
+}
+div.odoscope div.info{
+	padding:20px 10px 0px 10px; 
+}
+div.odoscope div.message-feedback, div.odoscope div.message-warning, div.odoscope div.message-error{
+	border: 6px solid;	
+}
+div.odoscope div.message-error{
+	border-color:#C11B17;
+	}
+div.odoscope div.message-feedback{
+border-color:#3E8D29;
+		}
