@@ -230,8 +230,7 @@ class exportEventType extends eZWorkflowEventType
 
 
 		ezYCFunctions::sendExportContent($pushingItemDoc, $solution);
-echo $pushingItemDoc ;
-exit;
+
 		return eZWorkflowType::STATUS_ACCEPTED;
     }
 	
