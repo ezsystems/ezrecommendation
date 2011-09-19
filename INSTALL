@@ -12,7 +12,7 @@
  
  Installation
  ================
- 1) Copy ezyoochoose into 'extension' folder
+ 1) Copy ezyoochoose into 'extension' folder or install the ezyoochoose package (Setup->Packages->Import new package).
   
  2) Activate ezyoochoose
    In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezyoochoose', click button 'Apply Changes'.
@@ -21,12 +21,14 @@
      ActiveExtensions[]=ezyoochoose
 
  3) Regenerate autoloads
-    In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezyoochoose', click button 'Regenerate autoload arrays for extensions',
+    In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezyoochoose', click button 'Regenerate 
+    autoload arrays for extensions',
     or in eZ Publish installation folder, run "php bin/php/ezpgenerateautoloads.php -e"
     
  4)	Allow access for the ezyoochoose module
  	In administrator user interface, click 'User accounts' -> 'Roles and policies' then 'Anonymous'. Click on the Role and edit the Policies.
- 	Add new Policy. Choose the module 'ezyoochoose' and the Function 'request' and then grant access to this function. Do the same for the Role 'Members' if you have a login area an your site.
+ 	Add new Policy. Choose the module 'ezyoochoose' and the Function 'request' and then grant access to this function.
+ 	Do the same for the Role 'Members' if you have a login area an your site.
  
  5) Clear cache
     Clear INI and template caches. (from admin 'Setup' tab or commandline)
@@ -38,8 +40,8 @@ In order to integrate the pixel you simply need to place the following code with
 
 {include uri='design:content/ezyoochoose_html.tpl' content=$module_result track=true()}
 
-If track is set 'true' every site access will be treated as a click event. If you don't want to track every site access you will need to integrate the 'click event' in the tag you want to be tracked.
-For solution you can choose between 'publisher' and 'shop'.
+If track is set 'true' every site access will be treated as a click event. If you don't want to track every site access you will
+need to integrate the 'click event' in the tag you want to be tracked.
 
 The template must be included in any case. Otherwise the events won't work.
 
@@ -52,19 +54,24 @@ You have the opportunity to track special events on your site by simply integrat
 
 {generate_common_event($node, 'eventtype')}
 
-The code can be placed for example inside a <a>-tag. It will produce an onclick-Event. You just have to pass the current node and the eventtype ('click', 'recommend' and others).
+The code can be placed for example inside a <a>-tag. It will produce an onclick-Event. You just have to pass the current node
+and the eventtype ('click', 'recommend' and others).
 
-For the rate-Event you need to use the special template function 'generate_rate_event', where you have to pass more variables like the rating.
+For the rate-Event you need to use the special template function 'generate_rate_event', where you have to pass more variables
+like the rating.
 
 
 
 GETTING RECOMMENDATIONS
-In order to get recommendations for a specific node you need to include following code in the position you want the recommendations to be shown:
-{include uri='design:content/recommendations.tpl'  node=$node scenario='top_selling' limit=5 category_based=true() track_rendered_items=true() create_clickrecommended_event=true()}
+In order to get recommendations for a specific node you need to include following code in the position you want the recommendations
+to be shown:
+{include uri='design:content/recommendations.tpl'  node=$node scenario='top_selling' limit=5 track_rendered_items=true() create_clickrecommended_event=true()}
 
-This will get recommendations for the given node. If you set 'track_rendered_items=true()', the shown recommendations, will also be tracked. In the course of time this will produce a statistic of items a specific user
-been recommended, so the probability to get the same recommendations can be minimized. The rendered items can only be tracked, when they have the same classid. Otherwise they won't.
-'create_clickrendered_event=true()' will create an onclick-event in every recommendation <a>-tag, so when the user clicks on it, this special event will be tracked as a 'clickrecommended-event' (explaination below).
+This will get recommendations for the given node. If you set 'track_rendered_items=true()', the shown recommendations, will also be tracked.
+In the course of time this will produce a statistic of items a specific user been recommended, so the probability to get the same
+recommendations can be minimized.
+'create_clickrendered_event=true()' will create an onclick-event in every recommendation <a>-tag, so when the user clicks on it,
+this special event will be tracked as a 'clickrecommended-event' (explaination below).
 
 
 
@@ -119,7 +126,7 @@ Creates an onclick-event for rating an article. The rating has to be a value fro
 Buy event:
 The buy-event is trigered after a order has been checked out. Therefore you need to configure the buy event workflow.
 Go to the Setup-tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
-have to create a new workflow and give it a name. Add the "yoochoose buy event" to your workflow.
+have to create a new workflow and give it a name. Add the "yoochoose buy object event" to your workflow.
 After this you need to configure the trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your
 workflow to the "shop checkout before" trigger and apply the changes.
 From now on every time a order is checked out ezyoochoose will track every product buyed in this order.
@@ -131,4 +138,24 @@ This will just create a hidden div with some informations in it. After this go i
 Choose the class where you want to configure the "time to trigger consume event" attribute and click on edit. Search the recommendation attribute
 and insert the time in the "time to trigger consumption" field.
 From now on every time a user overruns the time to trigger value on a site the consume event will be sent to the yoochoose engine.
+
+
+ADMINISTRATIVE EVENTS
+
+Export Event
+The content of an object created in the ez publish backend can automatically be sent to the yoochoose engine. Therefore you have to define
+a workflow and a trigger which causes the workflow.
+Go to the Setup tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
+have to create a new workflow and give it a name. Add the "yoochoose export object event" to your workflow. After this you need to configure the 
+trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your workflow to the "content publish before" trigger and apply the changes.
+
+Delete event
+The content of an object removed in the ez publish backend can automatically be sent to the yoochoose engine. Therefore you have to define
+a workflow and a trigger which causes the workflow.
+Go to the Setup tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
+have to create a new workflow and give it a name. Add the "yoochoose delete object event" to your workflow. After this you need to configure the 
+trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your workflow to the "content delete before" trigger and apply the changes.
+
+
+
 

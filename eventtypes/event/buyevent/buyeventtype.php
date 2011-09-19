@@ -25,7 +25,7 @@ class buyEventType extends eZWorkflowEventType
     function buyEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( buyEventType::EZ_WORKFLOW_TYPE_BUYEVENT, "ezyoochoose buy event" );
+        $this->eZWorkflowEventType( buyEventType::EZ_WORKFLOW_TYPE_BUYEVENT, "ezyoochoose buy object event" );
     }
 
     function execute( $process, $event )

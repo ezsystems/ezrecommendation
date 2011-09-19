@@ -24,7 +24,7 @@ class deleteEventType extends eZWorkflowEventType
     function deleteEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( deleteEventType::EZ_WORKFLOW_TYPE_deleteEVENT, "ezyoochoose delete event" );
+        $this->eZWorkflowEventType( deleteEventType::EZ_WORKFLOW_TYPE_deleteEVENT, "ezyoochoose delete object event" );
     }
 
     function execute( $process, $event )

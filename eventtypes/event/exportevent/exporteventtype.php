@@ -25,7 +25,7 @@ class exportEventType extends eZWorkflowEventType
     function exportEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( exportEventType::EZ_WORKFLOW_TYPE_EXPORTEVENT, "Export to recommender engine" );
+        $this->eZWorkflowEventType( exportEventType::EZ_WORKFLOW_TYPE_EXPORTEVENT, "ezyoochoose export object event" );
     }
 
 
@@ -55,9 +55,42 @@ class exportEventType extends eZWorkflowEventType
 		//get the data map from objectID	
 		$contentClass = eZContentObject::fetch($objectID);
 		//$dataMap = $contentClass->attribute('data_map');
+		
 		//get the Class_id
 		$class_id = $contentClass->ClassID;
+		//get contentobject_attributes and transform to DataMapAsKeysAttributeIdentifier new array  e.g [index] -> [ContentClassAttributeIdentifier]
+		$pubVersion = $processParameters['version'];
+		$version = $contentClass->version( $processParameters['version'],  true );
+        $objectAttributes = $version->attribute( 'contentobject_attributes' );
+//print_r($version->ContentObject->ContentObjectAttributes[$pubVersion]);  
+$ObjectVersionContent = $version->ContentObject->ContentObjectAttributes[$pubVersion];
+$currentObjectLang = key($ObjectVersionContent) ;
 
+$objectAttributes = $ObjectVersionContent[$currentObjectLang];
+//
+		$count_objectAttributes = count($objectAttributes);
+		for($i = 0 ; $i <= $count_objectAttributes ; ++$i)
+		{
+			$ArrayKey = $objectAttributes[$i]->ContentClassAttributeIdentifier ;
+			$dataMap[$ArrayKey] =  $objectAttributes[$i] ;
+			 			 
+		}
+		//check if class has a recommendation datype else return
+		$classHasRecoDatatype = true;
+		foreach ($dataMap as $thisAttribute)			
+		{	if ( $thisAttribute->DataTypeString == 'ezrecommendation' )
+				{
+					$XmlDataText= $thisAttribute->DataTypeString;
+					
+				}else{
+					$classHasNoRecoDatatype = false;
+				}
+		}	
+
+		if ($classHasRecoDatatype == false)
+			return eZWorkflowType::STATUS_ACCEPTED;
+
+		
 		//Get node_id data
 		//$nodes =& eZContentObject::allContentObjectAttributes( $nodeID, $asObject = true );
 		//get categoryPath
@@ -72,17 +105,7 @@ class exportEventType extends eZWorkflowEventType
 			$toYcCategoryPath .= $ezCategoryArray[$i].'/';
 		}
 
-		//get contentobject_attributes and transform to DataMapAsKeysAttributeIdentifier new array  e.g [index] -> [ContentClassAttributeIdentifier]
-		$version = $contentClass->version( $processParameters['version'] );
-        $objectAttributes = $version->attribute( 'contentobject_attributes' );
-   
-		$count_objectAttributes = count($objectAttributes);
-		for($i = 0 ; $i <= $count_objectAttributes ; ++$i)
-		{
-			$ArrayKey = $objectAttributes[$i]->ContentClassAttributeIdentifier ;
-			$dataMap[$ArrayKey] =  $objectAttributes[$i] ;
-			 			 
-		}
+
 		
 		//get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
 		$classIDArray = eZRecommendationClassAttribute::fetchClassAttributeList($class_id);

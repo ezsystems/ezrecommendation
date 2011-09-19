@@ -22,9 +22,7 @@
 
 				{set $nodes_array = $nodes_array|merge($current_node_hash)}
 				
-				{if eq($rec_node.object.contentclass_id, '1')}
-					{node_view_gui content_node=$rec_node view='line'}
-				{/if}  
+				{node_view_gui content_node=$rec_node view='line'}
 			 	
 			{/if}
 

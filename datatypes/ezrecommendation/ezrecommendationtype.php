@@ -100,16 +100,12 @@ class eZRecommendationType extends eZDataType
 
         if ( $currentVersion != false )
         {
-            //$dataInt = $originalContentObjectAttribute->attribute( "data_int" );
-            //$contentObjectAttribute->setAttribute( "data_int", $dataInt );
 			$dataText = $originalContentObjectAttribute->attribute( "data_text" );
             $contentObjectAttribute->setAttribute( "data_text", $dataText );
         }
         else
         {
             $contentClassAttribute = $contentObjectAttribute->contentClassAttribute();
-            //$default = $contentClassAttribute->attribute( "data_int2" );
-            //$contentObjectAttribute->setAttribute( "data_int", $default );
             $defaultText = $contentClassAttribute->attribute( "data_text5" );
             $contentObjectAttribute->setAttribute( "data_text", $defaultText );			
         }	
@@ -159,8 +155,7 @@ class eZRecommendationType extends eZDataType
 		 $newXml = ezyRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)	;
 		 
 		$contentObjectAttribute->setAttribute( 'data_text' , $newXml );	
-		
-        //$contentObjectAttribute->setAttribute( "data_int", $data );
+
         return true;
     }
 
@@ -236,15 +231,17 @@ class eZRecommendationType extends eZDataType
 		
 		$ttlValueName = $base . self::TTL_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		$recommendValueName = $base . self::RECOMMEND_VALUE_VARIABLE . $classAttribute->attribute( "id" );
+		$exportValueName = $base . self::EXPORT_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		$itemTypeValueName = $base . self::ITEM_TYPE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		$validfromTypeValueName = $base . self::VALIDFROM_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		$validtoTypeValueName = $base . self::VALIDTO_VALUE_VARIABLE . $classAttribute->attribute( "id" );		
 		$priceTypeValueName = $base . self::PRICE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		$currencyTypeValueName = $base . self::CURRENCY_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 		 
+	
 		//check required fields
 	
-		if ($this->solution == 'publisher')
+		if ($this->solution == 'publisher' && $http->postVariable( $exportValueName ) != '')
 		{
 			if ( $http->postVariable( $validfromTypeValueName ) == '0' ||  $http->postVariable( $validtoTypeValueName ) == '0')
 				$flagValidation .= '[eZYoochoose]: Missing required Field for the publisher solution.' ;
@@ -252,7 +249,7 @@ class eZRecommendationType extends eZDataType
 			
 		}
 		
-		if ($this->solution == 'shop')
+		if ($this->solution == 'shop' && $http->postVariable( $exportValueName ) != '')
 		{
 			if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
 				$flagValidation .= '[eZYoochoose]: Missing required Field for the shop solution.' ;
@@ -293,14 +290,7 @@ class eZRecommendationType extends eZDataType
 			
 			return eZInputValidator::STATE_INVALID;
 		}
-		
-		//Recommend is enable but no item Type is selected
-		/*
-		if ( $http->hasPostVariable( $recommendValueName ) )
-		{	
-			return  eZInputValidator::STATE_ACCEPTED;
-		}		
-		*/
+
         return eZInputValidator::STATE_INVALID;
     }
 

@@ -1,18 +1,18 @@
-div.odoscope{
+div.ezyoochoose-statistics{
 	
 	}
 
-div.odoscope table{
+div.ezyoochoose-statistics table{
 	width:450px;
 	margin-top:20px;
 	}
-div.odoscope table td.odoscope-text-field{
+div.ezyoochoose-statistics table td.ezyoochoose-statistics-text-field{
 	text-align: right;
 	}
-div.odoscope input.button{
+div.ezyoochoose-statistics input.button{
 	margin-top:10px;
 }
-div.odoscope input.odoscope-text-field{
+div.ezyoochoose-statistics input.ezyoochoose-statistics-text-field{
 	width:250px;
 }
 div.warning{
@@ -21,15 +21,35 @@ div.warning{
 	border:red 1px solid;
 	width:500px;
 }
-div.odoscope div.info{
+div.ezyoochoose-statistics div.info{
 	padding:20px 10px 0px 10px; 
 }
-div.odoscope div.message-feedback, div.odoscope div.message-warning, div.odoscope div.message-error{
+div.ezyoochoose-statistics div.message-feedback, div.ezyoochoose-statistics div.message-warning, div.ezyoochoose-statistics div.message-error{
 	border: 6px solid;	
 }
-div.odoscope div.message-error{
+div.ezyoochoose-statistics div.message-error{
 	border-color:#C11B17;
 	}
-div.odoscope div.message-feedback{
+div.ezyoochoose-statistics div.message-feedback{
 border-color:#3E8D29;
-		}
+	}
+
+div.element_mapping {
+    float: left;
+    padding: 1em 0 0;
+    width: 10em;
+}
+fieldset.mapping_block_required{
+	float:left;
+	margin-right: 2em;
+    width: 25em;
+	
+}
+fieldset.mapping_block_required small{
+	color: #FF0000;
+}
+
+fieldset.mapping_block_second{
+    width: 25em;
+	
+}

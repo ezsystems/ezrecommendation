@@ -1,10 +1,10 @@
-<div class="odoscope">
+<div class="ezyoochoose-statistics">
 
     <div class="context-block">
 
         <div class="box-header"><div class="box-tc"><div class="box-ml"><div class="box-mr"><div class="box-tl"><div class="box-tr">
 
-            <h1 class="context-title">{"ezyoochoose statistics"|i18n('ezodoscope/admin/view')}</h1>
+            <h1 class="context-title">ezyoochoose statistics</h1>
 
         <div class="header-mainline"></div>
 
@@ -58,7 +58,7 @@
 				
 			{else}
 				<div class="message-error">
-					<h2><span class="time">[{currentdate()|l10n( shortdatetime )}]</span>No statistics</h2>
+					<h2><span class="time">[{currentdate()|l10n( shortdatetime )}]</span>No statistics received.</h2>
 				</div>
 			 
 			{/if} 
