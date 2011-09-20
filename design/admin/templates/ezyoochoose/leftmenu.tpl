@@ -18,14 +18,7 @@
 			<div class="box-bl">
 				<div class="box-br">
 					<div class="box-content">
-						<ul>
-							{if $permission_activate}
-					    		<li><div><a href={'/odoscope/activate'|ezurl()}>{"Activation"|i18n('ezodoscope/admin/leftmenu')|wash()}</a></div></li>
-					    	{/if}
-					    	{if $permission_view}
-					    		<li><div><a href={'/odoscope/view'|ezurl()}>{"odoscope Web Viewer"|i18n('ezodoscope/admin/leftmenu')|wash()}</a></div></li>
-					    	{/if}
-						</ul>
+						<!-- -->
 					</div>
 				</div>
 			</div>

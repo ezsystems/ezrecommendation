@@ -435,7 +435,7 @@ class ezYCTemplateFunctions {
 				
 				$current_user_id = $this->get_current_user_id();
 				/////////////////////////
-				$mynodeArray = $node->attribute( 'data_map' );
+				/*$mynodeArray = $node->attribute( 'data_map' );
 			
 				foreach ($mynodeArray as $contentObjectAttr)
 				{		
@@ -448,7 +448,7 @@ class ezYCTemplateFunctions {
 				}
 				if ( $isEnableReco != 1 and $event_type == 'clickrecommended')
 					return false;
-			
+				*/			
 				//////////////////////////
 				$params = '?productid='.$productid.'&eventtype='.$event_type;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$ycitemtypeid;

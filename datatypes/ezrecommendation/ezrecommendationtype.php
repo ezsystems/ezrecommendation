@@ -12,20 +12,14 @@
 class eZRecommendationType extends eZDataType
 {
     const DATA_TYPE_STRING = "ezrecommendation";
-	
 	const ITEM_TYPE_VALUE_FIELD = "data_int1";
 	const ITEM_TYPE_VALUE_VARIABLE = "_ezrecommendation_class_yc_item_type_value_";	
-	
 	const RECOMMEND_VALUE_FIELD = "data_int2";
 	const RECOMMEND_VALUE_VARIABLE = "_ezrecommendation_page_yc_recommend_value_";
-	
 	const EXPORT_VALUE_FIELD = "data_int3";
 	const EXPORT_VALUE_VARIABLE = "_ezrecommendation_page_yc_export_value_";
-
 	const TTL_VALUE_FIELD = "data_int4";
 	const TTL_VALUE_VARIABLE = "_ezrecommendation_page_yc_ttl_value_";
-	
-	
 	const MAPPING_VALUE_FIELD = "data_text5";
 	const VALIDFROM_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_validfrom_"; 
 	const VALIDTO_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_validto_";
@@ -39,8 +33,8 @@ class eZRecommendationType extends eZDataType
 	const GEOLOCATION_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_geolocation_";
 	const DATE_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_date_";
 	const TAGS_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_tags_";
-	
 	const ADDTOMAP_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_addtomap_";
+
 	public $solution = '';
 	
     function eZRecommendationType()
@@ -50,7 +44,7 @@ class eZRecommendationType extends eZDataType
                            array( 'serialize_supported' => true ) );
         $this->IntegerValidator = new eZIntegerValidator();
 		
-				$ini = eZINI::instance('ezyoochoose.ini');
+		$ini = eZINI::instance('ezyoochoose.ini');
 		if ($ini->hasVariable( 'SolutionSettings', 'solution' ))
 			$this->solution = $ini->variable( 'SolutionSettings', 'solution' );
     }
@@ -303,8 +297,6 @@ class eZRecommendationType extends eZDataType
         $recommendValueName = $base . self::RECOMMEND_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $exportValueName = $base . self::EXPORT_VALUE_VARIABLE . $classAttribute->attribute( "id" );
     	$ttlValueName = $base . self::TTL_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-		
-
 
 		//get item type 
 		$itemTypeXMLNode = '';

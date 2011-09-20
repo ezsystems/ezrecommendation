@@ -30,9 +30,6 @@ class deleteEventType extends eZWorkflowEventType
     function execute( $process, $event )
     {
     	
-    	//print_r($process);
-    	
-		
     	$parameters = $process->attribute( 'parameter_list' );
     	
     	if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the yoochoose engine

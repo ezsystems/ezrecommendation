@@ -70,8 +70,6 @@ class ezYCFunctions{
 			
 	}
 	
-	
-	
 	/*
 	 * 
 	 */
@@ -98,7 +96,7 @@ class ezYCFunctions{
 			$out = "POST ".$path." HTTP/1.0\r\n";
 			$out .= "Host: ".$url."\r\n";
 			$out .= "Accept: text/html\r\n";	
-*/			$out .= "Authorization: Basic $auth\r\n\r\n";
+			$out = "Authorization: Basic $auth\r\n\r\n";*/
 			/*end https:443*/
 		
 			/* Beginn http:80 */		
@@ -398,4 +396,77 @@ class ezYCFunctions{
 
 	}	
 	
+	
+	/*
+	 * 
+	 */
+	public static function send_bulk_request($xml_url, $xml_path){
+
+		$ini = eZINI::instance('ezyoochoose.ini');
+		
+		$url = $ini->variable( 'URLSettings', 'ExportURL' );
+		$customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
+		$LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
+		
+		$solution = $ini->variable( 'SolutionSettings', 'solution' );
+		$mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
+		
+		$path = "/$mapSetting/$customerID/item/upload?url=".$xml_url.$xml_path."bulkexport.xml";				
+	
+		$contenttype = "text/xml";
+
+		eZLog::write('[ezyoochoose] Trying bulk request '.$url.$path, 'debug.log', 'var/log');
+		
+		$fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
+
+			if ($fp) {
+
+				eZLog::write('[ezyoochoose] Sending bulk request '.$url.$path, 'debug.log', 'var/log');
+				
+				$auth=base64_encode($customerID.":".$LicKey); 
+
+			    $out = "GET ".$path." HTTP/1.0\r\n";
+			    $out .= "Host: ".$url."\r\n";
+			    //$out .= "Content-type:$contenttype\r\n";	    
+				//$out .= "Content-Length: ".strlen($data)."\r\n";  	
+				$out .= "Accept: text/html\r\n";				
+				$out .= "Authorization: Basic $auth\r\n\r\n";					
+				
+				fwrite($fp, $out);
+				//fwrite($fp, $data);
+			    
+    		    $content = "";
+			    $header = "";
+			    
+				$header_passed = "not yet";
+				
+				while( !feof( $fp ) ) {
+				    $line = fgets( $fp, 128 );
+				    if( $line == "\r\n" && $header_passed == "not yet" ) {
+				        $header_passed = "passed";
+				    }
+				    if( $header_passed == "passed" ) {
+				        $content .= $line;
+				    }else{
+				    	$header .= $line;
+				    }
+				}
+
+				
+				eZLog::write('[ezyoochoose] Received answer '.var_export($header, true), 'debug.log', 'var/log');
+				eZLog::write('[ezyoochoose] Received answer '.var_export($content, true), 'debug.log', 'var/log');
+				
+			    fclose($fp);
+			    return true;
+				
+			}
+			else {
+				
+				eZLog::write('[ezyoochoose] Could not connect to server with url: '.$url, 'error.log', 'var/log'); 
+				return false;
+				
+			}	
+
+	}	
+		
 }

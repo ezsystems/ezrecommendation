@@ -3,7 +3,7 @@
 /**
  * File containing the eZyoochooseFunctions request implementation
  *
- * @copyright Copyright (C) 2010-2011 yoochoose GmbH. All rights reserved.
+ * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
  * @package ezyoochoose

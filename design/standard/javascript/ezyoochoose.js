@@ -136,10 +136,6 @@ function sleep(milliseconds) {
 var ezyc = new ezycClass(); 
 
 
- 
-
-
-
  var startTime = new Date(); 
  var startTimePageVisit = startTime.getTime();
  window.onbeforeunload = function(){

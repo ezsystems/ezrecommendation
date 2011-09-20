@@ -24,7 +24,7 @@
 	$Result['content'] = $tpl->fetch( 'design:ezyoochoose/statistics.tpl' ); 
 	$Result['left_menu'] = "design:ezyoochoose/leftmenu.tpl";  
 
-	$Result['path'] = array( array( 'url' => 'ezodoscope/statistics',
+	$Result['path'] = array( array( 'url' => 'ezyoochoose/statistics',
                                 'text' => 'ezyoochoose statistics' ) );	
 
 ?>
