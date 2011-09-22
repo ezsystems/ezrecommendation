@@ -13,11 +13,11 @@
 			{if $stats_received|eq(true())}
 				
 				{foreach $stats as $stat}
-					<h2>{$stat.timespanBegin}</h2>
+					<h2>{$stat.timespanBegin|wash()}</h2>
 					<table class="list" cellspacing="0">
 						<tr class="bglight">
 							<td>revenue:</td>
-							<td>{$stat.revenue}</td>
+							<td>{$stat.revenue|wash()}</td>
 						</tr>
 						{*<tr class="bgdark">
 							<td>timespanBegin:</td>
@@ -29,28 +29,28 @@
 						</tr>*}
 						<tr class="bgdark">
 							<td>click events:</td>
-							<td>{$stat.clickEvents}</td>
+							<td>{$stat.clickEvents|wash()}</td>
 						</tr>
 						<tr class="bglight">
 							<td>purchase events:</td>
-							<td>{$stat.purchaseEvents}</td>
+							<td>{$stat.purchaseEvents|wash()}</td>
 						</tr>
 						<tr class="bgdark">
 							<td>delivered recommendations:</td>
-							<td>{$stat.deliveredRecommendations}</td>
+							<td>{$stat.deliveredRecommendations|wash()}</td>
 						</tr>
 						<tr class="bglight">
 							<td>clicked recommendations:</td>
-							<td>{$stat.clickedRecommendations}</td>
+							<td>{$stat.clickedRecommendations|wash()}</td>
 						</tr>
 						<tr class="bgdark">
 							<td>purchased recommendations:</td>
-							<td>{$stat.purchasedRecommendations}</td>
+							<td>{$stat.purchasedRecommendations|wash()}</td>
 						</tr>
 						{*if ne($stat.cuurency, '')*}
 							<tr class="bglight">
 								<td>currency:</td>
-								<td>{$stat.cuurency}</td>
+								<td>{$stat.cuurency|wash()}</td>
 							</tr>
 						{*/if*}
 					</table>

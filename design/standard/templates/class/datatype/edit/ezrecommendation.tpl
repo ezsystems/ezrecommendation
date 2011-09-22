@@ -44,7 +44,7 @@
 {*TTL*}
 <div class="block">	
     <label for="ContentClass_ezrecommendation_page_yc_ttl_value_{$class_attribute.id}">{'Time to trigger consumption event'|i18n( 'design/standard/class/datatype' )}:</label>
-    <input type="text" id="ContentClass_ezrecommendation_page_yc_ttl_value_{$class_attribute.id}" name="ContentClass_ezrecommendation_page_yc_ttl_value_{$class_attribute.id}" value="{$class_attribute.data_int4}" size="10" maxlength="9" /> sec.
+    <input type="text" id="ContentClass_ezrecommendation_page_yc_ttl_value_{$class_attribute.id}" name="ContentClass_ezrecommendation_page_yc_ttl_value_{$class_attribute.id}" value="{$class_attribute.data_int4|wash}" size="10" maxlength="9" /> sec.
 </div>
 
 {*attribute mapping section*}
@@ -66,7 +66,7 @@
 
 				{foreach $class_attributes as $attribute}
 					{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-						<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.price)}selected="selected"{/if}>{$attribute.name|wash}</option>
+						<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.price)}selected="selected"{/if}>{$attribute.name|wash}</option>
 					{/if}
 				{/foreach}
 				</select>
@@ -82,13 +82,13 @@
 			<div class="element_mapping">
 				<select name="ContentClass_ezrecommendation_attribute_mapping_currency_{$class_attribute.id}"  name=ContentClass_ezrecommendation_attribute_mapping_currency_{$class_attribute.id}}>
 					{foreach $currenyList as $attribute}
-						<option value="{$attribute}" {if $attribute|compare($class_attribute.content.currency)} selected="selected" {/if} >{$attribute}</option>
+						<option value="{$attribute|wash}" {if $attribute|compare($class_attribute.content.currency)} selected="selected" {/if} >{$attribute|wash}</option>
 					{/foreach}
 				</select>
 				
 			</div>	
 		</div>
-		{if eq($currenyList|count(), 0)}<br /> <small> Please Specify defaultCurrency in ezyoochoose.ini</small>{/if}
+		{if eq($currenyList|count(), 0)}<br /> <small>{'Please Specify defaultCurrency in ezyoochoose.ini'|i18n( 'design/standard/class/datatype' )}</small>{/if}
 		
 	</fieldset>
 {/if}
@@ -110,7 +110,7 @@
 
 			{foreach $class_attributes as $attribute}
 				{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-					<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.validfrom )}selected="selected"{/if}>{$attribute.name|wash}</option>
+					<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.validfrom )}selected="selected"{/if}>{$attribute.name|wash}</option>
 				{/if}
 			{/foreach}
 			</select>
@@ -129,7 +129,7 @@
 
 			{foreach $class_attributes as $attribute}
 				{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-					<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.validto)}selected="selected"{/if}>{$attribute.name|wash}</option>
+					<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.validto)}selected="selected"{/if}>{$attribute.name|wash}</option>
 				{/if}
 			{/foreach}
 			</select>
@@ -154,7 +154,7 @@
 
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.title )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.title )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -171,7 +171,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.abstract )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.abstract )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -188,7 +188,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.author )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.author )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -205,7 +205,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.newsagency )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.newsagency )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}	
 		{/foreach}
 		</select>
@@ -222,7 +222,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.vendor )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.vendor )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -239,7 +239,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.geolocation )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.geolocation )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -256,7 +256,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.date )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.date )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -273,7 +273,7 @@
 		<option value="0"></option>
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
-				<option value="{$attribute.identifier}" {if $attribute.identifier|compare($class_attribute.content.tags )}selected="selected"{/if}>{$attribute.name|wash}</option>
+				<option value="{$attribute.identifier|wash}" {if $attribute.identifier|compare($class_attribute.content.tags )}selected="selected"{/if}>{$attribute.name|wash}</option>
 			{/if}
 		{/foreach}
 		</select>
@@ -286,18 +286,18 @@
 <fieldset class="mapping_block_second">
 <legend>{'Additional attributes for content export'|i18n( 'design/standard/class/datatype' )}</legend>
 <div class="block">		
-	<small>Check only if not already selected in the attribute mapping</small>
+	<small>{'Check only if not already selected in the attribute mapping'|i18n( 'design/standard/class/datatype' )}</small>
 	<div class="element">
 		
 		{def $attrCount=$class_attributes|count()}
 		{def $i=1}
 		
-		<input type="hidden" name="ContentClass_ezrecommendation_attribute_mapping_counter_{$class_attribute.id}" value="{$attrCount|sub( 1 )}" />
+		<input type="hidden" name="ContentClass_ezrecommendation_attribute_mapping_counter_{$class_attribute.id}" value="{$attrCount|sub( 1 )|wash}" />
 	
 		{foreach $class_attributes as $attribute}
 			{if or($attribute.identifier|compare(''),$attribute.data_type_string|compare('ezrecommendation'))}{else}
 				<p>
-					<input type="checkbox" id="ContentClass_ezrecommendation_attribute_mapping_addtomap{$i}_{$class_attribute.id}" name="ContentClass_ezrecommendation_attribute_mapping_addtomap{$i}_{$class_attribute.id}" value="{$attribute.identifier}" 
+					<input type="checkbox" id="ContentClass_ezrecommendation_attribute_mapping_addtomap{$i}_{$class_attribute.id}" name="ContentClass_ezrecommendation_attribute_mapping_addtomap{$i}_{$class_attribute.id}" value="{$attribute.identifier|wash}" 
 					{if $attribute.identifier|compare($class_attribute.content.concat( 'addtomap', $i ))} checked="checked" {/if}/> {$attribute.name|wash}
 				</p>
 				{set $i=inc( $i )}

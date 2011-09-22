@@ -12,7 +12,6 @@
 <?php
 
 require 'autoload.php';
-require_once 'extension/ezyoochoose/classes/ezycxmlfunctions.php' ;
 require_once 'extension/ezyoochoose/classes/ezrecommendationclassattribute.php' ;
 
 $cli = eZCLI::instance();

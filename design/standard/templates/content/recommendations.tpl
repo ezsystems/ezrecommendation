@@ -22,7 +22,7 @@
 
 				{set $nodes_array = $nodes_array|merge($current_node_hash)}
 				
-				{node_view_gui content_node=$rec_node view='line'}
+				{node_view_gui content_node=$rec_node view='line' create_clickrecommended_event=$create_clickrecommended_event}
 			 	
 			{/if}
 

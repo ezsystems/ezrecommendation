@@ -41,7 +41,7 @@ class exportEventType extends eZWorkflowEventType
 					$solution = 'shop';
 				break;
 				default:
-					eZLog::write('eZYoochoose: No solution exist in settings/ezyoochoose.ini.append.php file', 'error.log', 'var/log');
+					eZLog::write('[ezyoochoose] No solution exist in settings/ezyoochoose.ini.append.php file', 'error.log', 'var/log');
 				break;
 			}	
 			
@@ -87,9 +87,11 @@ $objectAttributes = $ObjectVersionContent[$currentObjectLang];
 				}
 		}	
 
-		if ($classHasRecoDatatype == false)
+		if ($classHasRecoDatatype == false){
+			eZLog::write('[ezyoochoose] Object has no recommendation datatype.', 'debug.log', 'var/log');
 			return eZWorkflowType::STATUS_ACCEPTED;
-
+		}
+		
 		
 		//Get node_id data
 		//$nodes =& eZContentObject::allContentObjectAttributes( $nodeID, $asObject = true );
@@ -127,8 +129,10 @@ $objectAttributes = $ObjectVersionContent[$currentObjectLang];
 		$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
 
 		//Check if export is enable for this class
-		if ($ezymappingArray['export-enable'] == 0)
+		if ($ezymappingArray['export-enable'] == 0){
+			eZLog::write('[ezyoochoose] Export is not enable for this object', 'debug.log', 'var/log');
 			return eZWorkflowType::STATUS_ACCEPTED;
+		}	
 		
 			//create the YC REST XML body
 			$doc = new DOMDocument( '1.0', 'utf-8' );
