@@ -59,7 +59,7 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 			
 			$elapsedtime = $http->getVariable('elapsedtime');
 			
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 			
 			if (count($arr['result']) > 0)
 			{

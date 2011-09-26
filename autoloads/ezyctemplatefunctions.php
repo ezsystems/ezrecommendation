@@ -336,7 +336,7 @@ class ezYCTemplateFunctions {
 
 			$ycitemtypeid = '';
 
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 			
 			if (count($arr['result']) > 0)
 			{
@@ -418,7 +418,7 @@ class ezYCTemplateFunctions {
 
 			$ycitemtypeid = '';
 
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 			
 			if (count($arr['result']) > 0)
 			{
@@ -506,7 +506,7 @@ class ezYCTemplateFunctions {
 			
 			$ycitemtypeid = '';
 
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 			
 			if (count($arr['result']) > 0)
 			{
@@ -579,7 +579,7 @@ class ezYCTemplateFunctions {
 			
 			$ycitemtypeid = '';
 
-			$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 			
 			if (count($arr['result']) > 0)
 			{
@@ -638,7 +638,7 @@ class ezYCTemplateFunctions {
 					
 					$ycitemtypeid = '';
 
-					$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+					$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 					
 					if (count($arr['result']) > 0)
 					{
@@ -690,7 +690,7 @@ class ezYCTemplateFunctions {
 	}
 	
 	
-	function get_recommendations( $scenario, $node, $limit, $category_based){
+	function get_recommendations( $scenario, $node, $limit, $category_based=false){
 
 		$ini = eZINI::instance('ezyoochoose.ini');
 		
@@ -710,7 +710,7 @@ class ezYCTemplateFunctions {
 				
 				$ycitemtypeid = '';
 
-				$arr = eZRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+				$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
 				
 				if (count($arr['result']) > 0)
 				{
@@ -743,8 +743,8 @@ class ezYCTemplateFunctions {
 					if ($limit && $ini->hasVariable( 'ParameterMapSettings', 'limit' ) ) {
 						$path .= '&'.$ini->variable( 'ParameterMapSettings', 'limit' ).'='.urlencode($limit);
 					}
-					
-					if ($category_based && $ini->hasVariable( 'ParameterMapSettings', 'class_id' ) ) {
+
+					if ($ini->hasVariable( 'ParameterMapSettings', 'class_id' ) ) {
 						
 						$path .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.urlencode($ycitemtypeid);
 						
@@ -821,7 +821,7 @@ class ezYCTemplateFunctions {
 				
 				$ycitemtypeid = '';
 	
-				$arr = eZRecommendationClassAttribute::fetchClassAttributeList($key);
+				$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($key);
 					
 				if (count($arr['result']) > 0)
 				{

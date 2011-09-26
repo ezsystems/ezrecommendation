@@ -14,7 +14,7 @@
 					{set $request_url = $request_url|ezurl('double', 'full')}
 				{/if}
 			{/if}
-			{break}
+			
 		{/if}
 	{/foreach}
 

@@ -7,9 +7,9 @@
  * @package ezyoochoose
  */
 
-class eZRecommendationClassAttribute
+class ezYCRecommendationClassAttribute
 {
-    function eZRecommendationClassAttribute()
+    function ezYCRecommendationClassAttribute()
     {
     }
 

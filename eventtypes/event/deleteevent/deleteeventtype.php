@@ -49,7 +49,7 @@ class deleteEventType extends eZWorkflowEventType
 	    			
 	    			$ycitemtypeid = '';
 	
-					$arr = eZRecommendationClassAttribute::fetchClassAttributeList($class_id);
+					$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
 					
 					if (count($arr['result']) > 0){
 

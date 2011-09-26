@@ -173,6 +173,7 @@ class ezYCFunctions{
 			if ($fp) {
 
 				eZLog::write('[ezyoochoose] Sending request '.$url.$path, 'debug.log', 'var/log');
+				eZLog::write('[ezyoochoose] Sending Object Data '.$data, 'debug.log', 'var/log');
 				
 				$auth=base64_encode($customerID.":".$LicKey); 
 

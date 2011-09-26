@@ -41,7 +41,7 @@ class exportEventType extends eZWorkflowEventType
 					$solution = 'shop';
 				break;
 				default:
-					eZLog::write('[ezyoochoose] No solution exist in settings/ezyoochoose.ini.append.php file', 'error.log', 'var/log');
+					eZLog::write('eZYoochoose: No solution exist in settings/ezyoochoose.ini.append.php file', 'error.log', 'var/log');
 				break;
 			}	
 			
@@ -62,12 +62,11 @@ class exportEventType extends eZWorkflowEventType
 		$pubVersion = $processParameters['version'];
 		$version = $contentClass->version( $processParameters['version'],  true );
         $objectAttributes = $version->attribute( 'contentobject_attributes' );
-//print_r($version->ContentObject->ContentObjectAttributes[$pubVersion]);  
-$ObjectVersionContent = $version->ContentObject->ContentObjectAttributes[$pubVersion];
-$currentObjectLang = key($ObjectVersionContent) ;
-
-$objectAttributes = $ObjectVersionContent[$currentObjectLang];
-//
+		//print_r($version->ContentObject->ContentObjectAttributes[$pubVersion]);  
+		$ObjectVersionContent = $version->ContentObject->ContentObjectAttributes[$pubVersion];
+		$currentObjectLang = key($ObjectVersionContent) ;
+		$objectAttributes = $ObjectVersionContent[$currentObjectLang];
+		//
 		$count_objectAttributes = count($objectAttributes);
 		for($i = 0 ; $i <= $count_objectAttributes ; ++$i)
 		{
@@ -75,23 +74,21 @@ $objectAttributes = $ObjectVersionContent[$currentObjectLang];
 			$dataMap[$ArrayKey] =  $objectAttributes[$i] ;
 			 			 
 		}
+	
 		//check if class has a recommendation datype else return
-		$classHasRecoDatatype = true;
+		$classHasRecoDatatype = false;
 		foreach ($dataMap as $thisAttribute)			
 		{	if ( $thisAttribute->DataTypeString == 'ezrecommendation' )
-				{
-					$XmlDataText= $thisAttribute->DataTypeString;
+			{
+				unset($classHasRecoDatatype);
+				break;
+			}	
 					
-				}else{
-					$classHasNoRecoDatatype = false;
-				}
 		}	
-
-		if ($classHasRecoDatatype == false){
-			eZLog::write('[ezyoochoose] Object has no recommendation datatype.', 'debug.log', 'var/log');
+		//if class not have a recommendation DataTypeString then break
+		if (isset($classHasRecoDatatype))
 			return eZWorkflowType::STATUS_ACCEPTED;
-		}
-		
+
 		
 		//Get node_id data
 		//$nodes =& eZContentObject::allContentObjectAttributes( $nodeID, $asObject = true );
@@ -110,7 +107,7 @@ $objectAttributes = $ObjectVersionContent[$currentObjectLang];
 
 		
 		//get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
-		$classIDArray = eZRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
 		$XmlDataText = $classIDArray['result']['ycXmlMap'];
 		$ycitemtypeid = $classIDArray['result']['ycItemType'];
 		/*
@@ -129,10 +126,8 @@ $objectAttributes = $ObjectVersionContent[$currentObjectLang];
 		$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
 
 		//Check if export is enable for this class
-		if ($ezymappingArray['export-enable'] == 0){
-			eZLog::write('[ezyoochoose] Export is not enable for this object', 'debug.log', 'var/log');
+		if ($ezymappingArray['export-enable'] == 0)
 			return eZWorkflowType::STATUS_ACCEPTED;
-		}	
 		
 			//create the YC REST XML body
 			$doc = new DOMDocument( '1.0', 'utf-8' );

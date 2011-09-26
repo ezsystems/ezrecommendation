@@ -101,7 +101,7 @@ function get_node_informations($node_ids){
 		
 		$object_class_id_rows = $db->arrayQuery( "SELECT `contentclass_id` FROM `ezcontentobject` where `id`=$object_id" );
 		$class_id = $object_class_id_rows[0]['contentclass_id'];
-		$classIDArray = eZRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
 		$XmlDataText = $classIDArray['result']['ycXmlMap'];
 		$ycitemtypeid = $classIDArray['result']['ycItemType'];
 
