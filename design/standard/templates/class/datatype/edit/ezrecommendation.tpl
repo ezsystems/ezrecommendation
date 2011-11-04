@@ -142,10 +142,11 @@
 <div style="clear:both;">
 <br />
 <fieldset class="mapping_block_second">
+<legend>{'Optional attributes for content export'|i18n( 'design/standard/class/datatype' )}</legend>
 <div class="block">	
 
 	<div class="element_mapping">
-	<label for="ContentClass_ezrecommendation_attribute_mapping_title_{$class_attribute.id}">{'Titel'|i18n( 'design/standard/class/datatype' )} </label>
+	<label for="ContentClass_ezrecommendation_attribute_mapping_title_{$class_attribute.id}">{'Title'|i18n( 'design/standard/class/datatype' )} </label>
 	</div>
 	<div class="element_mapping">
 	

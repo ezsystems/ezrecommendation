@@ -43,10 +43,11 @@ ezycClass.prototype.get_ezyc_params = function(usrId) {
 		
 		ezyc_params += "sid=" + encodeURIComponent(c1);
 		
-		if(!usrCookieAvailable  &&  usrId != 0){
-			
+		if(!usrCookieAvailable  &&  usrId != 10){
 			var a = new Date(d.getTime() +1000*60*30);			
 			document.cookie = 'ezyc_usr=' + usrId + '; expires=' + a.toGMTString() + '; path=/;';
+			ezyc_params += "&map=1";
+		}else if (usrId != 10){
 			ezyc_params += "&map=1";
 		}
 		
@@ -116,7 +117,7 @@ ezycClass.prototype.consevt = function(src, userid, elapsedtime) {
 	var e = document.getElementById('ezyc-image');
 	if (e != null) {
 		e.src = src.replace(/&amp;/g, "&");
-		setTimeout('sleep(1)', 100); //the page should wait a bit of time until the module has sent the request
+		setTimeout('sleep(1)', 1000); //the page should wait a bit of time until the module has sent the request
 	}
 	return true;
 }
@@ -147,6 +148,7 @@ var ezyc = new ezycClass();
 	 var e2 = document.getElementById('ezyc-consume-event-userid');
 	 
 	 if (e != null && e2 != null) {
+
 		 ezyc.consevt(e.innerHTML, e2.innerHTML, timeelapsed);
 	 } 
 	 

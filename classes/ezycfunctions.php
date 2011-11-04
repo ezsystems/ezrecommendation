@@ -401,7 +401,7 @@ class ezYCFunctions{
 	/*
 	 * 
 	 */
-	public static function send_bulk_request($xml_url, $xml_path){
+	public static function send_bulk_request($xml_url, $xml_path, $xml_file){
 
 		$ini = eZINI::instance('ezyoochoose.ini');
 		
@@ -412,7 +412,7 @@ class ezYCFunctions{
 		$solution = $ini->variable( 'SolutionSettings', 'solution' );
 		$mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
 		
-		$path = "/$mapSetting/$customerID/item/upload?url=".$xml_url.$xml_path."bulkexport.xml";				
+		$path = "/$mapSetting/$customerID/item/upload?url=".$xml_url.'/'.$xml_path.$xml_file;				
 	
 		$contenttype = "text/xml";
 

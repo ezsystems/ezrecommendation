@@ -32,11 +32,19 @@ class buyEventType extends eZWorkflowEventType
     {
 
     	$parameters = $process->parameterList();
+    	
+    	
     	$order_id = $parameters['order_id'];
     	$user_id = $parameters['user_id'];
-    	
-    	$this->get_products_for_order($order_id, $user_id);
-        eZDebug::writeDebug('ezyoochoose buy event executed.');
+		
+    	if (!empty($order_id) && !empty($user_id)){
+	    	$this->get_products_for_order($order_id, $user_id);
+	    	eZDebug::writeDebug('ezyoochoose buy event executed.');
+    	}else{
+    		eZLog::write('eZYoochoose: buy event could not be executed. Missing orderid or userid.', 'error.log', 'var/log');
+    		eZDebug::writeDebug('ezyoochoose buy event could not be executed. Missing orderid or userid.');    		
+    	}
+        
         return eZWorkflowType::STATUS_ACCEPTED;
     }
     
@@ -74,9 +82,11 @@ class buyEventType extends eZWorkflowEventType
 				 	$object_id = $row['contentobject_id'];
 				 	
 				 	
-        			$main_node_id_query = "SELECT `main_node_id` FROM `ezcontentobject_tree` WHERE `contentobject_id` = $object_id"; 
+        			$main_node_id_query = "SELECT `main_node_id`, `path_string` FROM `ezcontentobject_tree` WHERE `contentobject_id` = $object_id"; 
         			$main_node_id_rows = $db -> arrayQuery( $main_node_id_query ); 
         			$main_node_id = $main_node_id_rows[0]['main_node_id'];			 	
+        			$pathString = urlencode(ezYCTemplateFunctions::getCategoryPath($main_node_id_rows[0]['path_string']));	
+
 				 	
 				 	$class_id_query = "SELECT `contentclass_id` FROM `ezcontentobject` WHERE `id` = $object_id"; 
         			$class_id_rows = $db -> arrayQuery( $class_id_query );
@@ -99,7 +109,7 @@ class buyEventType extends eZWorkflowEventType
 			        	$count = $row['item_count'];
 			        	$price = $row['price']*100;
 			        	
-			        	$path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$ycitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&price='.$price.'&currency='.$currency_code.'&timestamp='.$timestamp;
+			        	$path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$ycitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&price='.$price.'&currency='.$currency_code.'&timestamp='.$timestamp.'&categorypath='.$pathString;
 						
 			        	ezYCFunctions::send_http_request($url, $path);
 					}else{

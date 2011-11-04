@@ -6,7 +6,7 @@
 		{def $scenario = ezini( 'RecommendationSettings', 'DefaultScenario', 'ezyoochoose.ini' )}
 	{/if}
 	
-	{def $recommendations = get_recommendations( $scenario, $node, $limit)}
+	{def $recommendations = get_recommendations( $scenario, $node, $limit, $category_based)}
 
 	{def $itemid_array = array()}
 	
@@ -23,6 +23,8 @@
 				{set $nodes_array = $nodes_array|merge($current_node_hash)}
 				
 				{node_view_gui content_node=$rec_node view='line' create_clickrecommended_event=$create_clickrecommended_event}
+				
+				{undef $current_node_hash}
 			 	
 			{/if}
 

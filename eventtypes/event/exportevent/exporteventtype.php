@@ -51,22 +51,49 @@ class exportEventType extends eZWorkflowEventType
 		
 		$objectID = $processParameters['object_id'];
 		//Get the nodeID
-		$nodeID  = exportEventType::getNodeId($objectID);	
+		$nodeID  = exportEventType::getNodeId($objectID);
+
 		//get the data map from objectID	
-		$contentClass = eZContentObject::fetch($objectID);
-		//$dataMap = $contentClass->attribute('data_map');
-		
+		$contentClass = eZContentObject::fetch($objectID);	
+	
 		//get the Class_id
 		$class_id = $contentClass->ClassID;
+//
+//get content object in the default language
+
+		$dataMap = $contentClass->attribute('data_map');
+
+//or get content object in the actually language		
+/*
+		//get the data map from objectID	
+		$contentClass = eZContentObject::fetch($objectID);
 		//get contentobject_attributes and transform to DataMapAsKeysAttributeIdentifier new array  e.g [index] -> [ContentClassAttributeIdentifier]
 		$pubVersion = $processParameters['version'];
 		$version = $contentClass->version( $processParameters['version'],  true );
-        $objectAttributes = $version->attribute( 'contentobject_attributes' );
-		//print_r($version->ContentObject->ContentObjectAttributes[$pubVersion]);  
+       
 		$ObjectVersionContent = $version->ContentObject->ContentObjectAttributes[$pubVersion];
-		$currentObjectLang = key($ObjectVersionContent) ;
-		$objectAttributes = $ObjectVersionContent[$currentObjectLang];
+
 		//
+		try {
+			$currentObjectLang = key($ObjectVersionContent) ;
+
+			if ($currentObjectLang == '')
+			{	$objectAttributes = $version->attribute( 'contentobject_attributes' );
+				throw new Exception('Current object language was not detected');
+			}	
+			else
+				//Send with default language
+				 $objectAttributes = $ObjectVersionContent[$currentObjectLang];
+
+		}
+		catch (Exception $e) {
+			eZLog::write('[ezyoochoose] item export: Current object language was not detected. Message: '.$e->getMessage(), 'error.log', 'var/log');
+			
+			
+            //return eZWorkflowType::STATUS_REJECTED;
+		}
+
+		
 		$count_objectAttributes = count($objectAttributes);
 		for($i = 0 ; $i <= $count_objectAttributes ; ++$i)
 		{
@@ -74,7 +101,9 @@ class exportEventType extends eZWorkflowEventType
 			$dataMap[$ArrayKey] =  $objectAttributes[$i] ;
 			 			 
 		}
-	
+*/	
+//
+
 		//check if class has a recommendation datype else return
 		$classHasRecoDatatype = false;
 		foreach ($dataMap as $thisAttribute)			
@@ -95,19 +124,10 @@ class exportEventType extends eZWorkflowEventType
 		//get categoryPath
 		$path  =& eZContentObjectTreeNode::fetch ($nodeID, $lang=false, $asObject=true, $conditions=false);
 		$ezCategoryPath = $path->PathString;
-		$ezCategoryArray = explode("/",$ezCategoryPath);
-		$count_ezCategoryArray = count($ezCategoryArray);
-		/*e.g /1/2/174/262/ -> /2/174/ */
-		$toYcCategoryPath = "/";
-		for ($i = 2; $i <= $count_ezCategoryArray-3 ; ++$i )
-		{
-			$toYcCategoryPath .= $ezCategoryArray[$i].'/';
-		}
-
-
 		
 		//get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
 		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		
 		$XmlDataText = $classIDArray['result']['ycXmlMap'];
 		$ycitemtypeid = $classIDArray['result']['ycItemType'];
 		/*
@@ -120,9 +140,9 @@ class exportEventType extends eZWorkflowEventType
 		}	
 		*/
 		
-	
 		//get Object data with Datatype mapping xml schema
 		$ezymappingArray  = array();
+
 		$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
 
 		//Check if export is enable for this class
@@ -158,11 +178,11 @@ class exportEventType extends eZWorkflowEventType
 			//validfrom-valid-to
 			
 				$elementVFromTypeContent = $doc->createElement( 'validfrom' );
-				$elementVFromTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom'])) );
+				$elementVFromTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom'],'validfrom')) );
 				$elementType->appendChild( $elementVFromTypeContent);
 				
 				$elementVToTypeContent = $doc->createElement( 'validto' );
-				$elementVToTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto'])) );
+				$elementVToTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto'],'validto')) );
 				$elementType->appendChild( $elementVToTypeContent);		
 			
 			//--categorypaths-- 
@@ -170,7 +190,7 @@ class exportEventType extends eZWorkflowEventType
 			$elementType->appendChild( $elementTypeContent );
 			//<categorypath> Section
 			$elementTypeCategoryChild = $doc->createElement( 'categorypath' );
-			$elementTypeCategoryChild->appendChild( $doc->createTextNode($toYcCategoryPath) );
+			$elementTypeCategoryChild->appendChild( $doc->createTextNode(ezYCTemplateFunctions::getCategoryPath($ezCategoryPath)) );
 			$elementTypeContent->appendChild( $elementTypeCategoryChild);
 			//
 			$createContentParentNode = 0;
@@ -189,6 +209,7 @@ class exportEventType extends eZWorkflowEventType
 					//create content child elements
 					$elementTypeContentChild = $doc->createElement( 'content-data' );
 					$elementTypeContentChild->setAttribute( 'key', $key );
+
 					$elementTypeContentChild->appendChild( $doc->createCDATASection(
 																	htmlentities(
 																	dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key]) 
@@ -257,8 +278,6 @@ class exportEventType extends eZWorkflowEventType
 		$pushingItemDoc = $doc->saveXML();
 
 		//REST API CALL(Export)
-
-
 		ezYCFunctions::sendExportContent($pushingItemDoc, $solution);
 
 		return eZWorkflowType::STATUS_ACCEPTED;

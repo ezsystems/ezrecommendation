@@ -54,29 +54,19 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 	$itemtypeid = $http->getVariable('itemtypeid');
 	
 	if ($eventtype == 'consume'){
-		
+
 		if ( $http->hasGetVariable('elapsedtime') ){
 			
 			$elapsedtime = $http->getVariable('elapsedtime');
-			
-			$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
-			
-			if (count($arr['result']) > 0)
-			{
-			
-				$itemtypeid = $arr['result']['ycItemType'];
-				$ttl = $arr['result']['ycTimeTrigger'];
-				if ($elapsedtime<$ttl){
-					eZLog::write('[ezyoochoose] customer-event not triggered because of to low elapsed time.', 'error.log', 'var/log');
-					return false;
-				}
-			}else {
-				eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
+			$ttl = $arr['result']['ycTimeTrigger'];
+			if ($elapsedtime<$ttl){
+				eZLog::write('[ezyoochoose] consume-event not triggered because of to low elapsed time.', 'debug.log', 'var/log');
 				return false;
 			}
 			
 		}else{
-			eZLog::write('[ezyoochoose] customer-event not triggered because of no elapsed time.', 'error.log', 'var/log');
+			eZLog::write('[ezyoochoose] customer-event not triggered because of no elapsed time.', 'debug.log', 'var/log');
 			return false;
 		}
 		

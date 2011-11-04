@@ -11,8 +11,8 @@
 
 <?php
 
-require 'autoload.php';
-require_once 'extension/ezyoochoose/classes/ezrecommendationclassattribute.php' ;
+require 'autoload.php'; 
+require_once 'extension/ezyoochoose/classes/ezycrecommendationclassattribute.php' ;
 
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
@@ -21,10 +21,24 @@ $script = eZScript::instance();
 $script->startup();
 $script->initialize();
 $db = eZDB::instance();
-
 $ini = eZINI::instance('ezyoochoose.ini');
 
+$options = $script->getOptions( "[split:]",
+								"",
+								Array ( 'split' => 'Define how many entrys are defined in each ezyoochoose initial XML export file. ',
+									
+								)
+							);
+$split=$options[ 'split' ];		
+if($split == ""){
+	//default initial XML export split value
+	$split = $ini->variable( 'BulkExportSettings', 'XmlEntrys' );
 
+	if (empty($split)){	
+		$cli->output('Missing XmlEntrys in ezyoochoose.ini');
+		$script->shutdown(1);
+	}
+}	
 
 
 $solution = $ini->variable( 'SolutionSettings', 'solution' );
@@ -40,12 +54,33 @@ if (empty($url) || empty($path)){
 	$cli->output('Missing SiteURL or BulkPath in ezyoochoose.ini');
 	$script->shutdown(1);	
 }
+//Check paths
+if (substr($url,-1) == '/' ||  $path[0]  == '/'){
+	$cli->output("SiteURL musst not end wit a '/' and BulkPath musst not beginn with '/'  in ezyoochoose.ini");
+	$script->shutdown(1);
+}
+
 
 $cli->output('Starting script.');
+$class_group = '1'; //ezcontentclass_classgroup 
 
-$class_rows = $db->arrayQuery( "SELECT `id` FROM `ezcontentclass` where `id` in (SELECT distinct(`contentclass_id`) FROM `ezcontentclass_attribute` where `data_type_string`='ezrecommendation')" );
-
+$class_rows = $db->arrayQuery( "SELECT `id`
+								FROM `ezcontentclass`
+								LEFT JOIN `ezcontentclass_classgroup` ON ( `contentclass_id` = `id` )
+								WHERE `id`
+								IN (
+								
+								SELECT DISTINCT (
+								`contentclass_id`
+								)
+								FROM `ezcontentclass_attribute`
+								WHERE `data_type_string` = 'ezrecommendation'
+								)
+								AND group_id  IN (".$class_group.")
+								GROUP BY id " 
+								);
 $class_array = array();
+
 
 foreach ( $class_rows as $class_row ){
 	
@@ -53,24 +88,31 @@ foreach ( $class_rows as $class_row ){
 	  
 }
 
-$node_id_array = array();
-
+$object_param_array = array();
+$parent_tree = 2 ;//Home
 foreach ($class_array as $class_id){
 	
-	$node_rows = $db->arrayQuery( "SELECT `node_id` FROM `ezcontentobject_tree` where `contentobject_id` in (SELECT `id` FROM `ezcontentobject` where `contentclass_id` = $class_id) ");
+	$node_rows = $db->arrayQuery( "SELECT `node_id`,`contentobject_id`,`path_string` FROM `ezcontentobject_tree` where `contentobject_id` in (SELECT `id` FROM `ezcontentobject` where `contentclass_id` = $class_id) ");
 	
 	foreach ($node_rows as $node_id){
-		
-		array_push($node_id_array, $node_id['node_id']);		
-		
+		$path_string = str_replace('/1/', '', $node_id['path_string']);
+		$arr_path_string = preg_split("/\//",$path_string);
+		if ($path_string[0] == $parent_tree )
+			array_push($object_param_array,array("node_id"    =>  $node_id['node_id'],
+											     "object_id"  =>  $node_id['contentobject_id'], 
+											     "node_path"  =>  '/'.$path_string,
+												 "class_id"   =>  $class_id
+										        )
+					   );	
 	}
 }
 
 
-if (generate_xml($node_id_array)){
-	
-	ezYCFunctions::send_bulk_request($url, $path);
+$exportFiles = generate_xml($object_param_array);
+foreach ($exportFiles as $xmlFiles){
+	ezYCFunctions::send_bulk_request($url, $path, $xmlFiles);
 }
+	
 
 $cli->output('Script finished succesfully.');
 
@@ -78,67 +120,71 @@ $cli->output('Script finished succesfully.');
 /*
  * 
  */
-function get_node_informations($node_ids){
+function get_node_informations($object_param_arrays){
 	
 	global $cli, $script, $db, $solution;
 	
 	$params_array = array();
 	$counter = 0;
 	
-	foreach ($node_ids as $node_id){
+	foreach ($object_param_arrays as $object_param){
+
+
+		$object_id   =  $object_param['object_id'] ;
+		$node_id     =  $object_param['node_id']   ;
+		$path_string =  $object_param['node_path'] ;
+		$class_id    =  $object_param['class_id'] ;
 		
-		
-		$object_id_rows = $db->arrayQuery( "SELECT `contentobject_id`, `path_string`, `contentobject_version`  FROM `ezcontentobject_tree` where `node_id`=$node_id" );
-		$object_id = $object_id_rows[0]['contentobject_id'];
-		$path_string = $object_id_rows[0]['path_string'];
-		$path_string = str_replace('/'.$node_id.'/', '/', $path_string);
-		$path_string = str_replace('/1/', '/', $path_string);
 		$contentobject_version = $object_id_rows[0]['contentobject_version'];
 		
-		$params_array['node_id']=$node_id;
-		$params_array['object_id']=$object_id;
-		$params_array['path_string']=$path_string;
+		$params_array['node_id']     =  $node_id     ;
+		$params_array['object_id']   =  $object_id   ;
+		$params_array['path_string'] =  $path_string ;
+
 		
-		$object_class_id_rows = $db->arrayQuery( "SELECT `contentclass_id` FROM `ezcontentobject` where `id`=$object_id" );
-		$class_id = $object_class_id_rows[0]['contentclass_id'];
 		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		// Get Datatype information from class definition
 		$XmlDataText = $classIDArray['result']['ycXmlMap'];
 		$ycitemtypeid = $classIDArray['result']['ycItemType'];
 
 		$params_array['class_id']=$class_id;
 		$params_array['ycitemtype_id']=$ycitemtypeid;
 		
+		try {
 		$ezymappingArray  = array();
-		$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
+			if (empty($XmlDataText))
+				  throw new Exception('[ezyoochoose] Recommendation XML mapping was not found for ezpublish class ID : '.$class_id);
+			else
+				$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
+		}
+		catch (Exception $e) {
+			eZLog::write($e->getMessage(), 'error.log', 'var/log');
+			continue;
+		}
+			
 		
 		if ($ezymappingArray['export-enable'] == 0)
 			continue;
-		
-		$contentClass = eZContentObject::fetch($object_id);
-		$version = $contentClass->version( $contentobject_version );
-		$objectAttributes = $version->attribute( 'contentobject_attributes' );
-   
-		$count_objectAttributes = count($objectAttributes);
+	
 		$data_map = null;
-		for($i = 0 ; $i <= $count_objectAttributes ; ++$i)
-		{
-			$ArrayKey = $objectAttributes[$i]->ContentClassAttributeIdentifier ;
-			$dataMap[$ArrayKey] =  $objectAttributes[$i] ;
-			 			 
-		}
+		$contentClass = eZContentObject::fetch($object_id);
+		$dataMap = $contentClass->attribute('data_map');
+		
 		$currency = $ezymappingArray['currency'];
 		$price = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['price'], $ezymappingArray['currency']);
-		$valid_from = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom']);
-		$valid_to = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto']);
+		$valid_from = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom'],'validfrom');
+		$valid_to = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto'],'validto');
 
 		if ($solution == 'shop'){
 			if (empty($currency) || empty($price)){
-				$cli->output('Missing currency or price for node '.$node_id.'.');
+
+
+				$cli->output('Missing currency or price for node '.$node_id.'(object Id '.$object_id.')');
 				continue;
 			}
 		}elseif($solution == 'publisher'){
 			if (empty($valid_to) || empty($valid_from)){
-				$cli->output('Missing valid_to or valid_from for node '.$node_id.'.');
+					$cli->output('Missing valid_to or valid_from for node '.$node_id.'(object Id '.$object_id.')');
 				continue;
 			}
 		}
@@ -147,32 +193,68 @@ function get_node_informations($node_ids){
 		$params_array['price']=$price;
 		$params_array['valid_from']=$valid_from;
 		$params_array['valid_to']=$valid_to;
-				
+		
+		
 		$ycXmlContentSection = array('title','abstract','tags');
 		$ycXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
 		$count_ycXmlContentSection = count($ycXmlContentSection);
 		$count_ycXmlAttributesSection = count($ycXmlAttributesSection);
+
+
 			
-
-		/*
-		$createContentParentNode = 0;
-
+		$content_section = array();
 		for ($i = 0; $i <= $count_ycXmlContentSection ; ++$i){
+			$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
 				
-				//-content-
+				//-Get content data
 			$key = $ycXmlContentSection[$i];
 			
 			if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0') {
-				if($createContentParentNode == 0)
-				{	
-					$params_array['content']=array();
-				}
 				
-				$params_array['content'][$key]=htmlentities( dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key]));
+				$dataMapKey = $ezymappingArray[$key];
+				
+				if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
+					$tagsObject = "tags";
+				
+						
+				$content_section[] = array( $key => htmlentities( dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key], $tagsObject) ) );
+
 			}
+		}
+		
+		$params_array['content'] = $content_section;
+		
+		//attributes
+		$attributes_section = array();
+		if (isset($ezymappingArray['counter'])){
+			$addedOptAttributes = $ezymappingArray['counter'];
+			for ($i = 1; $i < $addedOptAttributes ; ++$i){
+					$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
+					if (isset($ezymappingArray['addtomap'.$i])){
+						if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
+							$tagsObject = "tags";
+					$attributes_section[] = array( $ezymappingArray['addtomap'.$i] => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['addtomap'.$i], $tagsObject) );
+
+					}
+					
+				
+			}			
 
 		}
-		*/
+		for ($i = 0; $i <= $count_ycXmlAttributesSection ; ++$i){
+			$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
+			$key = $ycXmlAttributesSection[$i];
+			if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0'){
+				if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
+					$tagsObject = "tags";
+				array_push($attributes_section, array( $key => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key], $tagsObject ) ) );
+			
+			}			
+		}
+		
+		
+		$params_array['attribute'] = $attributes_section;
+
 		$all_params_array[$counter]= $params_array;
 		$counter++;
 				
@@ -184,71 +266,131 @@ function get_node_informations($node_ids){
 /*
  * 
  */
-function generate_xml($node_ids){
+function generate_xml($object_param_arrays){
 	
-	global $cli, $script, $db, $solution;
+
+
+	global $cli, $script, $db, $solution, $split, $path;
+	
 	$cli->output('Collecting object informations...');
-	$nodes_parameters = get_node_informations($node_ids);
+	$nodes_parameters = get_node_informations($object_param_arrays);
 	$cli->output('Collecting object informations done.');
-	
 	if ($nodes_parameters){
-		$cli->output('Generating XML...');
-		$doc = new DOMDocument( '1.0', 'utf-8' );
+		
+		$filesNumber = ceil(count($nodes_parameters) / $split) ;
+		$fromEntry = 0 ;
+		$xml_files = array();
+		for($i = 1 ; $i <= $filesNumber ; ++$i ){
+			$cli->output('Generating bulkexport_'.$i.'.xml...');
+			$doc = new DOMDocument( '1.0', 'utf-8' );
 			$root = $doc->createElement( 'items' );
-			$root->setAttribute( 'version', 1 );
-			foreach ($nodes_parameters as $nodes_parameter){
-				$elementType = $doc->createElement( 'item' );
-				$elementType->setAttribute( 'id', $nodes_parameter['node_id'] );
-				
-				$root->appendChild( $elementType );	
-				$elementType->setAttribute( 'type', $nodes_parameter['ycitemtype_id'] );		
-				$root->appendChild( $elementType );
-
-				if ($solution == 'shop'){			
-					$elementPriceTypeContent = $doc->createElement( 'price' );
-					$elementPriceTypeContent->setAttribute( 'currency', $nodes_parameter['currency'] );
-					$elementPriceTypeContent->appendChild( $doc->createTextNode($nodes_parameter['price']) );
-					$elementType->appendChild( $elementPriceTypeContent);
-				}
-				
-				if (!empty($nodes_parameter['valid_from'])){
-					$elementVFromTypeContent = $doc->createElement( 'validfrom' );
-					$elementVFromTypeContent->appendChild( $doc->createTextNode($nodes_parameter['valid_from']) );
-					$elementType->appendChild( $elementVFromTypeContent);
-				}
-				
-				if (!empty($nodes_parameter['valid_to'])){
-					$elementVToTypeContent = $doc->createElement( 'validto' );
-					$elementVToTypeContent->appendChild( $doc->createTextNode($nodes_parameter['valid_to']) );
-					$elementType->appendChild( $elementVToTypeContent);
-				}
-				
-				
-			$elementTypeContent = $doc->createElement( 'categorypaths' );
-			$elementType->appendChild( $elementTypeContent );
-
-			$elementTypeCategoryChild = $doc->createElement( 'categorypath' );
-			$elementTypeCategoryChild->appendChild( $doc->createTextNode($nodes_parameter['path_string']) );
-			$elementTypeContent->appendChild( $elementTypeCategoryChild);
+			$root->setAttribute( 'version', 1 );	
+			$toEntry = ($i * $split) - 1 ;
 			
-			//$elementTypeContent = $doc->createElement( 'content' );
-			//$elementType->appendChild( $elementTypeContent );
+			for($j = $fromEntry ; $j <= $toEntry ; ++$j ){
+				if ( $nodes_parameters[$j]['node_id'] == "")
+					break;
+					
+					$elementType = $doc->createElement( 'item' );
+					$elementType->setAttribute( 'id', $nodes_parameters[$j]['node_id'] );
+					
+					$root->appendChild( $elementType );	
+					$elementType->setAttribute( 'type', $nodes_parameters[$j]['ycitemtype_id'] );		
+					$root->appendChild( $elementType );
 
+					if ($solution == 'shop'){			
+						$elementPriceTypeContent = $doc->createElement( 'price' );
+						$elementPriceTypeContent->setAttribute( 'currency', $nodes_parameters[$j]['currency'] );
+						$elementPriceTypeContent->appendChild( $doc->createTextNode($nodes_parameters[$j]['price']) );
+						$elementType->appendChild( $elementPriceTypeContent);
+					}
+					
+					if (!empty($nodes_parameters[$j]['valid_from'])){
+						$elementVFromTypeContent = $doc->createElement( 'validfrom' );
+						$elementVFromTypeContent->appendChild( $doc->createTextNode($nodes_parameters[$j]['valid_from']) );
+						$elementType->appendChild( $elementVFromTypeContent);
+					}
+					
+					if (!empty($nodes_parameters[$j]['valid_to'])){
+						$elementVToTypeContent = $doc->createElement( 'validto' );
+						$elementVToTypeContent->appendChild( $doc->createTextNode($nodes_parameters[$j]['valid_to']) );
+						$elementType->appendChild( $elementVToTypeContent);
+					}
+					
+					
+					$elementTypeContent = $doc->createElement( 'categorypaths' );
+					$elementType->appendChild( $elementTypeContent );
+
+					$elementTypeCategoryChild = $doc->createElement( 'categorypath' );
+					$elementTypeCategoryChild->appendChild( $doc->createTextNode($nodes_parameters[$j]['path_string']) );
+					$elementTypeContent->appendChild( $elementTypeCategoryChild);
+				
+					//content
+					$content_elements = count($nodes_parameters[$j]['content']);
+					if ( $content_elements > 0){
+						$elementTypeContent = $doc->createElement( 'content' );
+						$elementType->appendChild( $elementTypeContent );
+						
+						foreach ($nodes_parameters[$j]['content'] as  $contentvalue){
+							$elementTypeContentChild = $doc->createElement( 'content-data' );
+							$elementTypeContentChild->setAttribute( 'key', key($contentvalue) );
+							$elementTypeContentChild->appendChild( $doc->createCDATASection(
+																			current($contentvalue)
+																		)
+																  );
+							$elementTypeContent->appendChild( $elementTypeContentChild);
+						
+							
+						}
+						
+					
+					}
+					//atributes
+					$content_elements = count($nodes_parameters[$j]['attribute']);
+					if ( $content_elements > 0){
+						$elementTypeContent = $doc->createElement( 'attributes' );
+						$elementType->appendChild( $elementTypeContent );
+						
+						foreach ($nodes_parameters[$j]['attribute'] as  $contentvalue){
+							$elementTypeContentChild = $doc->createElement( 'attribute' );
+							$elementTypeContentChild->setAttribute( 'key', key($contentvalue) );
+							$elementTypeContentChild->setAttribute( 'value', current($contentvalue) );
+
+							$elementTypeContent->appendChild( $elementTypeContentChild);
+						
+							
+						}
+						
+					
+					}				
+				
+		
+		
 			}
+
+			$fromEntry = $toEntry + 1; 
 			
-			$cli->output('Generating XML done.');
-			$cli->output('Saving XML...');
+			
+			$cli->output('Generating bulkexport_'.$i.'.xml done.');
+			$cli->output('Saving bulkexport_'.$i.'.xml...');
 			$doc->appendChild( $root );	
 			$pushingItemDoc = $doc->saveXML();
-			$filename = 'extension/ezyoochoose/design/standard/images/bulkexport.xml';
+			$filename = $path .'bulkexport_'.$i.'.xml';
 			$fh = fopen($filename, 'w');
-    		fwrite($fh, $pushingItemDoc);
-    		fclose($fh);
-    		$cli->output('Saving XML done.');
-			return true;
+			fwrite($fh, $pushingItemDoc);
+			fclose($fh);
+			$cli->output('Saving bulkexport_'.$i.'.xml done.');
+			
+			$xml_files [].= 'bulkexport_'.$i.'.xml' ;
+			
+				
+		}
+
+	
+
 	}
 	
-	
+	return $xml_files;
 	
 }
 

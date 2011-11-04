@@ -26,8 +26,6 @@ class ezYCTemplateFunctions {
 									'track_rendered_items'
                                   );
 
-
-
 	}
 
 	function &operatorList()
@@ -183,7 +181,7 @@ class ezYCTemplateFunctions {
 		
 		$siteaccess_url = $access_path['siteaccess']['url'];
 		
-		if ($_SERVER['HTTPS'] == 'on'){
+		if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
 			
 			$path = 'https://';
 		
@@ -226,7 +224,19 @@ class ezYCTemplateFunctions {
 		
 		return $serverURL.$moduleURL;
 	}
+	static function getCategoryPath($ezCat){
 	
+		$ezCategoryArray = explode("/",$ezCat);
+		$count_ezCategoryArray = count($ezCategoryArray);
+		/*e.g /1/2/174/262/ -> /2/174/ */
+		$toYcCategoryPath = "/";
+		for ($i = 2; $i <= $count_ezCategoryArray-3 ; ++$i )
+		{
+			$toYcCategoryPath .= $ezCategoryArray[$i].'/';
+		}	
+		return $toYcCategoryPath;
+	
+	}	
 			 
 	function get_html( $params ) {
 		
@@ -367,10 +377,10 @@ class ezYCTemplateFunctions {
 			
 				//////////////////////////
 				$params = '?productid='.$productid.'&eventtype=consume';
-				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$itemtypeid;
+				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$ycitemtypeid;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.$categorypath;
+				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezYCTemplateFunctions::getCategoryPath($categorypath);
 
 				$res = '<div id="ezyc-consume-event">'.$this->get_url_for_consume_event( $params ).'</div><div id="ezyc-consume-event-userid">'.$current_user_id.'</div>';
 				
@@ -391,6 +401,8 @@ class ezYCTemplateFunctions {
 		return $res;
 				
 	}
+	
+
 	
 	function generate_common_event( $node, $event_type )
 	{
@@ -434,27 +446,12 @@ class ezYCTemplateFunctions {
 				$categorypath = $node->PathString;	
 				
 				$current_user_id = $this->get_current_user_id();
-				/////////////////////////
-				/*$mynodeArray = $node->attribute( 'data_map' );
-			
-				foreach ($mynodeArray as $contentObjectAttr)
-				{		
-					if($contentObjectAttr->DataTypeString == "ezrecommendation"){
-							$dataTextXml = $contentObjectAttr->DataText;
-							 $isEnableReco = ezyRecommendationXml::getNodeAttributeValue($dataTextXml, 'recommendation-enable')	;
-							break 1;
-					}		
 
-				}
-				if ( $isEnableReco != 1 and $event_type == 'clickrecommended')
-					return false;
-				*/			
-				//////////////////////////
 				$params = '?productid='.$productid.'&eventtype='.$event_type;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$ycitemtypeid;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.$categorypath;
+				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezYCTemplateFunctions::getCategoryPath($categorypath);
 
 				$res = $this->get_html_for_event( $params, $current_user_id );
 			}
@@ -590,6 +587,7 @@ class ezYCTemplateFunctions {
 			if (!empty($ycitemtypeid))
 			{			
 				$itemid = $node->NodeID;
+				$categorypath = $node->PathString;
 							
 				$current_user_id = $this->get_current_user_id();
 				
@@ -598,6 +596,7 @@ class ezYCTemplateFunctions {
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
 				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'rating' ).'='.$rating;
+				$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezYCTemplateFunctions::getCategoryPath($categorypath);
 				
 				$res = $this->get_html_for_event( $params, $current_user_id );
 			}else{
@@ -661,7 +660,7 @@ class ezYCTemplateFunctions {
 						$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$ycitemtypeid;
 						$params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
 						$params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-						$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.$categorypath;
+						$params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezYCTemplateFunctions::getCategoryPath($categorypath);
 									
 						$res = $this->get_html( $params );
 					}else{
@@ -717,51 +716,68 @@ class ezYCTemplateFunctions {
 					$ycitemtypeid = $arr['result']['ycItemType'];
 					
 				}
+											
+				$itemid = $node->NodeID;
 				
-				if (!empty($ycitemtypeid))
-				{
-					
-					$itemid = $node->NodeID;
-					
-					if ($productid == 'news'){
-						$current_user = eZUser::currentUser ();
-						$current_user_id = $current_user->attribute( 'contentobject_id' );
-					}
-					
-					$path = '/'.$productid;
-					$path .= '/'.$client_id;
-					
-					if ($productid == 'news'){
-						$path .= '/'.$current_user_id;
-					}
-					
-					//$path .= '/'.$ycitemtypeid;
-					
-					$path .= '/'.$scenario.'.'.$extension;
-					$path .= '?'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.urlencode($itemid);
-						
-					if ($limit && $ini->hasVariable( 'ParameterMapSettings', 'limit' ) ) {
-						$path .= '&'.$ini->variable( 'ParameterMapSettings', 'limit' ).'='.urlencode($limit);
-					}
 
+				$current_user = eZUser::currentUser ();
+				$current_user_id = $current_user->attribute( 'contentobject_id' );
+
+
+				$path = '/'.$productid;
+				$path .= '/'.$client_id;
+				
+				
+				$path .= '/'.$current_user_id;
+				
+				
+				//$path .= '/'.$ycitemtypeid;
+				
+				$path .= '/'.$scenario.'.'.$extension;
+				$path .= '?'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.urlencode($itemid);
+					
+				if ($limit && $ini->hasVariable( 'ParameterMapSettings', 'limit' ) ) {
+					$path .= '&'.$ini->variable( 'ParameterMapSettings', 'limit' ).'='.urlencode($limit);
+				}
+
+				if (!empty($ycitemtypeid)){
+					
 					if ($ini->hasVariable( 'ParameterMapSettings', 'class_id' ) ) {
 						
 						$path .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.urlencode($ycitemtypeid);
 						
 					}
 					
-					require_once( 'extension/ezyoochoose/classes/ezycfunctions.php' );
-
-					$recommendations = ezYCFunctions::send_reco_request($url, $path);
-
-					return $this->generate_recommendations_array($recommendations);
-					
-					
-				}else{
-					eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
-
-					return false;
 				}
+				
+				if ($category_based==true){
+				
+					$categorypath = $node->PathString;
+					
+					if (!empty($categorypath)){
+						
+						//$categorypath = str_replace('/'.$node_id.'/', '/', $categorypath);
+						//$categorypath = str_replace('/1/', '/', $categorypath);
+	
+						$path .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.urlencode(ezYCTemplateFunctions::getCategoryPath($categorypath));
+						
+					}
+				
+				}				
+					
+				
+				require_once( 'extension/ezyoochoose/classes/ezycfunctions.php' );
+
+				$recommendations = ezYCFunctions::send_reco_request($url, $path);
+
+				return $this->generate_recommendations_array($recommendations);
+				
+					
+				//}else{
+					//eZLog::write('[ezyoochoose] ez-classid could not be mapped to a ezyoochoose-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezyoochoose type.', 'error.log', 'var/log');
+
+					//return false;
+				//}
 			 
 			}else{
 			
@@ -795,6 +811,9 @@ class ezYCTemplateFunctions {
 			}
 			
 		}
+		
+		print_r($sorted_array);
+		die();
 		
 		$ini = eZINI::instance('ezyoochoose.ini');
 
