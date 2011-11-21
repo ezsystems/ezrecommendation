@@ -1,9 +1,9 @@
 {set-block scope=global variable=cache_ttl}0{/set-block}
 
-<div id="ezyoochoose-recommendations">
+<div id="ezrecommendation-recommendations">
 
 	{if eq($scenario, '')}
-		{def $scenario = ezini( 'RecommendationSettings', 'DefaultScenario', 'ezyoochoose.ini' )}
+		{def $scenario = ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' )}
 	{/if}
 	
 	{def $recommendations = get_recommendations( $scenario, $node, $limit, $category_based)}
@@ -36,6 +36,7 @@
 	{if and(gt($nodes_array|count(), 0), $track_rendered_items|eq(true()))}
 		{track_rendered_items( $nodes_array )}
 	{/if}
+		
 
 </div>
 {undef $recommendation $itemid_array}

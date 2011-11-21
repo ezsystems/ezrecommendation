@@ -6,7 +6,7 @@
 	</div>
 	
 	<div class="element">
-		{*Content to de exported to YC *}
+		{*Content to de exported to eZ Recommendation Service *}
 		<label>{'Export content (for recommendation)'|i18n( 'design/standard/class/datatype' )}:</label>
 		 <p>{$class_attribute.data_int3|choose( 'Unchecked'|i18n( 'design/standard/class/datatype' ), 'Checked'|i18n( 'design/standard/class/datatype' ) )}</p>
 		 
@@ -16,7 +16,7 @@
 <br />
 <br />
 
-{*YC Item Type ID*}
+{*ezrecommendation Item Type ID*}
 <div class="block">
 	<label>{'Item type (for recommendation)'|i18n( 'design/standard/class/datatype' )}: </label>
 	  <p>{$class_attribute.data_int1}</p>

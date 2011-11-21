@@ -4,7 +4,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 class eZRecommendationFunctionCollection
@@ -39,7 +39,7 @@ class eZRecommendationFunctionCollection
 	function getRecommendationValue($data)
 	{
 		
-		$recommendationValue = ezyRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
+		$recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
 		
 		return $recommendationValue;
 
@@ -54,13 +54,13 @@ class eZRecommendationFunctionCollection
 		$rowCount = count($row);
 		if ($rowCount == 0)
 		{
-			$ini = eZINI::instance('ezyoochoose.ini');
+			$ini = eZINI::instance('ezrecommendation.ini');
 			if ($ini->hasVariable( 'ShopPriceCurrency', 'defaultCurrency' ) && $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) != "")
 				$systemCurrency = array ('0' => $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) );
 			else
 			{
-				eZLog::write('eZYoochoose: Missing defaultCurrency in ezyoochoose.ini.', 'error.log', 'var/log');
-				eZDebug::writeWarning( "eZYoochoose: Missing defaultCurrency in ezyoochoose.ini." );
+				eZLog::write('[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.', 'error.log', 'var/log');
+				eZDebug::writeWarning( "[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini." );
 			}	
 		}	
 		else

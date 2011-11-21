@@ -1,0 +1,7 @@
+div#ezrecommendation{
+	display:none;
+}
+
+div#ezreco-consume-event, div#ezreco-consume-event-userid{
+	display:none;
+}

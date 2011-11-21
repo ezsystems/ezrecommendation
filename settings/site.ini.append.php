@@ -1,9 +1,9 @@
 <?php /* #?ini charset="utf8"?
 
 [TemplateSettings]
-ExtensionAutoloadPath[]=ezyoochoose
+ExtensionAutoloadPath[]=ezrecommendation
 
 [RegionalSettings]
-TranslationExtensions[]=ezyoochoose
+TranslationExtensions[]=ezrecommendation
 
 */ ?>

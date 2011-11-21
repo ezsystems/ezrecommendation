@@ -1,0 +1,55 @@
+div.ezrecommendation-statistics{
+	
+	}
+
+div.ezrecommendation-statistics table{
+	width:450px;
+	margin-top:20px;
+	}
+div.ezrecommendation-statistics table td.ezrecommendation-statistics-text-field{
+	text-align: right;
+	}
+div.ezrecommendation-statistics input.button{
+	margin-top:10px;
+}
+div.ezrecommendation-statistics input.ezrecommendation-statistics-text-field{
+	width:250px;
+}
+div.warning{
+	margin-top:10px;
+	padding:20px;
+	border:red 1px solid;
+	width:500px;
+}
+div.ezrecommendation-statistics div.info{
+	padding:20px 10px 0px 10px; 
+}
+div.ezrecommendation-statistics div.message-feedback, div.ezrecommendation-statistics div.message-warning, div.ezrecommendation-statistics div.message-error{
+	border: 6px solid;	
+}
+div.ezrecommendation-statistics div.message-error{
+	border-color:#C11B17;
+	}
+div.ezrecommendation-statistics div.message-feedback{
+border-color:#3E8D29;
+	}
+
+div.element_mapping {
+    float: left;
+    padding: 1em 0 0;
+    width: 10em;
+}
+fieldset.mapping_block_required{
+	float:left;
+	margin-right: 2em;
+    width: 25em;
+	
+}
+fieldset.mapping_block_required small{
+	color: #FF0000;
+}
+
+fieldset.mapping_block_second{
+    width: 25em;
+	
+}

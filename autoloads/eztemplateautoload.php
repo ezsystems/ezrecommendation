@@ -1,19 +1,19 @@
 <?php
 
 /**
- * File containing the ZTemplateOperatorArray
+ * File containing the eZTemplateOperatorArray
  *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 
 $eZTemplateOperatorArray = array();
 $eZTemplateOperatorArray[] =
- array( 'script' => 'extension/ezyoochoose/autoloads/ezyctemplatefunctions.php',
-        'class' => 'ezYCTemplateFunctions',
+ array( 'script' => 'extension/ezrecommendation/autoloads/ezrecotemplatefunctions.php',
+        'class' => 'ezRecoTemplateFunctions',
         'operator_names' => array( 	'generate_html',
  									'generate_common_event',
  									'generate_consume_event',

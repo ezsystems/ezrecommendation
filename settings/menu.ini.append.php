@@ -1,6 +1,6 @@
 <?php /* #?ini charset="utf8"?
 
 [Leftmenu_setup]
-Links[ezyoochoose]=ezyoochoose/statistics
+Links[ezrecommendation]=ezrecommendation/statistics
 
 */ ?>

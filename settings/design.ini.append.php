@@ -1,14 +1,13 @@
 <?php /* #?ini charset="utf8"?
 
 [ExtensionSettings]
-DesignExtensions[]=ezyoochoose
+DesignExtensions[]=ezrecommendation
 
 [StylesheetSettings]
-FrontendCSSFileList[]=ezyoochoose.css
-BackendCSSFileList[]=ezyoochoose.css
+FrontendCSSFileList[]=ezrecommendation.css
+BackendCSSFileList[]=ezrecommendation.css
 
 [JavaScriptSettings]
-FrontendJavaScriptList[]=ezyoochoose.js
-
+FrontendJavaScriptList[]=ezrecommendation.js
 
 */ ?>

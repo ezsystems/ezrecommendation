@@ -1,9 +1,7 @@
 <?php /* #?ini charset="utf8"?
 
 [ModuleSettings] 
-ExtensionRepositories[]=ezyoochoose
-ModuleList[]=ezyoochoose
+ExtensionRepositories[]=ezrecommendation
 ModuleList[]=ezrecommendation
-
 
 */ ?>

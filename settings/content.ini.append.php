@@ -1,7 +1,7 @@
 <?php /* #?ini charset="utf-8"?
 
 [DataTypeSettings]
-ExtensionDirectories[]=ezyoochoose
+ExtensionDirectories[]=ezrecommendation
 AvailableDataTypes[]=ezrecommendation
 
 */ ?>
