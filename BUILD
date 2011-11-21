@@ -1,10 +1,10 @@
 
 To cleanly build the extension:
-ant -Dextension.name=ezyoochoose clean-all build pack
+ant -Dextension.name=ezrecommendation clean-all build pack
 
 
 To see all available options:
-ant -Dextension.name=ezyoochoose -p help
+ant -Dextension.name=ezrecommendation -p help
 
 
 Results are in the build directory.
