@@ -20,17 +20,21 @@
      [ExtensionSettings]
      ActiveExtensions[]=ezrecommendation
 
- 3) Regenerate autoloads
+ 3) Import classes from package
+     packages/classes_for_recommendation-*.ezpkg
+
+
+ 4) Regenerate autoloads
     In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezrecommendation', click button 'Regenerate 
     autoload arrays for extensions',
     or in eZ Publish installation folder, run "php bin/php/ezpgenerateautoloads.php -e"
     
- 4)	Allow access for the ezrecommendation module
+ 5)	Allow access for the ezrecommendation module
  	In administrator user interface, click 'User accounts' -> 'Roles and policies' then 'Anonymous'. Click on the Role and edit the Policies.
  	Add new Policy. Choose the module 'ezrecommendation' and the Function 'request' and then grant access to this function.
  	Do the same for the Role 'Members' if you have a login area an your site.
  
- 5) Clear cache
+ 6) Clear cache
     Clear INI and template caches. (from admin 'Setup' tab or commandline)
  
 
