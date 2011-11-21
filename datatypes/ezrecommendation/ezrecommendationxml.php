@@ -4,17 +4,17 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
  
-class ezyRecommendationXml
+class ezRecommendationXml
 {
 
 
-	static function ezyRecommendationArrContent ($xmlText)
+	static function ezRecommendationArrContent ($xmlText)
 	{
 	
-		$doc = ezyRecommendationXml::parseXML( $xmlText );
+		$doc = ezRecommendationXml::parseXML( $xmlText );
 		$root = $doc->documentElement;
 		
 		$type = $root->getElementsByTagName( 'itemtypeid' )->item( 0 );
@@ -118,7 +118,7 @@ class ezyRecommendationXml
 	static function getNodeAttributeValue($xml, $node)
 	{
 		
-		$doc = ezyRecommendationXml::parseXML( $xml );
+		$doc = ezRecommendationXml::parseXML( $xml );
 		$root = $doc->documentElement;
 		$type = $root->getElementsByTagName( $node )->item( 0 );
         if ( $type )
@@ -131,7 +131,7 @@ class ezyRecommendationXml
 
 	static function setNodeAttributeValue($xml, $node, $value)
 	{
-		$doc = ezyRecommendationXml::parseXML( $xml );
+		$doc = ezRecommendationXml::parseXML( $xml );
 		
 		$root = $doc->documentElement;
 

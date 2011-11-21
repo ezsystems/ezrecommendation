@@ -1,7 +1,7 @@
- eZ yoochoose extension installation documentation
+ eZrecommendation extension installation documentation
 
    
- About eZ yoochoose
+ About eZrecommendation
  ===================
  
 
@@ -12,22 +12,22 @@
  
  Installation
  ================
- 1) Copy ezyoochoose into 'extension' folder or install the ezyoochoose package (Setup->Packages->Import new package).
+ 1) Copy ezrecommendation into 'extension' folder or install the ezrecommendation package (Setup->Packages->Import new package).
   
- 2) Activate ezyoochoose
-   In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezyoochoose', click button 'Apply Changes'.
+ 2) Activate ezrecommendation
+   In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezrecommendation', click button 'Apply Changes'.
    or in settings/override/site.ini.append.php, add acivation configuration under "ExtensionSettings" section:
      [ExtensionSettings]
-     ActiveExtensions[]=ezyoochoose
+     ActiveExtensions[]=ezrecommendation
 
  3) Regenerate autoloads
-    In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezyoochoose', click button 'Regenerate 
+    In administrator user interface, click 'setup' tab->'extensions' menu, select 'ezrecommendation', click button 'Regenerate 
     autoload arrays for extensions',
     or in eZ Publish installation folder, run "php bin/php/ezpgenerateautoloads.php -e"
     
- 4)	Allow access for the ezyoochoose module
+ 4)	Allow access for the ezrecommendation module
  	In administrator user interface, click 'User accounts' -> 'Roles and policies' then 'Anonymous'. Click on the Role and edit the Policies.
- 	Add new Policy. Choose the module 'ezyoochoose' and the Function 'request' and then grant access to this function.
+ 	Add new Policy. Choose the module 'ezrecommendation' and the Function 'request' and then grant access to this function.
  	Do the same for the Role 'Members' if you have a login area an your site.
  
  5) Clear cache
@@ -38,7 +38,7 @@
 INTEGRATION OF THE PIXEL
 In order to integrate the pixel you simply need to place the following code within your pagelayout.tpl inside the html-body tag:
 
-{include uri='design:content/ezyoochoose_html.tpl' content=$module_result track=true()}
+{include uri='design:content/ezrecommendation_html.tpl' content=$module_result track=true()}
 
 If track is set 'true' every site access will be treated as a click event. If you don't want to track every site access you will
 need to integrate the 'click event' in the tag you want to be tracked.
@@ -75,28 +75,28 @@ this special event will be tracked as a 'clickrecommended-event' (explaination b
 
 
 
-SETTINGS IN EZYOOCHOOSE.INI
+SETTINGS IN ezrecommendation.ini
 [SolutionSettings]
-The user has to specify here the yoochoose solution he wants to use (shop or publisher).
+The user has to specify here the ezrecommendation solution he wants to use (shop or publisher).
 
 [ShopPriceCurrency]
 The default currency-code of the webshop (e.g. EUR or USD)
 
 [ClientIdSettings]
-These are the authentication string the user gets for his ez instance from yoochoose.
+These are the authentication string the user gets for his ez instance from the eZ Recommendation Service.
 
 [RequestSettings]
-If enabled, the answer from the yoochoose service will be logged in debug.log.
+If enabled, the answer from the eZ Recommendation Service will be logged in debug.log.
 
-#The following settings should only be modified in consultation with yoochoose.
+#The following settings should only be modified in consultation with the eZ Recommendation Service.
 [URLSettings]
-Settings for the Yoochoose Server URLs.
+Settings for the eZ Recommendation Service Server URLs.
 
 [ParameterMapSettings]
-Maps the ez attribute names to the ezyoochoose parameters.
+Maps the ez attribute names to the ezrecommendation parameters.
 
 [SolutionMapSettings]
-Maps the type of the site to the ezyoochoose productid.
+Maps the type of the site to the ezrecommendation productid.
 
 [ExtensionSettings]
 Defines the response form. Json is supported until now. 
@@ -126,10 +126,10 @@ Creates an onclick-event for rating an article. The rating has to be a value fro
 Buy event:
 The buy-event is trigered after a order has been checked out. Therefore you need to configure the buy event workflow.
 Go to the Setup-tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
-have to create a new workflow and give it a name. Add the "yoochoose buy object event" to your workflow.
+have to create a new workflow and give it a name. Add the "ezrecommendation buy object event" to your workflow.
 After this you need to configure the trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your
 workflow to the "shop checkout before" trigger and apply the changes.
-From now on every time a order is checked out ezyoochoose will track every product buyed in this order.
+From now on every time a order is checked out ezrecommendation will track every product buyed in this order.
 
 Consume event:
 Include following code in the template you want to use the consume event:
@@ -137,23 +137,23 @@ Include following code in the template you want to use the consume event:
 This will just create a hidden div with some informations in it. After this go in the backend to the Setup tab and then click on Classes.
 Choose the class where you want to configure the "time to trigger consume event" attribute and click on edit. Search the recommendation attribute
 and insert the time in the "time to trigger consumption" field.
-From now on every time a user overruns the time to trigger value on a site the consume event will be sent to the yoochoose engine.
+From now on every time a user overruns the time to trigger value on a site the consume event will be sent to the eZ Recommendation Service.
 
 
 ADMINISTRATIVE EVENTS
 
 Export Event
-The content of an object created in the ez publish backend can automatically be sent to the yoochoose engine. Therefore you have to define
+The content of an object created in the ez publish backend can automatically be sent to the eZ Recommendation Service. Therefore you have to define
 a workflow and a trigger which causes the workflow.
 Go to the Setup tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
-have to create a new workflow and give it a name. Add the "yoochoose export object event" to your workflow. After this you need to configure the 
+have to create a new workflow and give it a name. Add the "ezrecommendation export object event" to your workflow. After this you need to configure the 
 trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your workflow to the "content publish before" trigger and apply the changes.
 
 Delete event
-The content of an object removed in the ez publish backend can automatically be sent to the yoochoose engine. Therefore you have to define
+The content of an object removed in the ez publish backend can automatically be sent to the eZ Recommendation Service. Therefore you have to define
 a workflow and a trigger which causes the workflow.
 Go to the Setup tab and then to Workflows. Choose the Standard workflow group or create your own one. In the group you
-have to create a new workflow and give it a name. Add the "yoochoose delete object event" to your workflow. After this you need to configure the 
+have to create a new workflow and give it a name. Add the "ezrecommendation delete object event" to your workflow. After this you need to configure the 
 trigger for your workflow. Go to the Setup tab and then to Triggers. Add the your workflow to the "content delete before" trigger and apply the changes.
 
 

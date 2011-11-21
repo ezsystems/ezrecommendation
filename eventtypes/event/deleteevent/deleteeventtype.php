@@ -4,7 +4,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 include_once( 'kernel/classes/ezworkflowtype.php' );
@@ -24,7 +24,7 @@ class deleteEventType extends eZWorkflowEventType
     function deleteEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( deleteEventType::EZ_WORKFLOW_TYPE_deleteEVENT, "ezyoochoose delete object event" );
+        $this->eZWorkflowEventType( deleteEventType::EZ_WORKFLOW_TYPE_deleteEVENT, "ezrecommendation delete object event" );
     }
 
     function execute( $process, $event )
@@ -32,7 +32,7 @@ class deleteEventType extends eZWorkflowEventType
     	
     	$parameters = $process->attribute( 'parameter_list' );
     	
-    	if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the yoochoose engine
+    	if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the recommendation engine
     		
     		return eZWorkflowType::STATUS_ACCEPTED;
     		
@@ -47,18 +47,18 @@ class deleteEventType extends eZWorkflowEventType
 	    			$obj = $node_obj->ContentObject;
 	    			$class_id = $obj->ClassID;
 	    			
-	    			$ycitemtypeid = '';
+	    			$recoitemtypeid = '';
 	
-					$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+					$arr = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
 					
 					if (count($arr['result']) > 0){
 
-						$ycitemtypeid = $arr['result']['ycItemType'];
-						if (!empty($ycitemtypeid)){
+						$recoitemtypeid = $arr['result']['recoItemType'];
+						if (!empty($recoitemtypeid)){
 	    			
-	    					$path = $ycitemtypeid.'/'.$node;
-    				        eZDebug::writeDebug('ezyoochoose delete event executed.');
-	    					ezYCFunctions::delete_item_request($path);
+	    					$path = $recoitemtypeid.'/'.$node;
+    				        eZDebug::writeDebug('ezrecommendation delete event executed.');
+	    					ezRecoFunctions::delete_item_request($path);
 
 						}
 						

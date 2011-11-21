@@ -4,7 +4,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 
@@ -25,14 +25,14 @@ class exportEventType extends eZWorkflowEventType
     function exportEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( exportEventType::EZ_WORKFLOW_TYPE_EXPORTEVENT, "ezyoochoose export object event" );
+        $this->eZWorkflowEventType( exportEventType::EZ_WORKFLOW_TYPE_EXPORTEVENT, "ezrecommendation export object event" );
     }
 
 
     function execute( $process, $event )
     {
 		/*Read ini Settings*/
-		$ini = eZINI::instance('ezyoochoose.ini');
+		$ini = eZINI::instance('ezrecommendation.ini');
 			switch ($ini->variable( 'SolutionSettings', 'solution' )){
 				case 'publisher':
 					$solution = 'publisher';
@@ -41,7 +41,7 @@ class exportEventType extends eZWorkflowEventType
 					$solution = 'shop';
 				break;
 				default:
-					eZLog::write('eZYoochoose: No solution exist in settings/ezyoochoose.ini.append.php file', 'error.log', 'var/log');
+					eZLog::write('ezrecommendation: No solution exist in settings/ezrecommendation.ini.append.php file', 'error.log', 'var/log');
 				break;
 			}	
 			
@@ -87,7 +87,7 @@ class exportEventType extends eZWorkflowEventType
 
 		}
 		catch (Exception $e) {
-			eZLog::write('[ezyoochoose] item export: Current object language was not detected. Message: '.$e->getMessage(), 'error.log', 'var/log');
+			eZLog::write('[ezrecommendation] item export: Current object language was not detected. Message: '.$e->getMessage(), 'error.log', 'var/log');
 			
 			
             //return eZWorkflowType::STATUS_REJECTED;
@@ -126,10 +126,10 @@ class exportEventType extends eZWorkflowEventType
 		$ezCategoryPath = $path->PathString;
 		
 		//get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
-		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		$classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
 		
-		$XmlDataText = $classIDArray['result']['ycXmlMap'];
-		$ycitemtypeid = $classIDArray['result']['ycItemType'];
+		$XmlDataText = $classIDArray['result']['recoXmlMap'];
+		$recoitemtypeid = $classIDArray['result']['recoItemType'];
 		/*
 		//or get the xmlMap from ezcontentobject_attribute (Yet not used)
 		foreach ($dataMap as $thisAttribute)			
@@ -141,15 +141,15 @@ class exportEventType extends eZWorkflowEventType
 		*/
 		
 		//get Object data with Datatype mapping xml schema
-		$ezymappingArray  = array();
+		$ezRecomappingArray  = array();
 
-		$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
+		$ezRecomappingArray = ezRecommendationXml::ezRecommendationArrContent( $XmlDataText );
 
 		//Check if export is enable for this class
-		if ($ezymappingArray['export-enable'] == 0)
+		if ($ezRecomappingArray['export-enable'] == 0)
 			return eZWorkflowType::STATUS_ACCEPTED;
 		
-			//create the YC REST XML body
+			//create the reco REST XML body
 			$doc = new DOMDocument( '1.0', 'utf-8' );
 			$root = $doc->createElement( 'items' );
 			$root->setAttribute( 'version', 1 );
@@ -158,31 +158,31 @@ class exportEventType extends eZWorkflowEventType
 			$elementType->setAttribute( 'id', $nodeID );	
 			
 			$root->appendChild( $elementType );	
-			$elementType->setAttribute( 'type', $ycitemtypeid );		
+			$elementType->setAttribute( 'type', $recoitemtypeid );		
 			$root->appendChild( $elementType );	
 			//
-			$ycXmlContentSection = array('title','abstract','tags');
-			$ycXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
-			$count_ycXmlContentSection = count($ycXmlContentSection);
-			$count_ycXmlAttributesSection = count($ycXmlAttributesSection);
+			$recoXmlContentSection = array('title','abstract','tags');
+			$recoXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
+			$count_recoXmlContentSection = count($recoXmlContentSection);
+			$count_recoXmlAttributesSection = count($recoXmlAttributesSection);
 			//
 			//XML content
 			if ($solution == 'shop'){
 
 			//price
 				$elementPriceTypeContent = $doc->createElement( 'price' );
-				$elementPriceTypeContent->setAttribute( 'currency', $ezymappingArray['currency'] );
-				$elementPriceTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['price'],$ezymappingArray['currency'] )) );
+				$elementPriceTypeContent->setAttribute( 'currency', $ezRecomappingArray['currency'] );
+				$elementPriceTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'],$ezRecomappingArray['currency'] )) );
 				$elementType->appendChild( $elementPriceTypeContent);
 			}
 			//validfrom-valid-to
 			
 				$elementVFromTypeContent = $doc->createElement( 'validfrom' );
-				$elementVFromTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom'],'validfrom')) );
+				$elementVFromTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'],'validfrom')) );
 				$elementType->appendChild( $elementVFromTypeContent);
 				
 				$elementVToTypeContent = $doc->createElement( 'validto' );
-				$elementVToTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto'],'validto')) );
+				$elementVToTypeContent->appendChild( $doc->createTextNode(dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'],'validto')) );
 				$elementType->appendChild( $elementVToTypeContent);		
 			
 			//--categorypaths-- 
@@ -190,16 +190,16 @@ class exportEventType extends eZWorkflowEventType
 			$elementType->appendChild( $elementTypeContent );
 			//<categorypath> Section
 			$elementTypeCategoryChild = $doc->createElement( 'categorypath' );
-			$elementTypeCategoryChild->appendChild( $doc->createTextNode(ezYCTemplateFunctions::getCategoryPath($ezCategoryPath)) );
+			$elementTypeCategoryChild->appendChild( $doc->createTextNode(ezRecoTemplateFunctions::getCategoryPath($ezCategoryPath)) );
 			$elementTypeContent->appendChild( $elementTypeCategoryChild);
 			//
 			$createContentParentNode = 0;
-			for ($i = 0; $i <= $count_ycXmlContentSection ; ++$i)
+			for ($i = 0; $i <= $count_recoXmlContentSection ; ++$i)
 			{
 				
 				//-content-
-				$key = $ycXmlContentSection[$i];
-				if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0') {
+				$key = $recoXmlContentSection[$i];
+				if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0') {
 					if($createContentParentNode == 0)
 					{	//<content> Section
 						$elementTypeContent = $doc->createElement( 'content' );
@@ -212,7 +212,7 @@ class exportEventType extends eZWorkflowEventType
 
 					$elementTypeContentChild->appendChild( $doc->createCDATASection(
 																	htmlentities(
-																	dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key]) 
+																	dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key]) 
 																	)
 																)
 														  );
@@ -224,13 +224,13 @@ class exportEventType extends eZWorkflowEventType
 			}
 			//-attributes-
 			//Optional fields
-			if (isset($ezymappingArray['counter']))
+			if (isset($ezRecomappingArray['counter']))
 			{
-				$addedOptAttributes = $ezymappingArray['counter'];
+				$addedOptAttributes = $ezRecomappingArray['counter'];
 				$createAttributeParentNode = 0;
 				for ($i = 1; $i < $addedOptAttributes ; ++$i)
 				{
-					if (isset($ezymappingArray['addtomap'.$i]))
+					if (isset($ezRecomappingArray['addtomap'.$i]))
 					{
 						if($createAttributeParentNode == 0)
 						{	//<attributes> Section
@@ -239,17 +239,17 @@ class exportEventType extends eZWorkflowEventType
 							$createAttributeParentNode++;		// do not return here again
 						}
 						$elementTypeAttributeChild = $doc->createElement( 'attribute' );
-						$elementTypeAttributeChild->setAttribute( 'key', $ezymappingArray['addtomap'.$i] );
-						$elementTypeAttributeChild->setAttribute( 'value', dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['addtomap'.$i]) ); 
+						$elementTypeAttributeChild->setAttribute( 'key', $ezRecomappingArray['addtomap'.$i] );
+						$elementTypeAttributeChild->setAttribute( 'value', dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['addtomap'.$i]) ); 
 						$elementTypeAttributes->appendChild( $elementTypeAttributeChild );
 					}
 					
 				
 				}
-				for ($i = 0; $i <= $count_ycXmlAttributesSection ; ++$i)
+				for ($i = 0; $i <= $count_recoXmlAttributesSection ; ++$i)
 				{
-					$key = $ycXmlAttributesSection[$i];
-					if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0') 
+					$key = $recoXmlAttributesSection[$i];
+					if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0') 
 					{
 						if($createAttributeParentNode == 0)
 						{
@@ -263,7 +263,7 @@ class exportEventType extends eZWorkflowEventType
 						{
 							$elementTypeAttributeChild = $doc->createElement( 'attribute' );
 							$elementTypeAttributeChild->setAttribute( 'key', $key);
-							$elementTypeAttributeChild->setAttribute( 'value', dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key]) );
+							$elementTypeAttributeChild->setAttribute( 'value', dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key]) );
 							$elementTypeAttributes->appendChild( $elementTypeAttributeChild );							
 						}
 				
@@ -278,7 +278,7 @@ class exportEventType extends eZWorkflowEventType
 		$pushingItemDoc = $doc->saveXML();
 
 		//REST API CALL(Export)
-		ezYCFunctions::sendExportContent($pushingItemDoc, $solution);
+		ezRecoFunctions::sendExportContent($pushingItemDoc, $solution);
 
 		return eZWorkflowType::STATUS_ACCEPTED;
     }

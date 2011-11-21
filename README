@@ -1,10 +1,10 @@
 ============================
-YOOCHOOSE Recommender Engine
+eZ Recommendation Service 
 ============================
 
 Description
 -----------
-The Recommender Engine from YOOCHOOSE represents your first
+The eZ Recommendation Service provided by YOOCHOOSE represents your first
 opportunity to customize your online portal individually for
 each end user. News, images, videos and events are recommended in
 real time depending on the users' consumption behaviour and the content.
@@ -15,11 +15,9 @@ The varnishcache rely on the followin software and library:
 
 - eZ Publish version 4.5 or newer
 
-
 License
 -------
 The license of this extension can be found in the LICENSE file.
-
 
 Installation
 -----------

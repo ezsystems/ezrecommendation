@@ -4,7 +4,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 
@@ -129,8 +129,9 @@ class dataTypeContent
 				$query  = "	SELECT value FROM ezmultipricedata 
 							WHERE contentobject_attr_id = ".$contentObjectAttrID." AND contentobject_attr_version = ".$contentObjectAttrVersion." AND currency_code = '".$datatypeCurrencySetting."'";
 
+
 				$rows = $db -> arrayQuery( $query );
-				
+			echo $query ;	
 				 return $rows[0]['value'] * 100;
 
 
@@ -147,7 +148,7 @@ class dataTypeContent
 			break;			
 			case 'ezauthor':
 
-				$doc = ezyRecommendationXml::parseXML( $dataMap[$attributeIdentifier]->DataText );
+				$doc = ezRecommendationXml::parseXML( $dataMap[$attributeIdentifier]->DataText );
 				$root = $doc->documentElement;
 		
 				$nodes = $root->getElementsByTagName( 'author' );

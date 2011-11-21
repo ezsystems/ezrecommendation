@@ -1,25 +1,25 @@
 <?php
 
 /**
- * File containing the eZyoochooseFunctions class for generating the html output
+ * File containing the ezrecommendationFunctions class for generating the html output
  *
  * @copyright Copyright (C) 2010-2011 yoochoose GmbH. All rights reserved.
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
  
 class eZRecommendationType extends eZDataType
 {
     const DATA_TYPE_STRING = "ezrecommendation";
 	const ITEM_TYPE_VALUE_FIELD = "data_int1";
-	const ITEM_TYPE_VALUE_VARIABLE = "_ezrecommendation_class_yc_item_type_value_";	
+	const ITEM_TYPE_VALUE_VARIABLE = "_ezrecommendation_class_reco_item_type_value_";	
 	const RECOMMEND_VALUE_FIELD = "data_int2";
-	const RECOMMEND_VALUE_VARIABLE = "_ezrecommendation_page_yc_recommend_value_";
+	const RECOMMEND_VALUE_VARIABLE = "_ezrecommendation_page_reco_recommend_value_";
 	const EXPORT_VALUE_FIELD = "data_int3";
-	const EXPORT_VALUE_VARIABLE = "_ezrecommendation_page_yc_export_value_";
+	const EXPORT_VALUE_VARIABLE = "_ezrecommendation_page_reco_export_value_";
 	const TTL_VALUE_FIELD = "data_int4";
-	const TTL_VALUE_VARIABLE = "_ezrecommendation_page_yc_ttl_value_";
+	const TTL_VALUE_VARIABLE = "_ezrecommendation_page_reco_ttl_value_";
 	const MAPPING_VALUE_FIELD = "data_text5";
 	const VALIDFROM_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_validfrom_"; 
 	const VALIDTO_VALUE_VARIABLE = "_ezrecommendation_attribute_mapping_validto_";
@@ -44,7 +44,7 @@ class eZRecommendationType extends eZDataType
                            array( 'serialize_supported' => true ) );
         $this->IntegerValidator = new eZIntegerValidator();
 		
-		$ini = eZINI::instance('ezyoochoose.ini');
+		$ini = eZINI::instance('ezrecommendation.ini');
 		if ($ini->hasVariable( 'SolutionSettings', 'solution' ))
 			$this->solution = $ini->variable( 'SolutionSettings', 'solution' );
     }
@@ -146,7 +146,7 @@ class eZRecommendationType extends eZDataType
         }
 
 		 $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
-		 $newXml = ezyRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)	;
+		 $newXml = ezRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)	;
 		 
 		$contentObjectAttribute->setAttribute( 'data_text' , $newXml );	
 
@@ -173,7 +173,7 @@ class eZRecommendationType extends eZDataType
             $data = 0;
         }
 		 $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
-		 $newXml = ezyRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)	;
+		 $newXml = ezRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)	;
 		
 		 
 		$contentObjectAttribute->setAttribute( 'data_text' , $newXml );	
@@ -238,7 +238,7 @@ class eZRecommendationType extends eZDataType
 		if ($this->solution == 'publisher' && $http->postVariable( $exportValueName ) != '')
 		{
 			if ( $http->postVariable( $validfromTypeValueName ) == '0' ||  $http->postVariable( $validtoTypeValueName ) == '0')
-				$flagValidation .= '[eZYoochoose]: Missing required Field for the publisher solution.' ;
+				$flagValidation .= '[ezrecommendation]: Missing required Field for the publisher solution.' ;
 							
 			
 		}
@@ -246,7 +246,7 @@ class eZRecommendationType extends eZDataType
 		if ($this->solution == 'shop' && $http->postVariable( $exportValueName ) != '')
 		{
 			if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
-				$flagValidation .= '[eZYoochoose]: Missing required Field for the shop solution.' ;
+				$flagValidation .= '[ezrecommendation]: Missing required Field for the shop solution.' ;
 							
 			
 		}
@@ -265,7 +265,7 @@ class eZRecommendationType extends eZDataType
 				$ttl_state = $this->IntegerValidator->validate( $ttlValueValue );
 				if ( ( $ttl_state != eZInputValidator::STATE_ACCEPTED ) )
 				{
-					$flagValidation .= '[eZYoochoose]: Wrong Format (Time to trigger consumption event)';
+					$flagValidation .= '[ezrecommendation]: Wrong Format (Time to trigger consumption event)';
 					
 				}
 			
@@ -474,7 +474,7 @@ class eZRecommendationType extends eZDataType
 			return $classAttrContent;
 			
         }
-		$xmlMapContent = ezyRecommendationXml::ezyRecommendationArrContent($xmlText);
+		$xmlMapContent = ezRecommendationXml::ezRecommendationArrContent($xmlText);
         
   	
         return $xmlMapContent;

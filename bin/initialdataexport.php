@@ -5,14 +5,14 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 
 <?php
 
 require 'autoload.php'; 
-require_once 'extension/ezyoochoose/classes/ezycrecommendationclassattribute.php' ;
+require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.php' ;
 
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
@@ -21,11 +21,11 @@ $script = eZScript::instance();
 $script->startup();
 $script->initialize();
 $db = eZDB::instance();
-$ini = eZINI::instance('ezyoochoose.ini');
+$ini = eZINI::instance('ezrecommendation.ini');
 
 $options = $script->getOptions( "[split:]",
 								"",
-								Array ( 'split' => 'Define how many entrys are defined in each ezyoochoose initial XML export file. ',
+								Array ( 'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
 									
 								)
 							);
@@ -35,7 +35,7 @@ if($split == ""){
 	$split = $ini->variable( 'BulkExportSettings', 'XmlEntrys' );
 
 	if (empty($split)){	
-		$cli->output('Missing XmlEntrys in ezyoochoose.ini');
+		$cli->output('Missing XmlEntrys in ezrecommendation.ini');
 		$script->shutdown(1);
 	}
 }	
@@ -44,19 +44,19 @@ if($split == ""){
 $solution = $ini->variable( 'SolutionSettings', 'solution' );
 
 if (empty($solution)){	
-	$cli->output('Missing solution in ezyoochoose.ini');
+	$cli->output('Missing solution in ezrecommendation.ini');
 	$script->shutdown(1);
 }
 
 $url = $ini->variable( 'BulkExportSettings', 'SiteURL' );
 $path = $ini->variable( 'BulkExportSettings', 'BulkPath' );
 if (empty($url) || empty($path)){	
-	$cli->output('Missing SiteURL or BulkPath in ezyoochoose.ini');
+	$cli->output('Missing SiteURL or BulkPath in ezrecommendation.ini');
 	$script->shutdown(1);	
 }
 //Check paths
 if (substr($url,-1) == '/' ||  $path[0]  == '/'){
-	$cli->output("SiteURL musst not end wit a '/' and BulkPath musst not beginn with '/'  in ezyoochoose.ini");
+	$cli->output("SiteURL musst not end wit a '/' and BulkPath musst not beginn with '/'  in ezrecommendation.ini");
 	$script->shutdown(1);
 }
 
@@ -110,7 +110,7 @@ foreach ($class_array as $class_id){
 
 $exportFiles = generate_xml($object_param_array);
 foreach ($exportFiles as $xmlFiles){
-	ezYCFunctions::send_bulk_request($url, $path, $xmlFiles);
+	ezRecoFunctions::send_bulk_request($url, $path, $xmlFiles);
 }
 	
 
@@ -142,20 +142,20 @@ function get_node_informations($object_param_arrays){
 		$params_array['path_string'] =  $path_string ;
 
 		
-		$classIDArray = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+		$classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
 		// Get Datatype information from class definition
-		$XmlDataText = $classIDArray['result']['ycXmlMap'];
-		$ycitemtypeid = $classIDArray['result']['ycItemType'];
+		$XmlDataText = $classIDArray['result']['recoXmlMap'];
+		$ycitemtypeid = $classIDArray['result']['recoItemType'];
 
 		$params_array['class_id']=$class_id;
-		$params_array['ycitemtype_id']=$ycitemtypeid;
+		$params_array['recoitemtype_id']=$recoitemtypeid;
 		
 		try {
-		$ezymappingArray  = array();
+		$ezRecomappingArray  = array();
 			if (empty($XmlDataText))
-				  throw new Exception('[ezyoochoose] Recommendation XML mapping was not found for ezpublish class ID : '.$class_id);
+				  throw new Exception('[ezrecommendation] Recommendation XML mapping was not found for ezpublish class ID : '.$class_id);
 			else
-				$ezymappingArray = ezyRecommendationXml::ezyRecommendationArrContent( $XmlDataText );
+				$ezRecomappingArray = ezRecommendationXml::ezRecommendationArrContent( $XmlDataText );
 		}
 		catch (Exception $e) {
 			eZLog::write($e->getMessage(), 'error.log', 'var/log');
@@ -163,17 +163,17 @@ function get_node_informations($object_param_arrays){
 		}
 			
 		
-		if ($ezymappingArray['export-enable'] == 0)
+		if ($ezRecomappingArray['export-enable'] == 0)
 			continue;
 	
 		$data_map = null;
 		$contentClass = eZContentObject::fetch($object_id);
 		$dataMap = $contentClass->attribute('data_map');
 		
-		$currency = $ezymappingArray['currency'];
-		$price = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['price'], $ezymappingArray['currency']);
-		$valid_from = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validfrom'],'validfrom');
-		$valid_to = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['validto'],'validto');
+		$currency = $ezRecomappingArray['currency'];
+		$price = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency']);
+		$valid_from = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'],'validfrom');
+		$valid_to = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'],'validto');
 
 		if ($solution == 'shop'){
 			if (empty($currency) || empty($price)){
@@ -195,29 +195,29 @@ function get_node_informations($object_param_arrays){
 		$params_array['valid_to']=$valid_to;
 		
 		
-		$ycXmlContentSection = array('title','abstract','tags');
-		$ycXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
-		$count_ycXmlContentSection = count($ycXmlContentSection);
-		$count_ycXmlAttributesSection = count($ycXmlAttributesSection);
+		$recoXmlContentSection = array('title','abstract','tags');
+		$recoXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
+		$count_recoXmlContentSection = count($recoXmlContentSection);
+		$count_recoXmlAttributesSection = count($recoXmlAttributesSection);
 
 
 			
 		$content_section = array();
-		for ($i = 0; $i <= $count_ycXmlContentSection ; ++$i){
+		for ($i = 0; $i <= $count_recoXmlContentSection ; ++$i){
 			$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
 				
 				//-Get content data
-			$key = $ycXmlContentSection[$i];
+			$key = $recoXmlContentSection[$i];
 			
-			if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0') {
+			if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0') {
 				
-				$dataMapKey = $ezymappingArray[$key];
+				$dataMapKey = $ezRecomappingArray[$key];
 				
 				if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
 					$tagsObject = "tags";
 				
 						
-				$content_section[] = array( $key => htmlentities( dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key], $tagsObject) ) );
+				$content_section[] = array( $key => htmlentities( dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject) ) );
 
 			}
 		}
@@ -226,14 +226,14 @@ function get_node_informations($object_param_arrays){
 		
 		//attributes
 		$attributes_section = array();
-		if (isset($ezymappingArray['counter'])){
-			$addedOptAttributes = $ezymappingArray['counter'];
+		if (isset($ezRecomappingArray['counter'])){
+			$addedOptAttributes = $ezRecomappingArray['counter'];
 			for ($i = 1; $i < $addedOptAttributes ; ++$i){
 					$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
-					if (isset($ezymappingArray['addtomap'.$i])){
+					if (isset($ezRecomappingArray['addtomap'.$i])){
 						if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
 							$tagsObject = "tags";
-					$attributes_section[] = array( $ezymappingArray['addtomap'.$i] => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray['addtomap'.$i], $tagsObject) );
+					$attributes_section[] = array( $ezRecomappingArray['addtomap'.$i] => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['addtomap'.$i], $tagsObject) );
 
 					}
 					
@@ -241,13 +241,13 @@ function get_node_informations($object_param_arrays){
 			}			
 
 		}
-		for ($i = 0; $i <= $count_ycXmlAttributesSection ; ++$i){
+		for ($i = 0; $i <= $count_recoXmlAttributesSection ; ++$i){
 			$tagsObject = '';	//because tags (Keywords) are not on the dataMap array
-			$key = $ycXmlAttributesSection[$i];
-			if (array_key_exists($key, $ezymappingArray) and $ezymappingArray[$key] != '0'){
+			$key = $recoXmlAttributesSection[$i];
+			if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0'){
 				if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
 					$tagsObject = "tags";
-				array_push($attributes_section, array( $key => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezymappingArray[$key], $tagsObject ) ) );
+				array_push($attributes_section, array( $key => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject ) ) );
 			
 			}			
 		}
@@ -295,7 +295,7 @@ function generate_xml($object_param_arrays){
 					$elementType->setAttribute( 'id', $nodes_parameters[$j]['node_id'] );
 					
 					$root->appendChild( $elementType );	
-					$elementType->setAttribute( 'type', $nodes_parameters[$j]['ycitemtype_id'] );		
+					$elementType->setAttribute( 'type', $nodes_parameters[$j]['recoitemtype_id'] );		
 					$root->appendChild( $elementType );
 
 					if ($solution == 'shop'){			

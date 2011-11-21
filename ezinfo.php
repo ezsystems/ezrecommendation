@@ -5,7 +5,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 
@@ -13,7 +13,7 @@ class ezYooChooseInfo
 {
     static function info()
     {
-        return array( 'Name' => 'eZyoochoose',
+        return array( 'Name' => 'eZrecommendation',
                       'Version' => '//autogen//',
                       'Copyright' => '//autogen//',
                       'License' => '//autogen//',

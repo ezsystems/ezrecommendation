@@ -5,7 +5,7 @@
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
- * @package ezyoochoose
+ * @package ezrecommendation
  */
 
 include_once( 'kernel/classes/ezworkflowtype.php' );
@@ -25,7 +25,7 @@ class buyEventType extends eZWorkflowEventType
     function buyEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( buyEventType::EZ_WORKFLOW_TYPE_BUYEVENT, "ezyoochoose buy object event" );
+        $this->eZWorkflowEventType( buyEventType::EZ_WORKFLOW_TYPE_BUYEVENT, "ezrecommendation buy object event" );
     }
 
     function execute( $process, $event )
@@ -39,10 +39,10 @@ class buyEventType extends eZWorkflowEventType
 		
     	if (!empty($order_id) && !empty($user_id)){
 	    	$this->get_products_for_order($order_id, $user_id);
-	    	eZDebug::writeDebug('ezyoochoose buy event executed.');
+	    	eZDebug::writeDebug('[ezrecommendation] buy event executed.');
     	}else{
-    		eZLog::write('eZYoochoose: buy event could not be executed. Missing orderid or userid.', 'error.log', 'var/log');
-    		eZDebug::writeDebug('ezyoochoose buy event could not be executed. Missing orderid or userid.');    		
+    		eZLog::write('[ezrecommendation] buy event could not be executed. Missing orderid or userid.', 'error.log', 'var/log');
+    		eZDebug::writeDebug('[ezrecommendation] buy event could not be executed. Missing orderid or userid.');    		
     	}
         
         return eZWorkflowType::STATUS_ACCEPTED;
@@ -64,7 +64,7 @@ class buyEventType extends eZWorkflowEventType
         $query = "SELECT * FROM `ezproductcollection_item` WHERE `productcollection_id` = $productcollection_id"; 
         $product_rows = $db -> arrayQuery( $query ); 
 		
-        $ini = eZINI::instance('ezyoochoose.ini');
+        $ini = eZINI::instance('ezrecommendation.ini');
 		
         if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) && $ini->hasVariable( 'URLSettings', 'RequestURL' )){
 			
@@ -85,33 +85,33 @@ class buyEventType extends eZWorkflowEventType
         			$main_node_id_query = "SELECT `main_node_id`, `path_string` FROM `ezcontentobject_tree` WHERE `contentobject_id` = $object_id"; 
         			$main_node_id_rows = $db -> arrayQuery( $main_node_id_query ); 
         			$main_node_id = $main_node_id_rows[0]['main_node_id'];			 	
-        			$pathString = urlencode(ezYCTemplateFunctions::getCategoryPath($main_node_id_rows[0]['path_string']));	
+        			$pathString = urlencode(ezRecoTemplateFunctions::getCategoryPath($main_node_id_rows[0]['path_string']));	
 
 				 	
 				 	$class_id_query = "SELECT `contentclass_id` FROM `ezcontentobject` WHERE `id` = $object_id"; 
         			$class_id_rows = $db -> arrayQuery( $class_id_query );
         			$class_id = $class_id_rows[0]['contentclass_id'];
         			
-        			$ycitemtypeid = '';
+        			$recoitemtypeid = '';
 
-					$arr = ezYCRecommendationClassAttribute::fetchClassAttributeList($class_id);
+					$arr = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
 					
 					if (count($arr['result']) > 0)
 					{
-						$ycitemtypeid = $arr['result']['ycItemType'];
+						$recoitemtypeid = $arr['result']['recoItemType'];
 						
 					}else{
-						$ycitemtypeid = $class_id;
+						$recoitemtypeid = $class_id;
 					}
 					
-					if (!empty($ycitemtypeid))
+					if (!empty($recoitemtypeid))
 					{
 			        	$count = $row['item_count'];
 			        	$price = $row['price']*100;
 			        	
-			        	$path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$ycitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&price='.$price.'&currency='.$currency_code.'&timestamp='.$timestamp.'&categorypath='.$pathString;
+			        	$path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$recoitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&price='.$price.'&currency='.$currency_code.'&timestamp='.$timestamp.'&categorypath='.$pathString;
 						
-			        	ezYCFunctions::send_http_request($url, $path);
+			        	ezRecoFunctions::send_http_request($url, $path);
 					}else{
 						continue;
 					}
@@ -120,13 +120,13 @@ class buyEventType extends eZWorkflowEventType
 
 
         	}else{
-        		eZLog::write('eZYoochoose: missing setting in ezyoochoose.ini.', 'error.log', 'var/log');	
+        		eZLog::write('[ezrecommendation] missing setting in ezrecommendation.ini.', 'error.log', 'var/log');	
 				return false;
         	}
 		
 		}else{
 			
-			eZLog::write('eZYoochoose: missing setting in ezyoochoose.ini.', 'error.log', 'var/log');	
+			eZLog::write('[ezrecommendation] missing setting in ezrecommendation.ini.', 'error.log', 'var/log');	
 			return false;
 			
 		}
