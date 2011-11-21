@@ -11,7 +11,7 @@ real time depending on the users' consumption behaviour and the content.
 
 Requirements
 ------------
-The varnishcache rely on the followin software and library:
+The eZ Recommendation Extension rely on the followin software and library:
 
 - eZ Publish version 4.5 or newer
 
