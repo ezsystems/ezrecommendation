@@ -2,9 +2,9 @@
 
 [EventSettings]
 ExtensionDirectories[]=ezrecommendation
-AvailableEventTypes[]=event_exportevent
-AvailableEventTypes[]=event_buyevent
-AvailableEventTypes[]=event_deleteevent
+AvailableEventTypes[]=event_ezrecoexportevent
+AvailableEventTypes[]=event_ezrecobuyevent
+AvailableEventTypes[]=event_ezrecodeleteevent
 
 [OperationSettings]
 AvailableOperationList[]=content_delete

@@ -171,9 +171,9 @@ function get_node_informations($object_param_arrays){
 		$dataMap = $contentClass->attribute('data_map');
 		
 		$currency = $ezRecomappingArray['currency'];
-		$price = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency']);
-		$valid_from = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'],'validfrom');
-		$valid_to = dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'],'validto');
+		$price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency']);
+		$valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'],'validfrom');
+		$valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'],'validto');
 
 		if ($solution == 'shop'){
 			if (empty($currency) || empty($price)){
@@ -217,7 +217,7 @@ function get_node_informations($object_param_arrays){
 					$tagsObject = "tags";
 				
 						
-				$content_section[] = array( $key => htmlentities( dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject) ) );
+				$content_section[] = array( $key => htmlentities( eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject) ) );
 
 			}
 		}
@@ -233,7 +233,7 @@ function get_node_informations($object_param_arrays){
 					if (isset($ezRecomappingArray['addtomap'.$i])){
 						if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
 							$tagsObject = "tags";
-					$attributes_section[] = array( $ezRecomappingArray['addtomap'.$i] => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['addtomap'.$i], $tagsObject) );
+					$attributes_section[] = array( $ezRecomappingArray['addtomap'.$i] => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['addtomap'.$i], $tagsObject) );
 
 					}
 					
@@ -247,7 +247,7 @@ function get_node_informations($object_param_arrays){
 			if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0'){
 				if ($dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword')
 					$tagsObject = "tags";
-				array_push($attributes_section, array( $key => dataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject ) ) );
+				array_push($attributes_section, array( $key => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject ) ) );
 			
 			}			
 		}
