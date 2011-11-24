@@ -27,7 +27,7 @@
     
  4)	Allow access for the ezrecommendation module
  	In administrator user interface, click 'User accounts' -> 'Roles and policies' then 'Anonymous'. Click on the Role and edit the Policies.
- 	Add new Policy. Choose the module 'ezrecommendation' and the Function 'request' and then grant access to this function.
+ 	Add new Policy. Choose the module 'ezrecommendation' and then grant full access to this module.
  	Do the same for the Role 'Members' if you have a login area an your site.
  
  5) Clear cache
