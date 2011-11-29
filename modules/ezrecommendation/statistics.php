@@ -21,8 +21,8 @@
 	}	
 	
 	$Result = array();
-	$Result['content'] = $tpl->fetch( 'design:ezrecommendation/statistics.tpl' ); 
-	$Result['left_menu'] = "design:ezrecommendation/leftmenu.tpl";  
+	$Result['content'] = $tpl->fetch( 'design:statistics.tpl' ); 
+	$Result['left_menu'] = "design:leftmenu.tpl";  
 
 	$Result['path'] = array( array( 'url' => 'ezrecommendation/statistics',
                                 'text' => 'ezrecommendation statistics' ) );	
