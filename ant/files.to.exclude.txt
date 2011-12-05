@@ -2,6 +2,5 @@ TODO
 BUILD
 ant/
 tests/
-doc/ez_recommender_extension_manual_v108.docx
 .git/
 .gitignore
