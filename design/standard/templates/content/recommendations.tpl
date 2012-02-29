@@ -6,7 +6,7 @@
 		{def $scenario = ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' )}
 	{/if}
 	
-	{def $recommendations = get_recommendations( $scenario, $node, $limit, $category_based)}
+	{def $recommendations = get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based)}
 
 	{def $itemid_array = array()}
 	

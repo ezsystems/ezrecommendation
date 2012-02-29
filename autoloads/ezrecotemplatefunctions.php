@@ -90,9 +90,12 @@ class ezRecoTemplateFunctions {
 	                        'node' => array( 'type' => 'array',
 	                                            'required' => true,
 	                                            'default' => '' ),
-							'limit' => array( 'type' => 'integer',
+							'numrecs' => array( 'type' => 'integer',
 	                                            'required' => false,
 	                                            'default' => 5 ),
+							'output_itemtypeid' => array( 'type' => 'integer',
+	                                            'required' => false,
+	                                            'default' => 16 ),												
 							'category_based' => array( 'type' => 'boolean',
 	                                            'required' => false,
 	                                            'default' => false )
@@ -155,7 +158,8 @@ class ezRecoTemplateFunctions {
 					$operatorValue = $this->get_recommendations( 
 																$namedParameters['scenario'],
 																$namedParameters['node'],
-																$namedParameters['limit'],
+																$namedParameters['numrecs'],
+																$namedParameters['output_itemtypeid'],
 																$namedParameters['category_based']
 													 );
 				} break;
@@ -689,7 +693,7 @@ class ezRecoTemplateFunctions {
 	}
 	
 	
-	function get_recommendations( $scenario, $node, $limit, $category_based=false){
+	function get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based=false){
 
 		$ini = eZINI::instance('ezrecommendation.ini');
 		
@@ -709,14 +713,18 @@ class ezRecoTemplateFunctions {
 				
 				$recoitemtypeid = '';
 
-				$arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
-				
-				if (count($arr['result']) > 0)
-				{
-					$recoitemtypeid = $arr['result']['recoItemType'];
+				if ($output_itemtypeid)
+					$recoitemtypeid = $output_itemtypeid ;
+				else{	
 					
-				}
-											
+					$arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+					
+					if (count($arr['result']) > 0)
+					{
+						$recoitemtypeid = $arr['result']['recoItemType'];
+						
+					}	
+				}				
 				$itemid = $node->NodeID;
 				
 
@@ -734,13 +742,11 @@ class ezRecoTemplateFunctions {
 				$path .= '/'.$current_user_id;
 				
 				
-				//$path .= '/'.$recoitemtypeid;
-				
 				$path .= '/'.$scenario.'.'.$extension;
 				$path .= '?'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.urlencode($itemid);
 					
-				if ($limit && $ini->hasVariable( 'ParameterMapSettings', 'limit' ) ) {
-					$path .= '&'.$ini->variable( 'ParameterMapSettings', 'limit' ).'='.urlencode($limit);
+				if ($numrecs && $ini->hasVariable( 'ParameterMapSettings', 'numrecs' ) ) {
+					$path .= '&'.$ini->variable( 'ParameterMapSettings', 'numrecs' ).'='.urlencode($numrecs);
 				}
 
 				if (!empty($recoitemtypeid)){
@@ -768,7 +774,6 @@ class ezRecoTemplateFunctions {
 				
 				}				
 					
-				
 				require_once( 'extension/ezrecommendation/classes/ezrecofunctions.php' );
 
 				$recommendations = ezRecoFunctions::send_reco_request($url, $path);

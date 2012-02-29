@@ -1,7 +1,28 @@
 div.ezrecommendation-statistics{
 	
-	}
+}
+div.ezrecommendation-statistics table{
+	margin-top:20px;
+	width:450px;
+	
+}
+div.ezrecommendation-statistics table th {
+	background-color: #737882;
+    background-image: none;
+    color: #FFFFFF;
+    padding: 5px;
+    border: 1px solid #F0F0F0;
+    text-align: center;
+}
+div.ezrecommendation-statistics table td{
+	border: 1px solid #F0F0F0;
+	 text-align: right;
+}
 
+div.ezrecommendation-statistics #ezrecommendation_stat_date{
+	padding-left: 30px;
+}
+/*
 div.ezrecommendation-statistics table{
 	width:450px;
 	margin-top:20px;
@@ -9,6 +30,7 @@ div.ezrecommendation-statistics table{
 div.ezrecommendation-statistics table td.ezrecommendation-statistics-text-field{
 	text-align: right;
 	}
+*/	
 div.ezrecommendation-statistics input.button{
 	margin-top:10px;
 }
@@ -52,4 +74,15 @@ fieldset.mapping_block_required small{
 fieldset.mapping_block_second{
     width: 25em;
 	
+}
+div.ezrecommendation-statistics table table.stat_revenue{
+	 margin: 0;
+    width: 170px;
+}
+div.ezrecommendation-statistics table table.stat_revenue td{
+	border-bottom: 0 none;
+    border-left: 0 none;
+}
+div.ezrecommendation-statistics table table.stat_revenue td.stat_curr{
+	border-right: 0 none;
 }

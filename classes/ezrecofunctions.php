@@ -318,7 +318,7 @@ class ezRecoFunctions{
 		$solution = $ini->variable( 'SolutionSettings', 'solution' );
 		$mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
 		
-		$path = "/$mapSetting/v2/$customerID/revenue/last_seven_days";				
+		$path = "/$mapSetting/v3/$customerID/revenue/last_seven_days";				
 	
 		$contenttype = "text/xml";
 
@@ -364,27 +364,35 @@ class ezRecoFunctions{
 	    		eZLog::write('[ezrecommendation] Received stats '.var_export($content , true), 'debug.log', 'var/log');
 				
 			    fclose($fp);
-			    				
+  				
 				$raw_stats = json_decode($content );
 				$raw_stats2 = $raw_stats->revenueResponse;
 				$raw_stats_items = $raw_stats2->items;
 				
 				$stats_array = array();
-				$i = 0;
 				
+				$i = 0;  
+
+
 				foreach ($raw_stats_items as $stat){
-					$stats_array[$i]['currency']= $stat->currency;
-					$stats_array[$i]['revenue']= $stat->revenue;
+					if ($stat->revenue){
+						$revenue_array = array();
+						foreach($stat->revenue as $key => $value){
+							$revenue_array[$key] .=  substr_replace($value, ".", -2).substr($value,-2); 
+						}
+						$stats_array[$i]['revenue']= $revenue_array;
+					}
 					$stats_array[$i]['timespanBegin']= date("d.m.Y", strtotime($stat->timespanBegin));
 					$stats_array[$i]['timespanDuration']= $stat->timespanDuration;
 					$stats_array[$i]['clickEvents']= $stat->clickEvents;
+					$stats_array[$i]['consumeEvents']= $stat->consumeEvents;
 					$stats_array[$i]['purchaseEvents']= $stat->purchaseEvents;
 					$stats_array[$i]['deliveredRecommendations']= $stat->deliveredRecommendations;
-					$stats_array[$i]['clickedRecommendations']= $stat->clickedRecommendations;
-					$stats_array[$i]['purchasedRecommendations']= $stat->purchasedRecommendations;
+					$stats_array[$i]['clickedRecommended']= $stat->clickedRecommendations;
+					$stats_array[$i]['purchasedRecommended']= $stat->purchasedRecommendations;
 					$i++;
-				}
 
+				}
 				return $stats_array;
 
 			}
