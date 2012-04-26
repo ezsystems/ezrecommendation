@@ -244,7 +244,8 @@ class ezRecoTemplateFunctions {
 			 
 	function get_html( $params ) {
 		
-		$serverURL = '/ezrecommendation/request';
+		//$serverURL = '/ezrecommendation/request';
+		$serverURL = '';
 		
 		$res = $serverURL.$params;
 						

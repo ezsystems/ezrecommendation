@@ -388,8 +388,8 @@ class ezRecoFunctions{
 					$stats_array[$i]['consumeEvents']= $stat->consumeEvents;
 					$stats_array[$i]['purchaseEvents']= $stat->purchaseEvents;
 					$stats_array[$i]['deliveredRecommendations']= $stat->deliveredRecommendations;
-					$stats_array[$i]['clickedRecommended']= $stat->clickedRecommendations;
-					$stats_array[$i]['purchasedRecommended']= $stat->purchasedRecommendations;
+					$stats_array[$i]['clickedRecommended']= $stat->clickedRecommended;
+					$stats_array[$i]['purchasedRecommended']= $stat->purchasedRecommended;
 					$i++;
 
 				}

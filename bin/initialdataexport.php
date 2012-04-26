@@ -23,10 +23,10 @@ $script->initialize();
 $db = eZDB::instance();
 $ini = eZINI::instance('ezrecommendation.ini');
 
-$options = $script->getOptions( "[split:]",
+$options = $script->getOptions( "[split:][classgroup:]",
 								"",
 								Array ( 'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
-									
+									    'classgroup' => 'Filter classes by group, default group is 1 (Content)'
 								)
 							);
 $split=$options[ 'split' ];		
@@ -40,7 +40,10 @@ if($split == ""){
 	}
 }	
 
-
+$classgroup = $options['classgroup'];
+if( !$classgroup )
+    $classgroup = 1;
+var_dump( $classgroup );
 $solution = $ini->variable( 'SolutionSettings', 'solution' );
 
 if (empty($solution)){	

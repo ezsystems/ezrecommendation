@@ -9,5 +9,5 @@ BackendCSSFileList[]=ezrecommendation.css
 
 [JavaScriptSettings]
 FrontendJavaScriptList[]=ezrecommendation.js
-
+FrontendJavaScriptList[]=flyout.js
 */ ?>
