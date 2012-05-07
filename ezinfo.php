@@ -1,6 +1,5 @@
 <?php
 /**
- * File containing the eZyoochooseFunctions info class
  *
  * @copyright //autogen//
  * @license //autogen//
@@ -9,11 +8,11 @@
  */
 
 
-class ezYooChooseInfo
+class ezRecommendationInfo
 {
     static function info()
     {
-        return array( 'Name' => 'eZrecommendation',
+        return array( 'Name' => 'eZRecommendation',
                       'Version' => '//autogen//',
                       'Copyright' => '//autogen//',
                       'License' => '//autogen//',
