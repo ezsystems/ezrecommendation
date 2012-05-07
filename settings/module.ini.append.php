@@ -1,6 +1,6 @@
 <?php /* #?ini charset="utf8"?
 
-[ModuleSettings] 
+[ModuleSettings]
 ExtensionRepositories[]=ezrecommendation
 ModuleList[]=ezrecommendation
 

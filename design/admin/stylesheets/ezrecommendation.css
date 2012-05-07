@@ -1,10 +1,10 @@
 div.ezrecommendation-statistics{
-	
+
 }
 div.ezrecommendation-statistics table{
 	margin-top:20px;
 	width:450px;
-	
+
 }
 div.ezrecommendation-statistics table th {
 	background-color: #737882;
@@ -30,7 +30,7 @@ div.ezrecommendation-statistics table{
 div.ezrecommendation-statistics table td.ezrecommendation-statistics-text-field{
 	text-align: right;
 	}
-*/	
+*/
 div.ezrecommendation-statistics input.button{
 	margin-top:10px;
 }
@@ -44,10 +44,10 @@ div.warning{
 	width:500px;
 }
 div.ezrecommendation-statistics div.info{
-	padding:20px 10px 0px 10px; 
+	padding:20px 10px 0px 10px;
 }
 div.ezrecommendation-statistics div.message-feedback, div.ezrecommendation-statistics div.message-warning, div.ezrecommendation-statistics div.message-error{
-	border: 6px solid;	
+	border: 6px solid;
 }
 div.ezrecommendation-statistics div.message-error{
 	border-color:#C11B17;
@@ -65,7 +65,7 @@ fieldset.mapping_block_required{
 	float:left;
 	margin-right: 2em;
     width: 25em;
-	
+
 }
 fieldset.mapping_block_required small{
 	color: #FF0000;
@@ -73,7 +73,7 @@ fieldset.mapping_block_required small{
 
 fieldset.mapping_block_second{
     width: 25em;
-	
+
 }
 div.ezrecommendation-statistics table table.stat_revenue{
 	 margin: 0;

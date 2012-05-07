@@ -17,14 +17,14 @@
 		$tpl->setVariable('stats_received', false);
 	}else{
 		$tpl->setVariable('stats_received', true);
-		$tpl->setVariable('stats', $stats);	
-	}	
-	
+		$tpl->setVariable('stats', $stats);
+	}
+
 	$Result = array();
-	$Result['content'] = $tpl->fetch( 'design:statistics.tpl' ); 
-	$Result['left_menu'] = "design:leftmenu.tpl";  
+	$Result['content'] = $tpl->fetch( 'design:statistics.tpl' );
+	$Result['left_menu'] = "design:leftmenu.tpl";
 
 	$Result['path'] = array( array( 'url' => 'ezrecommendation/statistics',
-                                'text' => 'ezrecommendation statistics' ) );	
+                                'text' => 'ezrecommendation statistics' ) );
 
 ?>

@@ -24,12 +24,12 @@ $FunctionList['recommendation_enable'] = array( 'name' => 'recommendation_enable
 										 'parameter_type' => 'standard',
                                          'parameters' => array( array( 'name' => 'xmlDataText',
                                                                        'type' => 'string',
-                                                                       'required' => true ) ) 
-                                          );																	   
+                                                                       'required' => true ) )
+                                          );
 
 $FunctionList['currency_list'] = array( 'name' => 'currency_list',
                                          'call_method' => array( 'class' => 'eZRecommendationFunctionCollection',
                                                                  'method' => 'getCurrencyValues' ),
 
-                                          );										  
+                                          );
 ?>

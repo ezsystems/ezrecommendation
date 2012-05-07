@@ -12,7 +12,7 @@ ezrecoClass.prototype.get_ezreco_params = function(usrId) {
 		var usrCookie = new Array(3);
 		var ezrecoCookieAvailable = false;
 		var usrCookieAvailable = false;
-	
+
 		if (document.cookie) {
 			c = document.cookie;
 			var pos = c.indexOf("ezreco=");
@@ -35,26 +35,26 @@ ezrecoClass.prototype.get_ezreco_params = function(usrId) {
 				usrCookieAvailable = true;
 			}
 		}
-		
+
 		if (!ezrecoCookieAvailable) {
 			c1 = d.getTime().toString() + Math.floor(100000*Math.random()).toString();
 		}
-		
+
 		ezreco_params += "sid=" + encodeURIComponent(c1);
-		
+
 		if(!usrCookieAvailable  &&  usrId != 10){
-			var a = new Date(d.getTime() +1000*60*30);			
+			var a = new Date(d.getTime() +1000*60*30);
 			document.cookie = 'ezreco_usr=' + usrId + '; expires=' + a.toGMTString() + '; path=/;';
 			ezreco_params += "&map=1";
 		}else if (usrId != 10){
 			ezreco_params += "&map=1";
 		}
-		
-		var a = new Date(d.getTime() +1000*60*30);			
-		document.cookie = 'ezreco=' + c1 + '; expires=' + a.toGMTString() + '; path=/;';	
-		
-		
-		
+
+		var a = new Date(d.getTime() +1000*60*30);
+		document.cookie = 'ezreco=' + c1 + '; expires=' + a.toGMTString() + '; path=/;';
+
+
+
 	}
 
 	return ezreco_params;
@@ -62,38 +62,38 @@ ezrecoClass.prototype.get_ezreco_params = function(usrId) {
 
 
 ezrecoClass.prototype.img = function(src, userid) {
-	
+
 	var params = ezreco.get_ezreco_params(userid);
-	
+
 	if (src.indexOf('?') == -1){
 		params = '?'+params;
 	}else{
 		params = '&'+params;
 	}
-	
+
 	src = src + params;
-	
+
 	var e = document.getElementById('ezreco-image');
 	if (e == null) {
 		document.write('<div id="ezrecommendation"><img id="ezreco-image" src="' + src + '" alt="ezreco-image" /></div>');
 	}
 	else {
 		e.src = src;
-	}	
+	}
 }
 
 ezrecoClass.prototype.evt = function(src, userid) {
-	
+
 	var params = ezreco.get_ezreco_params(userid);
-	
+
 	if (src.indexOf('?') == -1){
 		params = '?'+params;
 	}else{
 		params = '&'+params;
 	}
-	
+
 	src = src + params;
-	
+
 	var e = document.getElementById('ezreco-image');
 	if (e != null) {
 		e.src = src;
@@ -102,17 +102,17 @@ ezrecoClass.prototype.evt = function(src, userid) {
 }
 
 ezrecoClass.prototype.consevt = function(src, userid, elapsedtime) {
-	
+
 	var params = ezreco.get_ezreco_params(userid);
-	
+
 	if (src.indexOf('?') == -1){
 		params = '?'+params + '&elapsedtime=' + elapsedtime;
 	}else{
 		params = '&'+params + '&elapsedtime=' + elapsedtime;
 	}
-	
+
 	src = src + params;
-	
+
 	var e = document.getElementById('ezreco-image');
 	if (e != null) {
 		e.src = src.replace(/&amp;/g, "&");
@@ -133,22 +133,22 @@ function sleep(milliseconds) {
 
 
 
-var ezreco = new ezrecoClass(); 
+var ezreco = new ezrecoClass();
 
 
- var startTime = new Date(); 
+ var startTime = new Date();
  var startTimePageVisit = startTime.getTime();
  window.onbeforeunload = function(){
 	 var endTime = new Date();
 	 var endTimePageVisit = endTime.getTime();
-	 var timeSpent=(endTimePageVisit - startTimePageVisit); 
+	 var timeSpent=(endTimePageVisit - startTimePageVisit);
 	 var timeelapsed = Math.round(timeSpent/1000);
 	 var e = document.getElementById('ezreco-consume-event');
 	 var e2 = document.getElementById('ezreco-consume-event-userid');
-	 
+
 	 if (e != null && e2 != null) {
 
 		 ezreco.consevt(e.innerHTML, e2.innerHTML, timeelapsed);
-	 } 
-	   
+	 }
+
  }

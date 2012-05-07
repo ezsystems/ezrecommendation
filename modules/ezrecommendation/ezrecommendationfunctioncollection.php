@@ -25,30 +25,30 @@ class eZRecommendationFunctionCollection
         if ( is_object( $contentClass ) )
         {
             $contentClassAttributeList = $contentClass->fetchAttributes();
-			
+
         }
 
         if ( $contentClassAttributeList === null )
             return array( 'error' => array( 'error_type' => 'kernel',
                                             'error_code' => eZError::KERNEL_NOT_FOUND ) );
-		
-	
+
+
         return array( 'result' => $contentClassAttributeList );
     }
-	
+
 	function getRecommendationValue($data)
 	{
-		
+
 		$recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
-		
+
 		return $recommendationValue;
 
 	}
-	
+
 	function getCurrencyValues(){
-	
+
 		$systemCurrency = array();
-		$db = eZDB::instance(); 
+		$db = eZDB::instance();
 		$query  = "SELECT code FROM `ezcurrencydata` ";
 		$row = $db -> arrayQuery( $query );
 		$rowCount = count($row);
@@ -61,8 +61,8 @@ class eZRecommendationFunctionCollection
 			{
 				eZLog::write('[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.', 'error.log', 'var/log');
 				eZDebug::writeWarning( "[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini." );
-			}	
-		}	
+			}
+		}
 		else
 		{
 			for ($i = 0 ; $i < $rowCount ; ++$i)
@@ -70,10 +70,10 @@ class eZRecommendationFunctionCollection
 					$systemCurrency[] = $row[$i]['code'];
 				}
 		}
-			
+
 
 		 return array( 'result' => $systemCurrency );
-	
+
 	}
 }
 

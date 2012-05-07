@@ -14,8 +14,8 @@ class ezRecommendationClassAttribute
     }
 
      static function  fetchClassAttributeList( $classID )
-    { 
-	
+    {
+
         $contentClassAttributeList = array();
 		$result = array();
         $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_MODIFIED );
@@ -27,11 +27,11 @@ class ezRecommendationClassAttribute
         if ( is_object( $contentClass ) )
         {
             $contentClassAttributeList = $contentClass->fetchAttributes();
-       
-		
-			foreach ($contentClassAttributeList as $thisAttribute)			
+
+
+			foreach ($contentClassAttributeList as $thisAttribute)
 			{
-				
+
 				if ( $thisAttribute->DataTypeString == 'ezrecommendation' )
 				{
 						$result['recoItemType']=  $thisAttribute->DataInt1 ;
@@ -39,12 +39,12 @@ class ezRecommendationClassAttribute
 						$result['recoExport']=  $thisAttribute->DataInt3 ;
 						$result['recoTimeTrigger']=  $thisAttribute->DataInt4 ;
 						$result['recoXmlMap']=  $thisAttribute->DataText5 ;
-				}	
-					
+				}
+
 			}
 		}
-	
-		
+
+
         if ( $contentClassAttributeList === null )
             return array( 'error' => array( 'error_type' => 'kernel',
                                             'error_code' => eZError::KERNEL_NOT_FOUND ) );

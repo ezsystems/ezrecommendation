@@ -6,22 +6,22 @@
  * @version //autogen//
  * @package ezrecommendation
  */
- 
+
 class ezRecommendationXml
 {
 
 
 	static function ezRecommendationArrContent ($xmlText)
 	{
-	
+
 		$doc = ezRecommendationXml::parseXML( $xmlText );
 		$root = $doc->documentElement;
-		
+
 		$type = $root->getElementsByTagName( 'itemtypeid' )->item( 0 );
         if ( $type )
         {
             $content['itemtypeid'] = $type->getAttribute( 'value' );
-        }		
+        }
 		$type = $root->getElementsByTagName( 'recommendation-enable' )->item( 0 );
         if ( $type )
         {
@@ -68,12 +68,12 @@ class ezRecommendationXml
         {
             $content['author'] = $type->getAttribute( 'value' );
         }
-		
+
         $type = $root->getElementsByTagName( 'newsagency' )->item( 0 );
         if ( $type )
         {
         $content['newsagency'] = $type->getAttribute( 'value' );
-        }	
+        }
 		 $type = $root->getElementsByTagName( 'vendor' )->item( 0 );
 		if ( $type )
         {
@@ -93,15 +93,15 @@ class ezRecommendationXml
 		if ( $type )
         {
             $content['tags'] = $type->getAttribute( 'value' );
-        }		
-  
+        }
+
 		//Client Adding mapping
 		$type = $root->getElementsByTagName( 'counter' )->item( 0 );
         if ( $type )
         {
 			$content['counter'] = $type->getAttribute( 'value' );
-            
-			
+
+
         }
 		for ($i = 1 ; $i <= $content['counter'] ; ++$i)
 		{
@@ -109,48 +109,48 @@ class ezRecommendationXml
 			if ( $type )
 			{
 				$content['addtomap'.$i] = $type->getAttribute( 'value' );
-			}		
-		
+			}
+
 		}
 		 return $content;
 	}
 
 	static function getNodeAttributeValue($xml, $node)
 	{
-		
+
 		$doc = ezRecommendationXml::parseXML( $xml );
 		$root = $doc->documentElement;
 		$type = $root->getElementsByTagName( $node )->item( 0 );
         if ( $type )
         {
             $nodeValue = $type->getAttribute( 'value' );
-        }	
-		
+        }
+
 		return $nodeValue;
 	}
 
 	static function setNodeAttributeValue($xml, $node, $value)
 	{
 		$doc = ezRecommendationXml::parseXML( $xml );
-		
+
 		$root = $doc->documentElement;
 
 		$type = $root->getElementsByTagName( $node )->item( 0 );
-       
+
 		$type->setAttribute('value',$value);
-		
+
 		$docText = $doc->saveXML();
-		
-		return $docText;	
-		
+
+		return $docText;
+
 	}
-	
+
 
 	static function parseXML( $xml )
     {
         $dom = new DOMDocument;
         $success = $dom->loadXML( $xml);
         return $dom;
-    }		
+    }
 }
 ?>
