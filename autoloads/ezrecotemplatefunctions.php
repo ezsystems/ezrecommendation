@@ -791,21 +791,19 @@ class ezRecoTemplateFunctions
 
             }else{
 
-                eZLog::write('[ezrecommendation] no clientid found for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebugSetting::writeError('extension-ezrecommendation', 'no clientid found for ezrecommendation extension in ezrecommendation.ini', 'Invalid settings' );
                 return false;
 
             }
-
-        }else{
+        }
+        else
+        {
 
             eZLog::write('[ezrecommendation] missing settings in ezrecommendation.ini.', 'error.log', 'var/log');
             return false;
 
         }
-
-
     }
-
 
     function track_rendered_items( $items_array )
     {
