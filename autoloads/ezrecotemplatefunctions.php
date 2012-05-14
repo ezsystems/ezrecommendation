@@ -9,10 +9,8 @@
  * @package ezrecommendation
  */
 
-include_once( 'lib/ezutils/classes/ezini.php' );
-
-
-class ezRecoTemplateFunctions {
+class ezRecoTemplateFunctions
+{
 
 
 
@@ -694,7 +692,8 @@ class ezRecoTemplateFunctions {
     }
 
 
-    function get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based=false){
+    function get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based=false)
+    {
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
@@ -906,7 +905,6 @@ class ezRecoTemplateFunctions {
         return;
 
     }
-
 
     var $Operators;
 }

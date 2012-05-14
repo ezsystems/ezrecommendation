@@ -122,7 +122,7 @@ class eZRecoExportEventType extends eZWorkflowEventType
 		//Get node_id data
 		//$nodes =& eZContentObject::allContentObjectAttributes( $nodeID, $asObject = true );
 		//get categoryPath
-		$path  =& eZContentObjectTreeNode::fetch ($nodeID, $lang=false, $asObject=true, $conditions=false);
+		$path  = eZContentObjectTreeNode::fetch ($nodeID, $lang=false, $asObject=true, $conditions=false);
 		$ezCategoryPath = $path->PathString;
 
 		//get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
