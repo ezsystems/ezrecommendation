@@ -8,6 +8,7 @@ FrontendCSSFileList[]=ezrecommendation.css
 BackendCSSFileList[]=ezrecommendation.css
 
 [JavaScriptSettings]
+FrontendJavaScriptList[]=ezjsc::jquery
 FrontendJavaScriptList[]=ezrecommendation.js
 FrontendJavaScriptList[]=ezflyout_jquery.js
 
