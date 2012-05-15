@@ -295,24 +295,29 @@ class ezRecoTemplateFunctions
     }
 
 
-    function generate_recommendations_array( $raw_recommendations ){
-
+    function generate_recommendations_array( $raw_recommendations )
+    {
         $recommendations_array = array();
-        $i = 0;
 
-        foreach ($raw_recommendations as $rec){
-            foreach ($rec as $rec2){
-                $recommendations_array[$i]['reason']= $rec2->reason;
-                $recommendations_array[$i]['itemType']= $rec2->itemType;
-                $recommendations_array[$i]['itemId']= $rec2->itemId;
-                $recommendations_array[$i]['relevance']= $rec2->relevance;
-                $i++;
+        foreach( $raw_recommendations as $rec )
+        {
+            foreach ( $rec as $rec2 )
+            {
+                $recommendations_array[] = array(
+                    'reason' => $rec2->reason,
+                    'itemType' => $rec2->itemType,
+                    'itemId' => $rec2->itemId,
+                    'relevance' => $rec2->relevance );
             }
         }
 
-        if (!empty($recommendations_array))
+        if ( !empty( $recommendations_array ) )
+        {
+            eZDebug::writeDebug( $recommendations_array, 'processed $recommendations' );
             return $recommendations_array;
-        else{
+        }
+        else
+        {
             eZLog::write('[ezrecommendation] no recommendations received.', 'error.log', 'var/log');
             return false;
         }
@@ -768,22 +773,20 @@ class ezRecoTemplateFunctions
 
                 }
 
-                require_once( 'extension/ezrecommendation/classes/ezrecofunctions.php' );
 
-                $recommendations = ezRecoFunctions::send_reco_request($url, $path);
+                try {
+                    $recommendations = ezRecoFunctions::send_reco_request( $url, $path );
+                    eZDebug::writeDebug( $recommendations, '$recommendations' );
+                    return $this->generate_recommendations_array( $recommendations );
+                } catch( eZRecommendationException $e ) {
+                    eZDebug::writeError( $e, "An error occured while fetching recommendations" );
+                    return false;
+                }
 
-                if (!empty($recommendations))
-                    return $this->generate_recommendations_array($recommendations);
-                else return false;
 
-
-                //}else{
-                    //eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
-
-                    //return false;
-                //}
-
-            }else{
+            }
+            else
+            {
 
                 eZDebugSetting::writeError('extension-ezrecommendation', 'no clientid found for ezrecommendation extension in ezrecommendation.ini', 'Invalid settings' );
                 return false;

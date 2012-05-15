@@ -10,62 +10,38 @@
  */
 
 
-class ezRecoFunctions{
-
+class ezRecoFunctions
+{
     /*
      *
      */
     public static function send_http_request($url, $path ){
 
-            $ini = eZINI::instance('ezrecommendation.ini');
+        eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying HTTP Request' );
 
-            eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying HTTP Request' );
+        $fp = fsockopen( $url, 80, $errno, $errstr, 30);
+        if ( $fp )
+        {
+            $out = "GET $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
-            $fp = fsockopen( $url, 80, $errno, $errstr, 30);
+            eZDebugSetting::writeDebug('extension-ezrecommendation', $out, "Sending HTTP Request to $url" );
+            fwrite( $fp, $out );
 
-            if ($fp) {
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
 
-                $out = "GET ".$path." HTTP/1.0\r\n";
-                $out .= "Host: ".$url."\r\n";
-                $out .= "Connection: Close\r\n\r\n";
+            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
-                fwrite($fp, $out);
-
-                eZDebugSetting::writeDebug('extension-ezrecommendation', $url.$path, 'Sending HTTP Request' );
-
-                if ( $ini->hasVariable( 'RequestSettings', 'ReceiveAnswer' ) && $ini->variable( 'RequestSettings', 'ReceiveAnswer' ) == 'enabled' ){
-
-                    $content = "";
-                    $header = "";
-
-                    $header_passed = "not yet";
-
-                    while( !feof( $fp ) ) {
-                        $line = fgets( $fp, 128 );
-                        if( $line == "\r\n" && $header_passed == "not yet" ) {
-                            $header_passed = "passed";
-                        }
-                        if( $header_passed == "passed" ) {
-                            $content .= $line;
-                        }else{
-                            $header .= $line;
-                        }
-                    }
-
-                    eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( $header, true ), 'Received response' );
-                }
-
-                fclose($fp);
-                return true;
-
-            }
-            else {
-
-                eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-                return false;
-
-            }
-
+            fclose( $fp );
+            return true;
+        }
+        else
+        {
+            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
+            return false;
+        }
     }
 
     /*
@@ -73,134 +49,71 @@ class ezRecoFunctions{
      */
     public static function send_reco_request( $url, $path )
     {
-        $ini = eZINI::instance( 'ezrecommendation.ini' );
-        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-        $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
-
         eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying request' );
 
-        $fp = fsockopen( $url, 80, $errno, $errstr, 30);
-
+        $fp = fsockopen( $url, 80, $errno, $errstr, 30 );
         if ( $fp )
         {
-
-            $auth = base64_encode( "$customerID:$LicKey" );
-
-            $out = "GET ".$path." HTTP/1.0\r\n";
-            $out .= "Host: ".$url."\r\n";
-            $out .= "Connection: Close\r\n";
-            $out .= "Authorization: Basic $auth\r\n\r\n";
+            $out = "GET $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out, "Sending request to $url" );
 
             fwrite( $fp, $out );
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
+            fclose( $fp );
 
-            $ini = eZINI::instance('ezrecommendation.ini');
-
-            if ( $ini->hasVariable( 'RequestSettings', 'ReceiveAnswer' ) && $ini->variable( 'RequestSettings', 'ReceiveAnswer' ) == 'enabled' ){
-
-                $content = "";
-                $header = "";
-
-                $header_passed = "not yet";
-
-                while( !feof( $fp ) ) {
-                    $line = fgets( $fp, 128 );
-                    if( $line == "\r\n" && $header_passed == "not yet" ) {
-                        $header_passed = "passed";
-                    }
-                    if( $header_passed == "passed" ) {
-                        $content .= $line;
-                    }else{
-                        $header .= $line;
-                    }
-                }
-
-                eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( compact( 'header', 'content' ), true ), 'Received response' );
-            }
-
-            fclose($fp);
-
-            return json_decode(substr( $content, 2 ) );
-
-            }else{
-
-                eZLog::write('[ezrecommendation] Could not connect to server with url: '.$url, 'error.log', 'var/log');
-                return false;
-
-            }
-
+            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            return json_decode( substr( $content, 2 ) );
+        }
+        else
+        {
+            eZLog::write('[ezrecommendation] Could not connect to server with url: '.$url, 'error.log', 'var/log');
+            return false;
+        }
     }
 
 
     /*
      *
      */
-    public static function sendExportContent($data, $solution){
-
+    public static function sendExportContent( $data, $solution )
+    {
         $ini = eZINI::instance('ezrecommendation.ini');
-
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
-        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-        $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
-
         $path = "/$mapSetting/$customerID/item";
-
-        $contenttype = "text/xml";
 
         eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying HTTP Request' );
 
         $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
 
-            if ($fp) {
+        if ( $fp )
+        {
+            $out = "POST $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
-                eZDebugSetting::writeDebug('extension-ezrecommendation', $data, "Sending HTTP request to $url.$path" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out.$data, "Sending HTTP request to $url" );
 
-                $auth=base64_encode($customerID.":".$LicKey);
+            fwrite( $fp, $out );
+            fwrite( $fp, $data );
 
-                $out = "POST ".$path." HTTP/1.0\r\n";
-                $out .= "Host: ".$url."\r\n";
-                $out .= "Content-type:$contenttype\r\n";
-                $out .= "Content-Length: ".strlen($data)."\r\n";
-                $out .= "Accept: text/html\r\n";
-                $out .= "Authorization: Basic $auth\r\n\r\n";
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
-                fwrite($fp, $out);
-                fwrite($fp, $data);
+            fclose( $fp );
 
-                if ( $ini->hasVariable( 'RequestSettings', 'ReceiveAnswer' ) && $ini->variable( 'RequestSettings', 'ReceiveAnswer' ) == 'enabled' ){
-
-                    $content = "";
-                    $header = "";
-
-                    $header_passed = "not yet";
-
-                    while( !feof( $fp ) ) {
-                        $line = fgets( $fp, 128 );
-                        if( $line == "\r\n" && $header_passed == "not yet" ) {
-                            $header_passed = "passed";
-                        }
-                        if( $header_passed == "passed" ) {
-                            $content .= $line;
-                        }else{
-                            $header .= $line;
-                        }
-                    }
-
-
-                    eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( $header, true ), "HTTP Response header" );
-                }
-
-                fclose($fp);
-
-                return true;
-            }
-            else {
-
-                eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-                return false;
-            }
+            return true;
+        }
+        else
+        {
+            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
+            return false;
+        }
     }
 
 
@@ -220,62 +133,34 @@ class ezRecoFunctions{
 
         $path = "/$mapSetting/$customerID/item/$item_path";
 
-
         $contenttype = "text/xml";
 
         eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying HTTP Request' );
 
         $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
 
-            if ($fp) {
+        if ($fp) {
 
-                eZDebugSetting::writeDebug('extension-ezrecommendation', $url.$path, "Sending HTTP request" );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', $url.$path, "Sending HTTP request" );
 
-                $auth = base64_encode( "$customerID:$LicKey" );
+            $out = "DELETE $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
-                $out = "DELETE ".$path." HTTP/1.0\r\n";
-                $out .= "Host: ".$url."\r\n";
-                //$out .= "Content-type:$contenttype\r\n";
-                //$out .= "Content-Length: ".strlen($data)."\r\n";
-                $out .= "Accept: text/html\r\n";
-                $out .= "Authorization: Basic $auth\r\n\r\n";
+            fwrite( $fp, $out );
 
-                fwrite($fp, $out);
-                //fwrite($fp, $data);
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
-                if ( $ini->hasVariable( 'RequestSettings', 'ReceiveAnswer' ) && $ini->variable( 'RequestSettings', 'ReceiveAnswer' ) == 'enabled' ){
-
-                    $content = "";
-                    $header = "";
-
-                    $header_passed = "not yet";
-
-                    while( !feof( $fp ) ) {
-                        $line = fgets( $fp, 128 );
-                        if( $line == "\r\n" && $header_passed == "not yet" ) {
-                            $header_passed = "passed";
-                        }
-                        if( $header_passed == "passed" ) {
-                            $content .= $line;
-                        }else{
-                            $header .= $line;
-                        }
-                    }
-
-                    eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( $header, true ), "HTTP Response header" );
-                }
-
-                fclose($fp);
-
-                return true;
-            }
-            else {
-
-                eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-                return false;
-
-            }
-
+            fclose( $fp );
+            return true;
+        }
+        else
+        {
+            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
+            return false;
+       }
     }
 
 
@@ -285,100 +170,70 @@ class ezRecoFunctions{
     public static function get_stats_request(){
 
         $ini = eZINI::instance('ezrecommendation.ini');
-
         $url = $ini->variable( 'URLSettings', 'ConfigURL' );
-        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-        $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
-
         $solution = $ini->variable( 'SolutionSettings', 'solution' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
 
         $path = "/$mapSetting/v3/$customerID/revenue/last_seven_days";
 
-        $contenttype = "text/xml";
-
-        eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying stats HTTP Request' );
+        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url.$path, 'Trying stats HTTP Request' );
 
         $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
-
         if ( $fp )
         {
-
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $url.$path, "Sending HTTP request" );
-
             $auth=base64_encode($customerID.":".$LicKey);
 
-            $out = "GET ".$path." HTTP/1.0\r\n";
-            $out .= "Host: ".$url."\r\n";
-            //$out .= "Content-type:$contenttype\r\n";
-            //$out .= "Content-Length: ".strlen($data)."\r\n";
-            $out .= "Accept: text/html\r\n";
-            $out .= "Authorization: Basic $auth\r\n\r\n";
+            $out = "GET $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out, "Sending HTTP request to $url" );
             fwrite($fp, $out);
-            //fwrite($fp, $data);
-
-            $content = "";
-            $header = "";
-
-            $header_passed = "not yet";
-
-            while( !feof( $fp ) ) {
-                $line = fgets( $fp, 128 );
-                if( $line == "\r\n" && $header_passed == "not yet" ) {
-                    $header_passed = "passed";
-                }
-                if( $header_passed == "passed" ) {
-                    $content .= $line;
-                }else{
-                    $header .= $line;
-                }
-            }
-
-
-            eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( compact( 'header', 'content' ), true ), "HTTP Response header" );
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
             fclose($fp);
 
-            $raw_stats = json_decode($content );
+            $raw_stats = json_decode( $content );
             $raw_stats2 = $raw_stats->revenueResponse;
             $raw_stats_items = $raw_stats2->items;
 
             $stats_array = array();
-
-            $i = 0;
-
-
             foreach ($raw_stats_items as $stat)
             {
-                if ($stat->revenue){
-                    $revenue_array = array();
-                    foreach($stat->revenue as $key => $value){
-                        $revenue_array[$key] .=  substr_replace($value, ".", -2).substr($value,-2);
+                $row = array();
+                if ( $stat->revenue )
+                {
+                    $revenueArray = array();
+                    foreach( $stat->revenue as $key => $value )
+                    {
+                        if ( !isset( $revenueArray[$key] ) )
+                            $revenueArray[$key] = '';
+                        $revenueArray[$key] .=  substr_replace( $value, ".", -2 ) . substr( $value, -2 );
                     }
-                    $stats_array[$i]['revenue']= $revenue_array;
+                    $row['revenue'] = $revenueArray;
                 }
-                $stats_array[$i]['timespanBegin']= date("d.m.Y", strtotime($stat->timespanBegin));
-                $stats_array[$i]['timespanDuration']= $stat->timespanDuration;
-                $stats_array[$i]['clickEvents']= $stat->clickEvents;
-                $stats_array[$i]['consumeEvents']= $stat->consumeEvents;
-                $stats_array[$i]['purchaseEvents']= $stat->purchaseEvents;
-                $stats_array[$i]['deliveredRecommendations']= $stat->deliveredRecommendations;
-                $stats_array[$i]['clickedRecommended']= $stat->clickedRecommended;
-                $stats_array[$i]['purchasedRecommended']= $stat->purchasedRecommended;
-                $i++;
+                $row += array(
+                    'timespanBegin' => date( "d.m.Y", strtotime( $stat->timespanBegin ) ),
+                    'timespanDuration' => $stat->timespanDuration,
+                    'clickEvents' => $stat->clickEvents,
+                    'consumeEvents' => $stat->consumeEvents,
+                    'purchaseEvents' => $stat->purchaseEvents,
+                    'deliveredRecommendations' => $stat->deliveredRecommendations,
+                    'clickedRecommended' => $stat->clickedRecommended,
+                    'purchasedRecommended' => $stat->purchasedRecommended );
 
+                $stats_array[] = $row;
             }
             return $stats_array;
         }
         else
         {
-
             eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
             return false;
         }
     }
-
 
     /*
      *
@@ -402,45 +257,21 @@ class ezRecoFunctions{
 
         $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
 
-        if ($fp) {
+        if ( $fp )
+        {
+            $out = "GET $path HTTP/1.0\r\n" .
+                   "Host: $url\r\n" .
+                   self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $data, "Sending HTTP request to $url.$path" );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', $data, "Sending HTTP request to $url" );
 
-            $auth = base64_encode( "$customerID:$LicKey" );
-
-            $out = "GET $path HTTP/1.0\r\n";
-            $out .= "Host: $url\r\n";
-            //$out .= "Content-type:$contenttype\r\n";
-            //$out .= "Content-Length: ".strlen($data)."\r\n";
-            $out .= "Accept: text/html\r\n";
-            $out .= "Authorization: Basic $auth\r\n\r\n";
-
-            fwrite($fp, $out);
-            //fwrite($fp, $data);
-
-            $content = "";
-            $header = "";
-
-            $header_passed = "not yet";
-
-            while( !feof( $fp ) ) {
-                $line = fgets( $fp, 128 );
-                if( $line == "\r\n" && $header_passed == "not yet" ) {
-                    $header_passed = "passed";
-                }
-                if( $header_passed == "passed" ) {
-                    $content .= $line;
-                }else{
-                    $header .= $line;
-                }
-            }
-
-
-            eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( compact( 'header', 'content' ), true ), "HTTP Response header" );
+            fwrite( $fp, $out );
+            $header = $content = '';
+            self::processHttpResponse( $fp, $header, $content );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
             fclose($fp);
             return true;
-
         }
         else
         {
@@ -462,5 +293,59 @@ class ezRecoFunctions{
                 throw new eZRecommendationException( $property, $value->message, $value );
             }
         }
+    }
+
+    /**
+     * Processes an HTTP open stream after a request was sent
+     * @param resource $fp
+     * @param string $headers
+     * @param string $content
+     * @return bool
+     */
+    private static function processHttpResponse( $fp, &$headers, &$content )
+    {
+        static $receiveAnswer = null;
+
+        if ( !isset( $receiveAnswer ) )
+        {
+            $ini = eZINI::instance( 'ezrecommendation.ini' );
+            $receiveAnswer = $ini->hasVariable( 'RequestSettings', 'ReceiveAnswer' ) && $ini->variable( 'RequestSettings', 'ReceiveAnswer' ) == 'enabled';
+        }
+
+        if ( $receiveAnswer )
+        {
+            $content = "";
+            $header = "";
+            $isHeaderPassed = false;
+
+            while( !feof( $fp ) )
+            {
+                $line = fgets( $fp, 128 );
+                if( $line == "\r\n" && $isHeaderPassed == false )
+                    $isHeaderPassed = true;
+
+                if( $isHeaderPassed == true )
+                    $content .= $line;
+                else
+                    $headers .= $line;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * ezRecoFunctions::getAuthorizationHeaderLine()
+     *
+     * @return
+     */
+    private static function getAuthorizationHeaderLine()
+    {
+        $ini = eZINI::instance('ezrecommendation.ini');
+        $customerId = $ini->variable( 'ClientIdSettings', 'CustomerID' );
+        $licenseKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
+        $headerLine =  "Authorization: Basic " . base64_encode( "$customerId:$licenseKey" );
+
+        return $headerLine;
     }
 }
