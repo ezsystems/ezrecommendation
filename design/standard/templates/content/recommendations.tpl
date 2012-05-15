@@ -1,42 +1,35 @@
-{set-block scope=global variable=cache_ttl}0{/set-block}
+{def $div_id = concat( 'ezrecommendation-recommendations', $node.node_id )}
+<script type="text/javascript">
+$(document).ready(function () {ldelim}
 
-<div id="ezrecommendation-recommendations">
+    var $div = $("#{$div_id}"),
+        urlParts = [
+            'ezrecommendation',
+            'getrecommendations',
+            {$node.node_id},
+            '{cond( $scenario|eq( '' ), ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' ), $scenario )|wash( 'javascript' )}',
+            {$numrecs|int},
+            {cond( is_set( $category_based ), $category_based, 0 )}
+        ],
+        errorMsg = "{'An error occured while loading the recommendations'|i18n( 'ezrecommendation/loading' )|wash( 'javascript' )}";
 
-	{if eq($scenario, '')}
-		{def $scenario = ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' )}
-	{/if}
-	
-	{def $recommendations = get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based)}
+    {literal}
 
-	{def $itemid_array = array()}
-	
-	{if ne($recommendations, false())}
-	 
-		{def $nodes_array = hash()}
-		 
-		{foreach $recommendations as $rec}
-			{def $rec_node=fetch( 'content', 'node', hash( 'node_id', $rec.itemId ) )}
-			{if $rec_node|is_object()}
-			
-				{def $current_node_hash = hash(concat("\"", $rec.itemId, "\""), $rec_node.object.contentclass_id)}
+    $.ez(urlParts.join('::'), false, function (data) {
+        $div.removeClass('reco-loading');
+        if (data.error_text) {
+            $div.addClass('reco-error').html(errorMsg);
+        } else {
+            $div.html(data.content);
+        }
+    });
 
-				{set $nodes_array = $nodes_array|merge($current_node_hash)}
-				
-				{node_view_gui content_node=$rec_node view='line' create_clickrecommended_event=$create_clickrecommended_event}
-				
-				{undef $current_node_hash}
-			 	
-			{/if}
+    {/literal}
 
-			{undef $rec_node}
-		{/foreach}
-	{/if}
-	
-	
-	{if and(gt($nodes_array|count(), 0), $track_rendered_items|eq(true()))}
-		{track_rendered_items( $nodes_array )}
-	{/if}
-		
+{rdelim});
+</script>
 
+<div id="{$div_id}" class="reco-loading">
+    {'Loading recommended items'|i18n( 'ezrecommendation/loading' )}
 </div>
-{undef $recommendation $itemid_array}
+{undef $div_id}

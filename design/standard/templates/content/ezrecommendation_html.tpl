@@ -1,3 +1,4 @@
+{def $request_url = 'ezreco.gif'|ezimage}
 {if and( is_set( $content.content_info.object_id), $track )}
     {def $obj=fetch( 'content', 'object', hash( 'object_id', $content.content_info.object_id ))}
 
@@ -7,7 +8,7 @@
             {def $data_array=fetch( 'ezrecommendation', 'recommendation_enable', hash( 'xmlDataText', $attribute.data_text ) )}
             {if eq( $data_array, 1 )}
 
-                {def $request_url=generate_html( $content, 'click' )}
+                {set $request_url=generate_html( $content, 'click' )}
 
                 {if eq( $request_url, false() )}
                     {set $request_url='ezreco.gif'|ezimage()}
@@ -19,9 +20,6 @@
 
         {/if}
     {/foreach}
-
-{else}
-    {def $request_url = 'ezreco.gif'|ezimage()}
 {/if}
 
 {if eq($current_user.is_logged_in, true())}

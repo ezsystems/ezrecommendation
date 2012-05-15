@@ -74,17 +74,17 @@ class ezjscServerFunctionsRecommendation
 
         $api = new eZRecommendationApi();
         $recommendations = $api->getRecommendations( $requestParameters );
+
+        $tpl = eZTemplate::factory();
+        $recommendedNodes = array();
         foreach( $recommendations as $key => $recommendation )
         {
             if ( $node = eZContentObjectTreeNode::fetch( $recommendation['itemId' ] ) )
             {
-                $recommendations[$key]['node'] = ezjscAjaxContent::simplify( $node );
-            }
-            else
-            {
-                unset( $recommendations[$key] );
+                $recommendedNodes[] = $node;
             }
         }
-        return array( 'recommendations' => $recommendations );
+        $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
+        return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
     }
 }
