@@ -56,7 +56,7 @@ class ezjscServerFunctionsRecommendation
                     'extension/ezrecommendation',
                     'Unknown scenario %scenario. Available scenarios: %available_scenarii',
                     null,
-                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => $availableScenarii )
+                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => implode( ', ', $availableScenarii ) )
                 )
             );
         }

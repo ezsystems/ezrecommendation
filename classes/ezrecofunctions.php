@@ -28,19 +28,19 @@ class ezRecoFunctions
 
             eZDebugSetting::writeDebug('extension-ezrecommendation', $out, "Sending HTTP Request to $url" );
             fwrite( $fp, $out );
-
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
+            fclose( $fp );
 
             eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            self::verifyHttpResponse( $header, $content );
 
-            fclose( $fp );
             return true;
         }
         else
         {
-            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-            return false;
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
         }
     }
 
@@ -64,14 +64,15 @@ class ezRecoFunctions
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
             fclose( $fp );
-
             eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
-            return json_decode( substr( $content, 2 ) );
+
+            self::verifyHttpResponse( $header, $content );
+            return json_decode( $content );
         }
         else
         {
-            eZLog::write('[ezrecommendation] Could not connect to server with url: '.$url, 'error.log', 'var/log');
-            return false;
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
         }
     }
 
@@ -97,22 +98,21 @@ class ezRecoFunctions
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out.$data, "Sending HTTP request to $url" );
-
             fwrite( $fp, $out );
             fwrite( $fp, $data );
-
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
-
             fclose( $fp );
+
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            self::verifyHttpResponse( $header, $content );
 
             return true;
         }
         else
         {
-            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-            return false;
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
         }
     }
 
@@ -148,19 +148,20 @@ class ezRecoFunctions
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
             fwrite( $fp, $out );
-
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
-            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
-
             fclose( $fp );
+
+            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            self::verifyHttpResponse( $header, $content );
+
             return true;
         }
         else
         {
-            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-            return false;
-       }
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
+        }
     }
 
 
@@ -191,9 +192,11 @@ class ezRecoFunctions
             fwrite($fp, $out);
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
 
-            fclose($fp);
+            fclose( $fp );
+
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            self::verifyHttpResponse( $header, $content );
 
             $raw_stats = json_decode( $content );
             $raw_stats2 = $raw_stats->revenueResponse;
@@ -230,8 +233,8 @@ class ezRecoFunctions
         }
         else
         {
-            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-            return false;
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
         }
     }
 
@@ -264,34 +267,20 @@ class ezRecoFunctions
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
             eZDebugSetting::writeDebug('extension-ezrecommendation', $data, "Sending HTTP request to $url" );
-
             fwrite( $fp, $out );
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
-            eZDebugSetting::writeDebug('extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
-
             fclose($fp);
+
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            self::verifyHttpResponse( $header, $content );
+
             return true;
         }
         else
         {
-            eZDebug::writeError( "url: $url", '<ezrecommendation> Could not connect to server' );
-            return false;
-        }
-    }
-
-    /**
-     * @throw eZRecommendationException
-     */
-    private static function handleFault( $result )
-    {
-        // since the Fault property name is unknown, we need to iterate over the object
-        foreach( $result as $property => $value )
-        {
-            if ( strstr( $property, 'Fault' ) !== false )
-            {
-                throw new eZRecommendationException( $property, $value->message, $value );
-            }
+            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            throw new eZRecommendationApiException( "Connection failed" );
         }
     }
 
@@ -329,6 +318,7 @@ class ezRecoFunctions
                 else
                     $headers .= $line;
             }
+            $content = trim( $content );
             return true;
         }
         return false;
@@ -347,5 +337,37 @@ class ezRecoFunctions
         $headerLine =  "Authorization: Basic " . base64_encode( "$customerId:$licenseKey" );
 
         return $headerLine;
+    }
+
+    /**
+     * ezRecoFunctions::verifyHttpResponse()
+     *
+     * @param string $headers
+     * @param string $content
+     * @return
+     */
+    public static function verifyHttpResponse( $headers, $content )
+    {
+        // Check header & HTTP code
+        $headers = explode( "\r\n", $headers );
+        $httpResponse = $headers[0];
+        if ( substr( $httpResponse, 9, 1 ) != 2 )
+        {
+            throw new eZRecommendationApiException( "Unexpected HTTP code" );
+        }
+
+        // Check content for Fault
+        if ( $content != '' )
+        {
+            $result = json_decode( $content );
+            // since the Fault property name is unknown, we need to iterate over the object
+            foreach( $result as $property => $value )
+            {
+                if ( strstr( $property, 'Fault' ) !== false )
+                {
+                    throw new eZRecommendationException( $property, $value->message, $value );
+                }
+            }
+        }
     }
 }

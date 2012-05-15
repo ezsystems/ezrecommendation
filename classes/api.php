@@ -65,8 +65,7 @@ class eZRecommendationApi
             $recommendations = ezRecoFunctions::send_reco_request( $ini->variable( 'URLSettings', 'RecoURL' ), $path );
             return self::processRawRecommendations( $recommendations );
         } catch( eZRecommendationException $e ) {
-            eZDebug::writeError( $e, "An error occured while fetching recommendations" );
-            return false;
+            throw new eZRecommendationApiException( $e->getMessage() );
         }
 
     }
