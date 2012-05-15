@@ -71,39 +71,27 @@ class ezRecoFunctions{
     /*
      *
      */
-    public static function send_reco_request($url, $path ){
-
-
-        /* Begin https:443 */
-/*        $ini = eZINI::instance('ezrecommendation.ini');
+    public static function send_reco_request( $url, $path )
+    {
+        $ini = eZINI::instance( 'ezrecommendation.ini' );
         $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
         $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
-        $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
-*/        /*end https:443*/
 
         eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying request' );
-        /* Begin http:80 */
 
         $fp = fsockopen( $url, 80, $errno, $errstr, 30);
-        /*end http:80*/
 
-        if ($fp) {
+        if ( $fp )
+        {
 
-            /* Beginn https:443 */
-/*            $auth=base64_encode($customerID.":".$LicKey);
-            $out = "POST ".$path." HTTP/1.0\r\n";
-            $out .= "Host: ".$url."\r\n";
-            $out .= "Accept: text/html\r\n";
-            $out = "Authorization: Basic $auth\r\n\r\n";*/
-            /*end https:443*/
+            $auth = base64_encode( "$customerID:$LicKey" );
 
-            /* Beginn http:80 */
             $out = "GET ".$path." HTTP/1.0\r\n";
             $out .= "Host: ".$url."\r\n";
-            $out .= "Connection: Close\r\n\r\n";
-            /*end http:80*/
+            $out .= "Connection: Close\r\n";
+            $out .= "Authorization: Basic $auth\r\n\r\n";
 
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $url.$path, 'Sending request' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out, "Sending request to $url" );
 
             fwrite( $fp, $out );
 
@@ -127,7 +115,6 @@ class ezRecoFunctions{
                         $header .= $line;
                     }
                 }
-
 
                 eZDebugSetting::writeDebug('extension-ezrecommendation', var_export( compact( 'header', 'content' ), true ), 'Received response' );
             }
@@ -476,5 +463,4 @@ class ezRecoFunctions{
             }
         }
     }
-
 }
