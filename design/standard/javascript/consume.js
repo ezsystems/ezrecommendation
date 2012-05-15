@@ -17,21 +17,21 @@ $.ez(  'MyAJAX::ajaxFunc', dataSent, function( ezp_data )
 
 
 
-	var data_sent = { message: "testing!"};
-	$.ajax({
-		url: "/ezyoochoose/post",
-		type: 'POST',
-		data: ( data_sent),
-		dataType: 'json',
-		success: function( data ){
-			if( data == "ok" )
-			{
-				alert( data );
-			}else{
-			
-						alert( 'error' );
-			}
-		}
-	});
+    var data_sent = { message: "testing!"};
+    $.ajax({
+        url: "/ezyoochoose/post",
+        type: 'POST',
+        data: ( data_sent),
+        dataType: 'json',
+        success: function( data ){
+            if( data == "ok" )
+            {
+                alert( data );
+            }else{
+            
+                        alert( 'error' );
+            }
+        }
+    });
 
 });
