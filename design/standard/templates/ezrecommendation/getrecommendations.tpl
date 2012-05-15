@@ -1,5 +1,5 @@
 {def $current_node_hash = ''
-     $node_array = array()}
+     $nodes_array = array()}
 {foreach $recommended_nodes as $node}
     {set $current_node_hash = hash( concat( "\"", $rec.itemId, "\"" ), $node.object.contentclass_id )}
     {set $nodes_array = $nodes_array|merge( $current_node_hash )}
