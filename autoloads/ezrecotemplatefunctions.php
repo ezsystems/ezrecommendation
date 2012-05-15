@@ -240,14 +240,9 @@ class ezRecoTemplateFunctions
 
     }
 
-    function get_html( $params ) {
-
-        //$serverURL = '/ezrecommendation/request';
-        $serverURL = '';
-
-        $res = $serverURL.$params;
-
-        return $res;
+    function get_html( $params )
+    {
+        return "/ezrecommendation/request$params";
     }
 
     function get_url_for_consume_event( $params ) {
@@ -626,15 +621,14 @@ class ezRecoTemplateFunctions
 
             $ini = eZINI::instance('ezrecommendation.ini');
 
-            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
 
                 $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
                 $content_info = $module_result['content_info'];
 
-                if ($content_info){
-
-
+                if ( $content_info )
+                {
                     $itemtypeid = $content_info['class_id'];
 
 
@@ -697,7 +691,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'URLSettings', 'RecoURL' ) && $ini->hasVariable( 'ExtensionSettings', 'usedExtension' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' )){
+        if ( $ini->hasVariable( 'URLSettings', 'RecoURL' ) && $ini->hasVariable( 'ExtensionSettings', 'usedExtension' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) ) {
 
             $url = $ini->variable( 'URLSettings', 'RecoURL' );
             $extension = $ini->variable( 'ExtensionSettings', 'usedExtension' );
