@@ -2,11 +2,10 @@
 
 {* This template is meant to be included from the pagelayout, or another global template.
    It will generate an image link to the tracking script that logs a click of a user on the currently displayed
-   object (full view).
+   object (full view).*}
 
-   It won't generate anything if the currently viewed item isn't a content *}
-
-{def $request_url = 'ezreco.gif'|ezimage}
+{def $request_url = 'ezreco.gif'|ezimage
+     $user_id=fetch( 'user', 'current_user' ).contentobject_id}
 {if and( is_set( $content.content_info.object_id), $track )}
     {def $obj=fetch( 'content', 'object', hash( 'object_id', $content.content_info.object_id ) )}
 
@@ -23,14 +22,14 @@
                 {else}
                     {set $request_url=$request_url|ezurl( 'no', 'full' )}
                 {/if}
-                {def $user_id=fetch( 'user', 'current_user' ).contentobject_id}
 
-                <script type="text/javascript">
-                    ezreco.img( "{$request_url}", {$user_id});
-                </script>
                 {break}
             {/if}
 
         {/if}
     {/foreach}
 {/if}
+<div id="ezrecommendation"></div>
+<script type="text/javascript">
+    ezreco.img("{$request_url}", {$user_id});
+</script>

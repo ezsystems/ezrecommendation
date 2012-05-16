@@ -255,26 +255,16 @@ class ezRecoTemplateFunctions
     }
 
 
-    function get_html_for_event( $params, $userid ) {
+    function get_html_for_event( $params ) {
 
         $serverURL = $this->get_current_url();
 
-        $res = 'onclick="ezreco.evt(\''.$serverURL.$params.'\', '.$userid.')"';
+        $res = 'onclick="ezreco.evt(\''.$serverURL.$params.'\')"';
 
         return $res;
     }
 
 
-
-    function get_html_for_rendered_items( $params, $userid, $i ) {
-
-        $time = 500;
-        $serverURL = $this->get_current_url();
-        echo '<script type="text/javascript">setTimeout("ezreco.evt(\''.$serverURL.$params.'\', '.$userid.')",'.$time*$i.')</script>';
-        //$res = '<script type="text/javascript">setTimeout("ezreco.evt(\''.$serverURL.$params.'\', '.$userid.')",'.$time*$i.')</script>';
-
-        return $res;
-    }
 
 
 
@@ -364,8 +354,6 @@ class ezRecoTemplateFunctions
 
                 $categorypath = $node->PathString;
 
-                $current_user_id = $this->get_current_user_id();
-                /////////////////////////
                 $mynodeArray = $node->attribute( 'data_map' );
 
                 foreach ($mynodeArray as $contentObjectAttr)
@@ -382,7 +370,6 @@ class ezRecoTemplateFunctions
                 $params = '?productid='.$productid.'&eventtype=consume';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
                 $res = '<div id="ezreco-consume-event">'.$this->get_url_for_consume_event( $params ).'</div><div id="ezreco-consume-event-userid">'.$current_user_id.'</div>';
@@ -448,15 +435,12 @@ class ezRecoTemplateFunctions
 
                 $categorypath = $node->PathString;
 
-                $current_user_id = $this->get_current_user_id();
-
                 $params = '?productid='.$productid.'&eventtype='.$event_type;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
-                $res = $this->get_html_for_event( $params, $current_user_id );
+                $res = $this->get_html_for_event( $params );
             }
             else
             {
@@ -519,18 +503,16 @@ class ezRecoTemplateFunctions
 
                 $itemid = $node->NodeID;
 
-                $current_user_id = $this->get_current_user_id();
 
                 $params = '?productid='.$productid.'&eventtype=buy';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'quantity' ).'='.$quantity;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'price' ).'='.$price;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'currency' ).'='.$currency;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'timestamp' ).'='.time();
 
-                $res = $this->get_html_for_event( $params, $current_user_id );
+                $res = $this->get_html_for_event( $params );
 
             }else{
                 eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
@@ -592,16 +574,13 @@ class ezRecoTemplateFunctions
                 $itemid = $node->NodeID;
                 $categorypath = $node->PathString;
 
-                $current_user_id = $this->get_current_user_id();
-
                 $params = '?productid='.$productid.'&eventtype=rate';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'rating' ).'='.$rating;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
-                $res = $this->get_html_for_event( $params, $current_user_id );
+                $res = $this->get_html_for_event( $params );
             }else{
                 eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
 
@@ -820,7 +799,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if (  $ini->hasVariable( 'URLSettings', 'RequestURL' ) && $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -837,6 +816,7 @@ class ezRecoTemplateFunctions
 
 
             $res = '';
+            $renderedEventsUrl = array();
 
             $i = 0;
             foreach ($sorted_array as $key => $value){
@@ -856,28 +836,11 @@ class ezRecoTemplateFunctions
                     $path = '/';
                     $i++;
 
-                    $path .= $productid;
-                    $path .= '/'.$client_id;
-                    $path .= '/rendered';
+                    $params = '?productid='.$productid.'&eventtype=rendered';
+                    $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
+                    $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$value;
 
-                    $current_user_id = $this->get_current_user_id();
-                    if ($current_user_id == 10 && $_COOKIE['ezreco']){
-                        $current_user_id = $_COOKIE['ezreco'];
-                    }
-
-                    $path .= '/'.$current_user_id;
-                    $path .= '/'.$recoitemtypeid;
-                    $path .= '/'.$value;
-
-                    //$params = '?productid='.$productid.'&eventtype=rendered';
-                    //$params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                    //$params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$value;
-                    //$params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-
-                    //$res = $res.''.$this->get_html_for_rendered_items( $params, $current_user_id, $i );
-
-                    $url = $ini->variable( 'URLSettings', 'RequestURL' );
-                    ezRecoFunctions::send_http_request($url, $path);
+                    $renderedEventsUrl[] = $this->get_current_url() . $params;
 
                 }else{
                     eZLog::write('[ezrecommendation] could not map classid '.$key.' to ezrecommendation itemtypeid.', 'error.log', 'var/log');
@@ -896,9 +859,16 @@ class ezRecoTemplateFunctions
 
         }
 
-
-        return;
-
+        if ( !empty( $renderedEventsUrl ) )
+        {
+            return '<script type="text/javascript">
+            (function(reco) {
+                var urls = ' . json_encode( $renderedEventsUrl ) . ';
+                reco.renderEvents(urls);
+            })(ezreco);
+            </script>';
+        }
+        return '';
     }
 
     var $Operators;

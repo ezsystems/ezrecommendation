@@ -1,9 +1,10 @@
 function ezrecoClass() {
     this.originalSrc = '';
+    this.userId = 10; // standard anonymous user id
 }
 
-ezrecoClass.prototype.get_ezreco_params = function(usrId) {
-    var ezreco_params = '';
+ezrecoClass.prototype.get_ezreco_params = function() {
+    var ezreco_params = 'userid=' + this.userId + '&';
     var x,y;
 
     if (navigator.cookieEnabled == true) {
@@ -42,11 +43,11 @@ ezrecoClass.prototype.get_ezreco_params = function(usrId) {
 
         ezreco_params += "sid=" + encodeURIComponent(c1);
 
-        if(!usrCookieAvailable  &&  usrId != 10){
+        if(!usrCookieAvailable  &&  this.userId != 10){
             var a = new Date(d.getTime() +1000*60*30);
-            document.cookie = 'ezreco_usr=' + usrId + '; expires=' + a.toGMTString() + '; path=/;';
+            document.cookie = 'ezreco_usr=' + this.userId + '; expires=' + a.toGMTString() + '; path=/;';
             ezreco_params += "&map=1";
-        }else if (usrId != 10){
+        }else if (this.userId != 10){
             ezreco_params += "&map=1";
         }
 
@@ -62,8 +63,10 @@ ezrecoClass.prototype.get_ezreco_params = function(usrId) {
 
 
 ezrecoClass.prototype.img = function(src, userid) {
+    var params = '';
 
-    var params = ezreco.get_ezreco_params(userid);
+    this.userId = userid;
+    params = ezreco.get_ezreco_params();
 
     if (src.indexOf('?') == -1){
         params = '?'+params;
@@ -75,16 +78,16 @@ ezrecoClass.prototype.img = function(src, userid) {
 
     var e = document.getElementById('ezreco-image');
     if (e == null) {
-        document.write('<div id="ezrecommendation"><img id="ezreco-image" src="' + src + '" alt="ezreco-image" /></div>');
+        document.getElementById('ezrecommendation').innerHTML += '<img id="ezreco-image" src="' + src + '" alt="ezreco-image" />';
     }
     else {
         e.src = src;
     }
 }
 
-ezrecoClass.prototype.evt = function(src, userid) {
+ezrecoClass.prototype.evt = function(src) {
 
-    var params = ezreco.get_ezreco_params(userid);
+    var params = ezreco.get_ezreco_params();
 
     if (src.indexOf('?') == -1){
         params = '?'+params;
@@ -101,9 +104,9 @@ ezrecoClass.prototype.evt = function(src, userid) {
     return true;
 }
 
-ezrecoClass.prototype.consevt = function(src, userid, elapsedtime) {
+ezrecoClass.prototype.consevt = function(src, elapsedtime) {
 
-    var params = ezreco.get_ezreco_params(userid);
+    var params = ezreco.get_ezreco_params();
 
     if (src.indexOf('?') == -1){
         params = '?'+params + '&elapsedtime=' + elapsedtime;
@@ -119,6 +122,15 @@ ezrecoClass.prototype.consevt = function(src, userid, elapsedtime) {
         setTimeout('sleep(1)', 1000); //the page should wait a bit of time until the module has sent the request
     }
     return true;
+}
+
+ezrecoClass.prototype.renderEvents = function (urls) {
+    var params = ezreco.get_ezreco_params(),
+        elt, r = document.getElementById('ezrecommendation');
+
+    for(var i=0; i!=urls.length; i++) {
+        r.innerHTML += '<img src="' + urls[i] + '&' + params + '" />';
+    }
 }
 
 
@@ -144,11 +156,9 @@ var ezreco = new ezrecoClass();
      var timeSpent=(endTimePageVisit - startTimePageVisit);
      var timeelapsed = Math.round(timeSpent/1000);
      var e = document.getElementById('ezreco-consume-event');
-     var e2 = document.getElementById('ezreco-consume-event-userid');
 
-     if (e != null && e2 != null) {
-
-         ezreco.consevt(e.innerHTML, e2.innerHTML, timeelapsed);
+     if (e) {
+         ezreco.consevt(e.innerHTML, timeelapsed);
      }
 
  }
