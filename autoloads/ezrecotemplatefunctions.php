@@ -341,7 +341,7 @@ class ezRecoTemplateFunctions
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
-                $res = '<div id="ezreco-consume-event">'.$this->get_url_for_consume_event( $params ).'</div><div id="ezreco-consume-event-userid">'.$current_user_id.'</div>';
+                $res = '<div id="ezreco-consume-event">'.$this->get_url_for_consume_event( $params ).'</div>';
 
             }
             else
