@@ -557,14 +557,6 @@ class eZRecommendationType extends eZDataType
          return $contentObjectAttribute->attribute( "data_text" );
     }
 
-
-    /*!
-     Returns the meta data used for storing search indeces.
-    */
-    function metaData( $contentObjectAttribute )
-    {
-        return $contentObjectAttribute->attribute( "data_text" );
-    }
     /*!
      \return string representation of an contentobjectattribute data for simplified export
 
@@ -602,7 +594,7 @@ class eZRecommendationType extends eZDataType
     */
     function isIndexable()
     {
-        return true;
+        return false;
     }
 
     function sortKey( $contentObjectAttribute )
