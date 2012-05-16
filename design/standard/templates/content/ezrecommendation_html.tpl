@@ -4,7 +4,7 @@
    It will generate an image link to the tracking script that logs a click of a user on the currently displayed
    object (full view).*}
 
-{def $request_url = 'ezreco.gif'|ezimage
+{def $request_url = 'ezreco.gif'|ezimage('no')
      $user_id=fetch( 'user', 'current_user' ).contentobject_id}
 {if and( is_set( $content.content_info.object_id), $track )}
     {def $obj=fetch( 'content', 'object', hash( 'object_id', $content.content_info.object_id ) )}
