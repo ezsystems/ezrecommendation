@@ -131,7 +131,6 @@ class eZRecoDataTypeContent
 
 
                 $rows = $db -> arrayQuery( $query );
-            echo $query ;
                  return $rows[0]['value'] * 100;
 
 
