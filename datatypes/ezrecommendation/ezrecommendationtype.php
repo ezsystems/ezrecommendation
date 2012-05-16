@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File containing the ezrecommendationFunctions class for generating the html output
  *
