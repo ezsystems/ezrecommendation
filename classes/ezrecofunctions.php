@@ -15,8 +15,8 @@ class ezRecoFunctions
     /*
      *
      */
-    public static function send_http_request($url, $path ){
-
+    public static function send_http_request( $url, $path )
+    {
         eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying HTTP Request' );
 
         $fp = fsockopen( $url, 80, $errno, $errstr, 30);
@@ -120,14 +120,12 @@ class ezRecoFunctions
     /*
      *
      */
-    public static function delete_item_request($item_path){
+    public static function delete_item_request( $item_path )
+    {
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
-        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-        $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
-
         $solution = $ini->variable( 'SolutionSettings', 'solution' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
 
@@ -174,6 +172,7 @@ class ezRecoFunctions
         $url = $ini->variable( 'URLSettings', 'ConfigURL' );
         $solution = $ini->variable( 'SolutionSettings', 'solution' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
+        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
 
         $path = "/$mapSetting/v3/$customerID/revenue/last_seven_days";
 
@@ -182,8 +181,6 @@ class ezRecoFunctions
         $fp = fsockopen( 'ssl://'.$url, 443, $errno, $errstr, 60);
         if ( $fp )
         {
-            $auth=base64_encode($customerID.":".$LicKey);
-
             $out = "GET $path HTTP/1.0\r\n" .
                    "Host: $url\r\n" .
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
