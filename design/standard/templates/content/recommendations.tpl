@@ -9,12 +9,14 @@ $(document).ready(function () {ldelim}
             {$node.node_id},
             '{cond( $scenario|eq( '' ), ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' ), $scenario )|wash( 'javascript' )}',
             {$numrecs|int},
-            {cond( is_set( $category_based ), $category_based, 0 )}
+            {cond( is_set( $category_based ), $category_based|int, 0 )},
+            {cond( is_set( $track_rendered_items ), $track_rendered_items|int, 0 )},
+            {cond( is_set( $create_clickrecommended_event ), $create_clickrecommended_event|int, 0 )}
         ],
         errorMsg = "{'An error occured while loading the recommendations'|i18n( 'ezrecommendation/loading' )|wash( 'javascript' )}";
 
     {literal}
-
+    console.log(urlParts, urlParts.join('::'));
     $.ez(urlParts.join('::'), false, function (data) {
         $div.removeClass('reco-loading');
         if (data.error_text) {

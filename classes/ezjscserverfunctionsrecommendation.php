@@ -11,13 +11,13 @@ class ezjscServerFunctionsRecommendation
 {
     /**
      * Fetches recommendations for a node
-     * @param array $args array( node id, scenario, limit, category_based(true|false, defaut false) )
+     * @param array $args array( node id, scenario, limit, category_based(true|false, defaut false), track_rendered_items(true|false, default false), create_clickrecommended_event(true|false, default false) )
      */
     public static function getRecommendations( $args )
     {
         $requestParameters = new eZRecommendationApiGetRecommendationsStruct;
 
-        if ( count( $args ) < 3 || count( $args ) > 4 )
+        if ( count( $args ) < 3 || count( $args ) > 6 )
         {
             throw new InvalidArgumentException(
                 ezpI18n::tr(
@@ -72,6 +72,9 @@ class ezjscServerFunctionsRecommendation
             $requestParameters->isCategoryBased = false;
         }
 
+        $trackRenderedItems = (bool) array_shift( $args );
+        $createClickRecommendedEvent = (bool) array_shift( $args );
+
         $api = new eZRecommendationApi();
         $recommendations = $api->getRecommendations( $requestParameters );
 
@@ -81,10 +84,12 @@ class ezjscServerFunctionsRecommendation
         {
             if ( $node = eZContentObjectTreeNode::fetch( $recommendation['itemId' ] ) )
             {
-                $recommendedNodes[] = $node;
+                $recommendedNodes[$recommendation['itemId']] = $node;
             }
         }
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
+        $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
+        $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
         return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
     }
 }

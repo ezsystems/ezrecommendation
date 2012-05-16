@@ -17,11 +17,12 @@ flyout: {$flyout}
     <a class="destroy_sliding_rec" title="close"></a>
     <div class="attribute-header"><h2>{$name|wash()}</h2></div>
 
-    {include uri='design:content/recommendations.tpl' node=$#node
-                                                      scenario=$scenario
-                                                      numrecs=$limit
-                                                      output_itemtypeid=cond( is_set( $output_itemtypeid ), $output_itemtypeid, 0 )
-                                                      category_based=cond( is_set( $category_based ), $category_based, false() )
-                                                      create_clickrecommended_event=true()
-                                                      track_rendered_items=true()}
+    {include uri='design:content/recommendations.tpl'
+        node=$#node
+        scenario=$scenario
+        numrecs=$limit
+        output_itemtypeid=cond( is_set( $output_itemtypeid ), $output_itemtypeid, 0 )
+        category_based=cond( is_set( $category_based ), $category_based, 0 )
+        create_clickrecommended_event=true()
+        track_rendered_items=true()}
 </div>
