@@ -21,7 +21,7 @@ $FunctionList['attribute_list'] = array( 'name' => 'attribute_list',
 $FunctionList['recommendation_enable'] = array( 'name' => 'recommendation_enable',
                                          'call_method' => array( 'class' => 'eZRecommendationFunctionCollection',
                                                                  'method' => 'getRecommendationValue' ),
-										 'parameter_type' => 'standard',
+                                         'parameter_type' => 'standard',
                                          'parameters' => array( array( 'name' => 'xmlDataText',
                                                                        'type' => 'string',
                                                                        'required' => true ) )

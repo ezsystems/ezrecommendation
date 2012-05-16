@@ -36,45 +36,45 @@ class eZRecommendationFunctionCollection
         return array( 'result' => $contentClassAttributeList );
     }
 
-	function getRecommendationValue($data)
-	{
+    function getRecommendationValue($data)
+    {
 
-		$recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
+        $recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
 
-		return $recommendationValue;
+        return $recommendationValue;
 
-	}
+    }
 
-	function getCurrencyValues(){
+    function getCurrencyValues(){
 
-		$systemCurrency = array();
-		$db = eZDB::instance();
-		$query  = "SELECT code FROM `ezcurrencydata` ";
-		$row = $db -> arrayQuery( $query );
-		$rowCount = count($row);
-		if ($rowCount == 0)
-		{
-			$ini = eZINI::instance('ezrecommendation.ini');
-			if ($ini->hasVariable( 'ShopPriceCurrency', 'defaultCurrency' ) && $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) != "")
-				$systemCurrency = array ('0' => $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) );
-			else
-			{
-				eZLog::write('[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.', 'error.log', 'var/log');
-				eZDebug::writeWarning( "[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini." );
-			}
-		}
-		else
-		{
-			for ($i = 0 ; $i < $rowCount ; ++$i)
-				{
-					$systemCurrency[] = $row[$i]['code'];
-				}
-		}
+        $systemCurrency = array();
+        $db = eZDB::instance();
+        $query  = "SELECT code FROM `ezcurrencydata` ";
+        $row = $db -> arrayQuery( $query );
+        $rowCount = count($row);
+        if ($rowCount == 0)
+        {
+            $ini = eZINI::instance('ezrecommendation.ini');
+            if ($ini->hasVariable( 'ShopPriceCurrency', 'defaultCurrency' ) && $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) != "")
+                $systemCurrency = array ('0' => $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) );
+            else
+            {
+                eZLog::write('[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeWarning( "[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini." );
+            }
+        }
+        else
+        {
+            for ($i = 0 ; $i < $rowCount ; ++$i)
+                {
+                    $systemCurrency[] = $row[$i]['code'];
+                }
+        }
 
 
-		 return array( 'result' => $systemCurrency );
+         return array( 'result' => $systemCurrency );
 
-	}
+    }
 }
 
 ?>

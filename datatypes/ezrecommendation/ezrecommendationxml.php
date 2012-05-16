@@ -11,49 +11,49 @@ class ezRecommendationXml
 {
 
 
-	static function ezRecommendationArrContent ($xmlText)
-	{
+    static function ezRecommendationArrContent ($xmlText)
+    {
 
-		$doc = ezRecommendationXml::parseXML( $xmlText );
-		$root = $doc->documentElement;
+        $doc = ezRecommendationXml::parseXML( $xmlText );
+        $root = $doc->documentElement;
 
-		$type = $root->getElementsByTagName( 'itemtypeid' )->item( 0 );
+        $type = $root->getElementsByTagName( 'itemtypeid' )->item( 0 );
         if ( $type )
         {
             $content['itemtypeid'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'recommendation-enable' )->item( 0 );
+        $type = $root->getElementsByTagName( 'recommendation-enable' )->item( 0 );
         if ( $type )
         {
             $content['recommendation-enable'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'export-enable' )->item( 0 );
+        $type = $root->getElementsByTagName( 'export-enable' )->item( 0 );
         if ( $type )
         {
             $content['export-enable'] = $type->getAttribute( 'value' );
         }
-		//
-		$type = $root->getElementsByTagName( 'validfrom' )->item( 0 );
+        //
+        $type = $root->getElementsByTagName( 'validfrom' )->item( 0 );
         if ( $type )
         {
             $content['validfrom'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'validto' )->item( 0 );
+        $type = $root->getElementsByTagName( 'validto' )->item( 0 );
         if ( $type )
         {
             $content['validto'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'price' )->item( 0 );
+        $type = $root->getElementsByTagName( 'price' )->item( 0 );
         if ( $type )
         {
             $content['price'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'currency' )->item( 0 );
+        $type = $root->getElementsByTagName( 'currency' )->item( 0 );
         if ( $type )
         {
             $content['currency'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'title' )->item( 0 );
+        $type = $root->getElementsByTagName( 'title' )->item( 0 );
         if ( $type )
         {
             $content['title'] = $type->getAttribute( 'value' );
@@ -74,79 +74,79 @@ class ezRecommendationXml
         {
         $content['newsagency'] = $type->getAttribute( 'value' );
         }
-		 $type = $root->getElementsByTagName( 'vendor' )->item( 0 );
-		if ( $type )
+         $type = $root->getElementsByTagName( 'vendor' )->item( 0 );
+        if ( $type )
         {
             $content['vendor'] = $type->getAttribute( 'value' );
         }
-		 $type = $root->getElementsByTagName( 'geolocation' )->item( 0 );
-		if ( $type )
+         $type = $root->getElementsByTagName( 'geolocation' )->item( 0 );
+        if ( $type )
         {
             $content['geolocation'] = $type->getAttribute( 'value' );
         }
-		 $type = $root->getElementsByTagName( 'date' )->item( 0 );
-		if ( $type )
+         $type = $root->getElementsByTagName( 'date' )->item( 0 );
+        if ( $type )
         {
             $content['date'] = $type->getAttribute( 'value' );
         }
-		$type = $root->getElementsByTagName( 'tags' )->item( 0 );
-		if ( $type )
+        $type = $root->getElementsByTagName( 'tags' )->item( 0 );
+        if ( $type )
         {
             $content['tags'] = $type->getAttribute( 'value' );
         }
 
-		//Client Adding mapping
-		$type = $root->getElementsByTagName( 'counter' )->item( 0 );
+        //Client Adding mapping
+        $type = $root->getElementsByTagName( 'counter' )->item( 0 );
         if ( $type )
         {
-			$content['counter'] = $type->getAttribute( 'value' );
+            $content['counter'] = $type->getAttribute( 'value' );
 
 
         }
-		for ($i = 1 ; $i <= $content['counter'] ; ++$i)
-		{
-			$type = $root->getElementsByTagName( 'addtomap'.$i )->item( 0 );
-			if ( $type )
-			{
-				$content['addtomap'.$i] = $type->getAttribute( 'value' );
-			}
+        for ($i = 1 ; $i <= $content['counter'] ; ++$i)
+        {
+            $type = $root->getElementsByTagName( 'addtomap'.$i )->item( 0 );
+            if ( $type )
+            {
+                $content['addtomap'.$i] = $type->getAttribute( 'value' );
+            }
 
-		}
-		 return $content;
-	}
+        }
+         return $content;
+    }
 
-	static function getNodeAttributeValue($xml, $node)
-	{
+    static function getNodeAttributeValue($xml, $node)
+    {
 
-		$doc = ezRecommendationXml::parseXML( $xml );
-		$root = $doc->documentElement;
-		$type = $root->getElementsByTagName( $node )->item( 0 );
+        $doc = ezRecommendationXml::parseXML( $xml );
+        $root = $doc->documentElement;
+        $type = $root->getElementsByTagName( $node )->item( 0 );
         if ( $type )
         {
             $nodeValue = $type->getAttribute( 'value' );
         }
 
-		return $nodeValue;
-	}
+        return $nodeValue;
+    }
 
-	static function setNodeAttributeValue($xml, $node, $value)
-	{
-		$doc = ezRecommendationXml::parseXML( $xml );
+    static function setNodeAttributeValue($xml, $node, $value)
+    {
+        $doc = ezRecommendationXml::parseXML( $xml );
 
-		$root = $doc->documentElement;
+        $root = $doc->documentElement;
 
-		$type = $root->getElementsByTagName( $node )->item( 0 );
+        $type = $root->getElementsByTagName( $node )->item( 0 );
 
-		$type->setAttribute('value',$value);
+        $type->setAttribute('value',$value);
 
-		$docText = $doc->saveXML();
+        $docText = $doc->saveXML();
 
-		return $docText;
+        return $docText;
 
-	}
+    }
 
 
-	static function parseXML( $xml )
+    static function parseXML( $xml )
     {
         $dom = new DOMDocument;
         $success = $dom->loadXML( $xml);

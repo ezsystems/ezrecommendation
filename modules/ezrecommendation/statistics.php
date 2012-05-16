@@ -9,22 +9,22 @@
  * @package ezrecommendation
  */
 
-	$tpl = eZTemplate::factory();
+    $tpl = eZTemplate::factory();
 
-	$stats = ezRecoFunctions::get_stats_request();
+    $stats = ezRecoFunctions::get_stats_request();
 
-	if ($stats == false){
-		$tpl->setVariable('stats_received', false);
-	}else{
-		$tpl->setVariable('stats_received', true);
-		$tpl->setVariable('stats', $stats);
-	}
+    if ($stats == false){
+        $tpl->setVariable('stats_received', false);
+    }else{
+        $tpl->setVariable('stats_received', true);
+        $tpl->setVariable('stats', $stats);
+    }
 
-	$Result = array();
-	$Result['content'] = $tpl->fetch( 'design:statistics.tpl' );
-	$Result['left_menu'] = "design:leftmenu.tpl";
+    $Result = array();
+    $Result['content'] = $tpl->fetch( 'design:statistics.tpl' );
+    $Result['left_menu'] = "design:leftmenu.tpl";
 
-	$Result['path'] = array( array( 'url' => 'ezrecommendation/statistics',
+    $Result['path'] = array( array( 'url' => 'ezrecommendation/statistics',
                                 'text' => 'ezrecommendation statistics' ) );
 
 ?>

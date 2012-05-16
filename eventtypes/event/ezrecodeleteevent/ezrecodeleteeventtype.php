@@ -30,47 +30,47 @@ class eZRecoDeleteEventType extends eZWorkflowEventType
     function execute( $process, $event )
     {
 
-    	$parameters = $process->attribute( 'parameter_list' );
+        $parameters = $process->attribute( 'parameter_list' );
 
-    	if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the recommendation engine
+        if ($parameters['move_to_trash'] === 2){ // change to 1 if moving to trash should not trigger a delete event to the recommendation engine
 
-    		return eZWorkflowType::STATUS_ACCEPTED;
+            return eZWorkflowType::STATUS_ACCEPTED;
 
-    	}else{
+        }else{
 
-	    	$node_list = $parameters['node_id_list'];
+            $node_list = $parameters['node_id_list'];
 
-	    	foreach ($node_list as $node){
+            foreach ($node_list as $node){
 
-	    		$node_obj = eZContentObjectTreeNode::fetch($node);
-	    		if ($node_obj){
-	    			$obj = $node_obj->ContentObject;
-	    			$class_id = $obj->ClassID;
+                $node_obj = eZContentObjectTreeNode::fetch($node);
+                if ($node_obj){
+                    $obj = $node_obj->ContentObject;
+                    $class_id = $obj->ClassID;
 
-	    			$recoitemtypeid = '';
+                    $recoitemtypeid = '';
 
-					$arr = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
+                    $arr = ezRecommendationClassAttribute::fetchClassAttributeList($class_id);
 
-					if (count($arr['result']) > 0){
+                    if (count($arr['result']) > 0){
 
-						$recoitemtypeid = $arr['result']['recoItemType'];
-						if (!empty($recoitemtypeid)){
+                        $recoitemtypeid = $arr['result']['recoItemType'];
+                        if (!empty($recoitemtypeid)){
 
-	    					$path = $recoitemtypeid.'/'.$node;
-    				        eZDebug::writeDebug('ezrecommendation delete event executed.');
-	    					ezRecoFunctions::delete_item_request($path);
+                            $path = $recoitemtypeid.'/'.$node;
+                            eZDebug::writeDebug('ezrecommendation delete event executed.');
+                            ezRecoFunctions::delete_item_request($path);
 
-						}
+                        }
 
-					}
+                    }
 
-	    		}
+                }
 
-	    	}
+            }
 
 
 
-    	}
+        }
         return eZWorkflowType::STATUS_ACCEPTED;
     }
 
