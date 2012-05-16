@@ -12,21 +12,19 @@
 class ezRecoTemplateFunctions
 {
 
-
-
-    function ezRecoTemplateFunctions() {
-        $this->Operators = array(     'generate_html',
-                                    'generate_common_event',
-                                    'generate_consume_event',
-                                    'generate_buy_event',
-                                    'generate_rate_event',
-                                    'get_recommendations',
-                                    'track_rendered_items'
-                                  );
-
+    function __construct()
+    {
+        $this->Operators = array(
+            'generate_html',
+            'generate_common_event',
+            'generate_consume_event',
+            'generate_buy_event',
+            'generate_rate_event',
+            'track_rendered_items'
+        );
     }
 
-    function &operatorList()
+    function operatorList()
     {
         return $this->Operators;
     }
@@ -81,23 +79,6 @@ class ezRecoTemplateFunctions
                                                 'required' => true,
                                                 'default' => '' )
                                 ),
-                        'get_recommendations' => array(
-                            'scenario' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'node' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'numrecs' => array( 'type' => 'integer',
-                                                'required' => false,
-                                                'default' => 5 ),
-                            'output_itemtypeid' => array( 'type' => 'integer',
-                                                'required' => false,
-                                                'default' => 16 ),
-                            'category_based' => array( 'type' => 'boolean',
-                                                'required' => false,
-                                                'default' => false )
-                                    ),
                             'track_rendered_items' => array(
                                     'itemtypeid' => array( 'type' => 'string',
                                                 'required' => true,
@@ -110,8 +91,7 @@ class ezRecoTemplateFunctions
                                 );
     }
 
-    function modify( &$tpl, &$operatorName, &$operatorParameters, &$rootNamespace,
-    &$currentNamespace, &$operatorValue, &$namedParameters )
+    function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters )
     {
         switch ( $operatorName )
         {
@@ -335,7 +315,6 @@ class ezRecoTemplateFunctions
 
                 }
 
-                //////////////////////////
                 $params = '?productid='.$productid.'&eventtype=consume';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
@@ -729,7 +708,7 @@ class ezRecoTemplateFunctions
         return '';
     }
 
-    var $Operators;
+    protected $Operators;
 }
 
 ?>
