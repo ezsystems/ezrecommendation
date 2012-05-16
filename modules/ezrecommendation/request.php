@@ -39,8 +39,6 @@ if ( $http->hasGetVariable('productid') && $http->hasGetVariable('eventtype') &&
 
     }
 
-    require_once( 'extension/ezrecommendation/classes/ezrecofunctions.php' );
-
     $path = '/';
     $params = array();
 
