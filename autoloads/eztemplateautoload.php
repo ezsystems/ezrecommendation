@@ -19,6 +19,5 @@ array( 'script' => 'extension/ezrecommendation/autoloads/ezrecotemplatefunctions
                                   'generate_consume_event',
                                   'generate_buy_event',
                                   'generate_rate_event',
-                                  'get_recommendations',
                                   'track_rendered_items' ) );
 ?>

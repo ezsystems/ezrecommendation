@@ -151,16 +151,6 @@ class ezRecoTemplateFunctions
                                                                 $namedParameters['rating']
                                                      );
                 } break;
-            case 'get_recommendations':
-                {
-                    $operatorValue = $this->get_recommendations(
-                                                                $namedParameters['scenario'],
-                                                                $namedParameters['node'],
-                                                                $namedParameters['numrecs'],
-                                                                $namedParameters['output_itemtypeid'],
-                                                                $namedParameters['category_based']
-                                                     );
-                } break;
             case 'track_rendered_items':
                 {
                     $operatorValue = $this->track_rendered_items(
@@ -263,27 +253,6 @@ class ezRecoTemplateFunctions
 
         return $res;
     }
-
-
-
-
-
-    function get_current_user_id( ) {
-
-        $current_user = eZUser::currentUser ();
-        if ($current_user->Login == 'anonymous'){
-
-            $userid = 10;
-
-        }else{
-
-            $userid = $current_user->attribute( 'contentobject_id' );
-
-        }
-
-        return $userid;
-    }
-
 
     function generate_recommendations_array( $raw_recommendations )
     {
@@ -669,117 +638,6 @@ class ezRecoTemplateFunctions
 
     }
 
-
-    function get_recommendations( $scenario, $node, $numrecs, $output_itemtypeid, $category_based=false)
-    {
-
-        $ini = eZINI::instance('ezrecommendation.ini');
-
-        if ( $ini->hasVariable( 'URLSettings', 'RecoURL' ) && $ini->hasVariable( 'ExtensionSettings', 'usedExtension' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) ) {
-
-            $url = $ini->variable( 'URLSettings', 'RecoURL' );
-            $extension = $ini->variable( 'ExtensionSettings', 'usedExtension' );
-
-            $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
-
-            if ( $ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
-                $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-                $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
-
-
-                $recoitemtypeid = '';
-
-                if ($output_itemtypeid)
-                    $recoitemtypeid = $output_itemtypeid ;
-                else{
-
-                    $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
-
-                    if (count($arr['result']) > 0)
-                    {
-                        $recoitemtypeid = $arr['result']['recoItemType'];
-
-                    }
-                }
-                $itemid = $node->NodeID;
-
-
-                $current_user = eZUser::currentUser ();
-                $current_user_id = $current_user->attribute( 'contentobject_id' );
-                if ($current_user_id == 10 && $_COOKIE['ezreco']){
-                    $current_user_id = $_COOKIE['ezreco'];
-                }
-
-
-                $path = '/'.$productid;
-                $path .= '/'.$client_id;
-
-
-                $path .= '/'.$current_user_id;
-
-
-                $path .= '/'.$scenario.'.'.$extension;
-                $path .= '?'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.urlencode($itemid);
-
-                if ($numrecs && $ini->hasVariable( 'ParameterMapSettings', 'numrecs' ) ) {
-                    $path .= '&'.$ini->variable( 'ParameterMapSettings', 'numrecs' ).'='.urlencode($numrecs);
-                }
-
-                if (!empty($recoitemtypeid)){
-
-                    if ($ini->hasVariable( 'ParameterMapSettings', 'class_id' ) ) {
-
-                        $path .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.urlencode($recoitemtypeid);
-
-                    }
-
-                }
-
-                if ($category_based==true){
-
-                    $categorypath = $node->PathString;
-
-                    if (!empty($categorypath)){
-
-                        //$categorypath = str_replace('/'.$node_id.'/', '/', $categorypath);
-                        //$categorypath = str_replace('/1/', '/', $categorypath);
-
-                        $path .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.urlencode(ezRecoTemplateFunctions::getCategoryPath($categorypath));
-
-                    }
-
-                }
-
-
-                try {
-                    $recommendations = ezRecoFunctions::send_reco_request( $url, $path );
-                    eZDebug::writeDebug( $recommendations, '$recommendations' );
-                    return $this->generate_recommendations_array( $recommendations );
-                } catch( eZRecommendationException $e ) {
-                    eZDebug::writeError( $e, "An error occured while fetching recommendations" );
-                    return false;
-                }
-
-
-            }
-            else
-            {
-
-                eZDebugSetting::writeError('extension-ezrecommendation', 'no clientid found for ezrecommendation extension in ezrecommendation.ini', 'Invalid settings' );
-                return false;
-
-            }
-        }
-        else
-        {
-
-            eZLog::write('[ezrecommendation] missing settings in ezrecommendation.ini.', 'error.log', 'var/log');
-            return false;
-
-        }
-    }
 
     function track_rendered_items( $items_array )
     {
