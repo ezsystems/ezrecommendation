@@ -2,3 +2,5 @@
 
 [GeneralCondition]
 extension-ezrecommendation=disabled
+
+*/
