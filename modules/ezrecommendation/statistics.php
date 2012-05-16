@@ -24,9 +24,7 @@ else
 }
 
 $Result = array();
-$Result['content'] = $tpl->fetch( 'design:statistics.tpl' );
-$Result['left_menu'] = "design:leftmenu.tpl";
-
-$Result['path'] = array( array( 'url' => 'ezrecommendation/statistics',
-                                'text' => 'ezrecommendation statistics' ) );
+$Result['content'] = $tpl->fetch( 'design:ezrecommendation/statistics.tpl' );
+$Result['path'] = array( array( 'url' => false,
+                                'text' => ezpI18n::tr( 'extension/ezrecommendation/statistics', 'eZ Recommendation statistics' ) ) );
 ?>
