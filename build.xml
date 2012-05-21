@@ -48,9 +48,7 @@
     <property file="./ant/${extension.name}.properties"/>
 
     <patternset id="all.sources">
-        <include name="**/*.php"/>
-        <include name="**/*.css"/>
-        <include name="**/*.js"/>
+        <include name="**/*"/>
     </patternset>
 
     <!-- http://ant-contrib.sourceforge.net/tasks/tasks/propertycopy.html -->
@@ -59,20 +57,24 @@
     <propertycopy name="version.release" from="${extension.name}.version.release"/>
     <propertycopy name="git.repository"  from="${extension.name}.git.repository" />
     <propertycopy name="copyright"       from="${extension.name}.copyright"/>
+    <propertycopy name="license.shorttext" from="${extension.name}.license.shorttext"/>
 
     <!-- the following properties are not mandatory -->
+    <propertycopy name="git.branch"      from="${extension.name}.git.branch" silent="true"/>
+    <property     name="git.branch"      value="master"/>
     <propertycopy name="create.tarball"  from="${extension.name}.create.tarball" silent="true"/>
     <property     name="create.tarball"  value="no"/>
     <propertycopy name="create.zip"      from="${extension.name}.create.zip" silent="true"/>
     <property     name="create.zip"      value="no"/>
-    <propertycopy name="version.license" from="${extension.name}.version.license" silent="true"/>
-    <property     name="version.license" value="http://www.gnu.org/licenses/gpl-3.0.txt GNU General Public License v3"/>
     <propertycopy name="version.alias"   from="${extension.name}.version.alias" silent="true"/>
     <property     name="version.alias"   value="${version.major}.${version.minor}"/>
-    <propertycopy name="license.shorttext" from="${extension.name}.license.shorttext"/>
 
     <!-- the following properties are normally not overridden -->
     <property     name="releasenr.separator" value="-"/>
+    <property     name="license.repository"  value="git@github.com:ezmarket/licenses.git" />
+    <property     name="license.file"        value="ezttlv2.txt" />
+    <property     name="license.target"      value="${build.dir}/${extension.name}/TRIAL_LICENSE" />
+    <property     name="trial.text"          value=" + eZ Trial and Test License Agreement (eZTTL)" />
 
 
     <!-- =================== -->
@@ -97,6 +99,22 @@
     <!-- Build the extension and generate the tarball -->
     <target name="all" description="Build the extension and generate the deliverables">
         <antcall target="build"/>
+        <antcall target="pack"/>
+    </target>
+
+    <!-- Build the extension and generate the tarball as trial-->
+    <target name="trial" description="Build the extension and generate the trial deliverables">
+        <echo message="Creating trial deliverables"/>
+        <!-- Modify properties to reflect trial strings-->
+        <var name="lic" value="${license.shorttext}" />
+        <var name="license.shorttext" unset="true" />
+        <property name="license.shorttext" value="${lic}${trial.text}" />
+        <var name="rel" value="${version.release}" />
+        <var name="version.release" unset="true" />
+        <property name="version.release" value="${rel}-trial" />
+        <!-- Build with modified trial properties and include trial license before packing-->
+        <antcall target="build"/>
+        <antcall target="-trialfile"/>
         <antcall target="pack"/>
     </target>
 
@@ -134,6 +152,8 @@
         <!-- git clone repository -->
         <exec executable="git" failonerror="true">
             <arg value="clone"/>
+            <arg value="-b"/>
+            <arg value="${git.branch}"/>
             <arg value="-q"/>
             <arg value="${git.repository}"/>
             <arg value="${build.dir}/${extension.name}"/>
@@ -250,8 +270,8 @@
     </target>
 
     <!-- header in each source code file -->
-    <target name="update-source-headers" description="Update headers in source code files">
-        <echo message="Updating license headers"/>
+    <target name="update-source-headers" description="Update headers in source code">
+        <echo message="Updating source code headers"/>
 
         <!-- @version //autogen// -->
         <replaceregexp byline="true">
@@ -291,4 +311,16 @@
         </delete>
     </target>
 
+    <!-- Adds the trial license to the build -->
+    <target name="-trialfile">
+        <echo message="Adding trial file"/>
+        <!-- git clone repository -->
+        <exec executable="git" failonerror="true">
+            <arg value="clone"/>
+            <arg value="-q"/>
+            <arg value="${license.repository}"/>
+            <arg value="${build.dir}/licenses"/>
+        </exec>
+        <copy file="${build.dir}/licenses/${license.file}" tofile="${license.target}" overwrite="true" />
+    </target>
 </project>
