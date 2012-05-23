@@ -16,7 +16,6 @@ $(document).ready(function () {ldelim}
         errorMsg = "{'An error occured while loading the recommendations'|i18n( 'ezrecommendation/loading' )|wash( 'javascript' )}";
 
     {literal}
-    console.log(urlParts, urlParts.join('::'));
     $.ez(urlParts.join('::'), false, function (data) {
         $div.removeClass('reco-loading');
         if (data.error_text) {
