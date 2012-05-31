@@ -166,39 +166,37 @@ function get_node_informations( $object_param_arrays )
         $contentClass = eZContentObject::fetch( $object_id );
         $dataMap = $contentClass->attribute( 'data_map' );
 
-        $currency = $ezRecomappingArray['currency'];
-        $price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency'] );
-        $valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'], 'validfrom' );
-        $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'], 'validto' );
-
         if ( $solution == 'shop' )
         {
+            $currency = $ezRecomappingArray['currency'];
+            $price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency'] );
             if ( empty( $currency ) || empty( $price ) )
             {
-                $cli->output( 'Missing currency or price for node ' . $node_id . '(object Id ' . $object_id . ')' );
+                $cli->output( "Missing currency or price for node $node_id (object Id $object_id)" );
                 continue;
             }
-        } elseif ( $solution == 'publisher' )
+            $params_array['currency'] = $currency;
+            $params_array['price'] = $price;
+        }
+        elseif ( $solution == 'publisher' )
         {
+            $valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'], 'validfrom' );
+            $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'], 'validto' );
             if ( empty( $valid_to ) || empty( $valid_from ) )
             {
-                $cli->output( 'Missing valid_to or valid_from for node ' . $node_id . '(object Id ' . $object_id . ')' );
+                $cli->output( "Missing valid_to or valid_from for node $node_id (object Id $object_id)" );
                 continue;
             }
+            $params_array['valid_from'] = $valid_from;
+            $params_array['valid_to'] = $valid_to;
         }
 
-        $params_array['currency'] = $currency;
-        $params_array['price'] = $price;
-        $params_array['valid_from'] = $valid_from;
-        $params_array['valid_to'] = $valid_to;
 
         $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
         $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
-        $count_recoXmlContentSection = count( $recoXmlContentSection );
-        $count_recoXmlAttributesSection = count( $recoXmlAttributesSection );
-
+        ;
         $content_section = array();
-        for ( $i = 0; $i <= $count_recoXmlContentSection ; ++$i )
+        for ( $i = 0, $count = count( $recoXmlContentSection ); $i < $count ; ++$i )
         {
             $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
 
@@ -233,11 +231,11 @@ function get_node_informations( $object_param_arrays )
                 }
             }
         }
-        for ( $i = 0; $i <= $count_recoXmlAttributesSection ; ++$i )
+        for ( $i = 0, $count = count( $recoXmlAttributesSection ); $i < $count ; ++$i )
         {
             $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
             $key = $recoXmlAttributesSection[$i];
-            if ( array_key_exists( $key, $ezRecomappingArray ) and $ezRecomappingArray[$key] != '0' )
+            if ( array_key_exists( $key, $ezRecomappingArray ) && $ezRecomappingArray[$key] != '0' )
             {
                 if ( $dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword' )
                     $tagsObject = "tags";
@@ -260,9 +258,9 @@ function generate_xml( $object_param_arrays )
 {
     global $cli, $script, $db, $solution, $split, $path;
 
-    $cli->output( 'Collecting object informations...' );
+    $cli->output( 'Collecting object informations... ', false );
     $nodes_parameters = get_node_informations( $object_param_arrays );
-    $cli->output( 'Collecting object informations done.' );
+    $cli->output( 'done' );
     if ( $nodes_parameters )
     {
         $filesNumber = ceil( count( $nodes_parameters ) / $split ) ;
@@ -270,7 +268,7 @@ function generate_xml( $object_param_arrays )
         $xml_files = array();
         for( $i = 1 ; $i <= $filesNumber ; ++$i )
         {
-            $cli->output( 'Generating bulkexport_' . $i . '.xml...' );
+            $cli->output( 'Generating bulkexport_' . $i . '.xml... ', false );
             $doc = new DOMDocument( '1.0', 'utf-8' );
             $root = $doc->createElement( 'items' );
             $root->setAttribute( 'version', 1 );
@@ -278,7 +276,7 @@ function generate_xml( $object_param_arrays )
 
             for( $j = $fromEntry ; $j <= $toEntry ; ++$j )
             {
-                if ( $nodes_parameters[$j]['node_id'] == "" )
+                if ( !isset( $nodes_parameters[$j] ) || $nodes_parameters[$j]['node_id'] == "" )
                     break;
 
                 $elementType = $doc->createElement( 'item' );
@@ -354,15 +352,15 @@ function generate_xml( $object_param_arrays )
 
             $fromEntry = $toEntry + 1;
 
-            $cli->output( 'Generating bulkexport_' . $i . '.xml done.' );
-            $cli->output( 'Saving bulkexport_' . $i . '.xml...' );
+            $cli->output( 'done' );
+            $cli->output( 'Saving bulkexport_' . $i . '.xml...', false );
             $doc->appendChild( $root );
             $pushingItemDoc = $doc->saveXML();
             $filename = $path . 'bulkexport_' . $i . '.xml';
             $fh = fopen( $filename, 'w' );
             fwrite( $fh, $pushingItemDoc );
             fclose( $fh );
-            $cli->output( 'Saving bulkexport_' . $i . '.xml done.' );
+            $cli->output( 'done' );
 
             $xml_files [] .= 'bulkexport_' . $i . '.xml' ;
         }

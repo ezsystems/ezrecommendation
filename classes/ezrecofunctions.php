@@ -240,7 +240,8 @@ class ezRecoFunctions
     /*
      *
      */
-    public static function send_bulk_request($xml_url, $xml_path, $xml_file){
+    public static function send_bulk_request( $xml_url, $xml_path, $xml_file )
+    {
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
@@ -265,7 +266,7 @@ class ezRecoFunctions
                    "Host: $url\r\n" .
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $data, "Sending HTTP request to $url" );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', $xml_url, "Sending HTTP request to $url" );
             fwrite( $fp, $out );
             $header = $content = '';
             self::processHttpResponse( $fp, $header, $content );
@@ -356,9 +357,15 @@ class ezRecoFunctions
         }
 
         // Check content for Fault
-        if ( $content != '' )
+        if ( $content != '' && $content)
         {
             $result = json_decode( $content );
+
+            if ( !is_object( $result ) )
+            {
+                return;
+            }
+
             // since the Fault property name is unknown, we need to iterate over the object
             foreach( $result as $property => $value )
             {
