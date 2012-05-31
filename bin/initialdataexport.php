@@ -19,12 +19,12 @@ $script->initialize();
 $db = eZDB::instance();
 $ini = eZINI::instance( 'ezrecommendation.ini' );
 
-$options = $script->getOptions( "[split:][classgroup:]",
+$options = $script->getOptions(
+    "[split:][classgroup:]",
     "",
-    Array ( 'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
-        'classgroup' => 'Filter classes by group, default group is 1 (Content)'
-        )
-    );
+    array ( 'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
+            'classgroup' => 'Filter classes by group, default group is 1 (Content)' )
+);
 $split = $options[ 'split' ];
 if ( $split == "" )
 {
@@ -59,14 +59,14 @@ if ( empty( $url ) || empty( $path ) )
 // Check paths
 if ( substr( $url, - 1 ) == '/' || $path[0] == '/' )
 {
-    $cli->output( "SiteURL musst not end wit a '/' and BulkPath musst not beginn with '/'  in ezrecommendation.ini" );
+    $cli->output( "SiteURL must not end with a '/' and BulkPath must not begin with '/' in ezrecommendation.ini" );
     $script->shutdown( 1 );
 }
 
 $cli->output( 'Starting script.' );
 $class_group = '1'; //ezcontentclass_classgroup
 
-$class_rows = $db->arrayQuery( "SELECT `id`
+$classRows = $db->arrayQuery( "SELECT `id`
                                 FROM `ezcontentclass`
                                 LEFT JOIN `ezcontentclass_classgroup` ON ( `contentclass_id` = `id` )
                                 WHERE `id`
@@ -81,16 +81,16 @@ $class_rows = $db->arrayQuery( "SELECT `id`
                                 AND group_id  IN (" . $class_group . ")
                                 GROUP BY id "
     );
-$class_array = array();
+$classArray = array();
 
-foreach ( $class_rows as $class_row )
+foreach ( $classRows as $classRow )
 {
-    array_push( $class_array, $class_row['id'] );
+    array_push( $classArray, $classRow['id'] );
 }
 
 $object_param_array = array();
 $parent_tree = 2 ; //Home
-foreach ( $class_array as $class_id )
+foreach ( $classArray as $class_id )
 {
     $node_rows = $db->arrayQuery( "SELECT `node_id`,`contentobject_id`,`path_string` FROM `ezcontentobject_tree` where `contentobject_id` in (SELECT `id` FROM `ezcontentobject` where `contentclass_id` = $class_id) " );
 
@@ -133,19 +133,17 @@ function get_node_informations( $object_param_arrays )
         $path_string = $object_param['node_path'] ;
         $class_id = $object_param['class_id'] ;
 
-        $contentobject_version = $object_id_rows[0]['contentobject_version'];
-
         $params_array['node_id'] = $node_id ;
         $params_array['object_id'] = $object_id ;
         $params_array['path_string'] = $path_string ;
 
-        $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $class_id );
         // Get Datatype information from class definition
+        $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $class_id );
         $XmlDataText = $classIDArray['result']['recoXmlMap'];
-        $ycitemtypeid = $classIDArray['result']['recoItemType'];
+        $recoItemTypeId = $classIDArray['result']['recoItemType'];
 
         $params_array['class_id'] = $class_id;
-        $params_array['recoitemtype_id'] = $recoitemtypeid;
+        $params_array['recoitemtype_id'] = $recoItemTypeId;
 
         try
         {
@@ -157,7 +155,7 @@ function get_node_informations( $object_param_arrays )
         }
         catch ( Exception $e )
         {
-            eZLog::write( $e->getMessage(), 'error.log', 'var/log' );
+            eZDebug::writeError( $e->getMessage() );
             continue;
         }
 
@@ -374,5 +372,3 @@ function generate_xml( $object_param_arrays )
 }
 
 $script->shutdown();
-
-?>
