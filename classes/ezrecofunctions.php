@@ -96,6 +96,7 @@ class ezRecoFunctions
         {
             $out = "POST $path HTTP/1.0\r\n" .
                    "Host: $url\r\n" .
+                   "Content-Length: " . strlen( $data ) . "\r\n" .
                    self::getAuthorizationHeaderLine() . "\r\n\r\n";
 
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $out.$data, "Sending HTTP request to $url" );
