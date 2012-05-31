@@ -163,9 +163,7 @@ class eZRecoExportEventType extends eZWorkflowEventType
             //
             $recoXmlContentSection = array('title','abstract','tags');
             $recoXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
-            $count_recoXmlContentSection = count($recoXmlContentSection);
-            $count_recoXmlAttributesSection = count($recoXmlAttributesSection);
-            //
+
             //XML content
             if ($solution == 'shop'){
 
@@ -194,7 +192,7 @@ class eZRecoExportEventType extends eZWorkflowEventType
             $elementTypeContent->appendChild( $elementTypeCategoryChild);
             //
             $createContentParentNode = 0;
-            for ($i = 0; $i <= $count_recoXmlContentSection ; ++$i)
+            for ($i = 0, $recoXmlContentSectionCount = count( $recoXmlContentSection ); $i < $recoXmlContentSectionCount ; ++$i)
             {
 
                 //-content-
@@ -246,7 +244,7 @@ class eZRecoExportEventType extends eZWorkflowEventType
 
 
                 }
-                for ($i = 0; $i <= $count_recoXmlAttributesSection ; ++$i)
+                for ($i = 0, $recoXmlAttributesSectionCount = count( $recoXmlAttributesSection ); $i < $recoXmlAttributesSectionCount ; ++$i)
                 {
                     $key = $recoXmlAttributesSection[$i];
                     if (array_key_exists($key, $ezRecomappingArray) and $ezRecomappingArray[$key] != '0')

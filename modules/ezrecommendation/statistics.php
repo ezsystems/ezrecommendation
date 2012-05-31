@@ -11,7 +11,15 @@
 
 $tpl = eZTemplate::factory();
 
-$stats = ezRecoFunctions::get_stats_request();
+try
+{
+    $stats = ezRecoFunctions::get_stats_request();
+}
+catch ( Exception $e )
+{
+    $stats = false;
+    eZDebug::writeError( $e, "An exception occured" );
+}
 
 if ( $stats == false )
 {

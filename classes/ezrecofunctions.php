@@ -83,6 +83,7 @@ class ezRecoFunctions
     public static function sendExportContent( $data, $solution )
     {
         $ini = eZINI::instance('ezrecommendation.ini');
+        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
         $path = "/$mapSetting/$customerID/item";
