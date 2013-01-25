@@ -1,4 +1,5 @@
-{def $div_id = concat( 'ezrecommendation-recommendations', $node.node_id )}
+{def $scenario_name = cond( $scenario|eq( '' ), ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' ), $scenario )
+     $div_id = concat( 'ezrecommendation-recommendations', $node.node_id )}
 <script type="text/javascript">
 $(document).ready(function () {ldelim}
 
@@ -7,7 +8,7 @@ $(document).ready(function () {ldelim}
             'ezrecommendation',
             'getrecommendations',
             {$node.node_id},
-            '{cond( $scenario|eq( '' ), ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' ), $scenario )|wash( 'javascript' )}',
+            '{$scenario_name|wash( 'javascript' )}',
             {$numrecs|int},
             {cond( is_set( $category_based ), $category_based|int, 0 )},
             {cond( is_set( $track_rendered_items ), $track_rendered_items|int, 0 )},
