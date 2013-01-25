@@ -67,26 +67,26 @@ DefaultScenario=top_clicked
 
 #used by flow block to fill scenario selection box
 [BackendSettings]
-AvailableScenarios[top_clicked]=Top clicked
-AvailableScenarios[top_consumed]=Top consumed
-AvailableScenarios[also_clicked]=Also clicked
-AvailableScenarios[also_clicked_article]=Also clicked article
-AvailableScenarios[also_clicked_article_global]=Also clicked article global
-AvailableScenarios[also_clicked_image]=Also clicked image
-AvailableScenarios[also_clicked_product]=Also clicked product
-AvailableScenarios[also_consumed]=Also consumed
+AvailableScenarios[top_clicked]=Top clicked content
+AvailableScenarios[top_clicked_article]=Top clicked articles
+AvailableScenarios[also_clicked_article]=Also clicked articles
+AvailableScenarios[also_clicked_article_global]=Globally also clicked articles
+AvailableScenarios[also_clicked_image]=Also clicked images with articles
+AvailableScenarios[also_clicked_media]=Also clicked media with articles
+AvailableScenarios[also_clicked_ugc]=Also clicked user generated content with articles
+AvailableScenarios[top_consumed]=Top consumed content
+AvailableScenarios[top_consumed_article]=Top consumed articles
 AvailableScenarios[also_consumed_article]=Also consumed article
-AvailableScenarios[also_consumed_image]=Also consumed image
-AvailableScenarios[also_purchased_article]=Also purchased article
-AvailableScenarios[most_rated]=Most rated
-AvailableScenarios[top_clicked_article]=Top clicked article
-AvailableScenarios[top_clicked_image]=Top clicked image
-AvailableScenarios[top_clicked_product]=Top clicked product
-AvailableScenarios[top_consumed_article]=Top consumed article
-AvailableScenarios[top_consumed_image]=Top consumed image
-AvailableScenarios[top_purchased]=Top purchased
-AvailableScenarios[top_purchased_product]=Top purchased product
-AvailableScenarios[ultimately_bought]=Ultimately bought
+AvailableScenarios[also_consumed_article_global]=Globally also consumed article
+AvailableScenarios[also_consumed_image]=Also consumed images with articles
+AvailableScenarios[also_consumed_media]=Also consumed media with articles
+AvailableScenarios[also_consumed_ugc]=Also consumed user generated content with articles
+AvailableScenarios[personalized1]=Personalized articles
+AvailableScenarios[personalized1_image]=Personalized images with articles
+AvailableScenarios[personalized1_media]=Personalized media with articles
+AvailableScenarios[personalized1_ugc]=Personalized user generated content with articles
+AvailableScenarios[personalized2]=Peronalized articles by Stereotype Algorithm
+AvailableScenarios[top_rated]=Top rated
 DefaultItemLimit=3
 */
 ?>
