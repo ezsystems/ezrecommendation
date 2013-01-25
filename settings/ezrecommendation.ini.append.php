@@ -1,3 +1,4 @@
+<?php /* #?ini charset="utf8"?
 # Choose the ezrecommendation solution for your site between shop and publisher
 # Do not forget to clear template cache if you change the solution
 [SolutionSettings]
@@ -70,6 +71,7 @@ AvailableScenarios[top_clicked]=Top clicked
 AvailableScenarios[top_consumed]=Top consumed
 AvailableScenarios[also_clicked]=Also clicked
 AvailableScenarios[also_clicked_article]=Also clicked article
+AvailableScenarios[also_clicked_article_global]=Also clicked article global
 AvailableScenarios[also_clicked_image]=Also clicked image
 AvailableScenarios[also_clicked_product]=Also clicked product
 AvailableScenarios[also_consumed]=Also consumed
@@ -86,3 +88,5 @@ AvailableScenarios[top_purchased]=Top purchased
 AvailableScenarios[top_purchased_product]=Top purchased product
 AvailableScenarios[ultimately_bought]=Ultimately bought
 DefaultItemLimit=3
+*/
+?>

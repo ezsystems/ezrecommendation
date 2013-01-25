@@ -20,6 +20,7 @@ Selection[top_clicked]=Top clicked
 Selection[top_consumed]=Top consumed
 Selection[also_clicked]=Also clicked
 Selection[also_clicked_article]=Also clicked article
+Selection[also_clicked_article_global]=Also clicked article global
 Selection[also_clicked_image]=Also clicked image
 Selection[also_clicked_product]=Also clicked product
 Selection[also_consumed]=Also consumed
