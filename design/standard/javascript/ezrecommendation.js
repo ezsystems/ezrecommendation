@@ -25,7 +25,8 @@ ezrecoClass.prototype.get_ezreco_params = function() {
                     c1 = c.substring(pos+7);
                 ezrecoCookieAvailable = true;
             }
-
+			
+			// pseudonymous cookie
             var pos = c.indexOf("ezreco_usr=");
             if ( pos > -1 )    {
                 var pos2 = c.indexOf(";",pos+11);
@@ -42,16 +43,18 @@ ezrecoClass.prototype.get_ezreco_params = function() {
         }
 
         ezreco_params += "sid=" + encodeURIComponent(c1);
-
+		
         if(!usrCookieAvailable  &&  this.userId != 10){
-            var a = new Date(d.getTime() +1000*60*30);
+			// pseudonymous, logged in user cookie
+            var a = new Date(d.getTime() + 1000*3600*24*30);
             document.cookie = 'ezreco_usr=' + this.userId + '; expires=' + a.toGMTString() + '; path=/;';
             ezreco_params += "&map=1";
         }else if (this.userId != 10){
             ezreco_params += "&map=1";
         }
-
-        var a = new Date(d.getTime() +1000*60*30);
+		
+		// anonymous cookie time
+        var a = new Date(d.getTime() + 1000*3600*24*30);
         document.cookie = 'ezreco=' + c1 + '; expires=' + a.toGMTString() + '; path=/;';
 
 
