@@ -5,14 +5,15 @@ eZ Recommendation Service
 Description
 -----------
 The eZ Recommendation Service provided by YOOCHOOSE represents your first
-opportunity to customize your online portal individually for
+opportunity to customize and personalize your online portal individually for
 each end user. News, images, videos and events are recommended in
 real time depending on the users' consumption behaviour and the content.
+
 
 Requirements
 ------------
 
-- eZ Publish version 4.5 or newer
+- eZ Publish version 4.6 or newer
 - The PECL HTTP extension: http://fr.php.net/http
 
 License
