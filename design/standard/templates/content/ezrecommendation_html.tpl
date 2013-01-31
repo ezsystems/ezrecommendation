@@ -5,7 +5,8 @@
    object (full view).*}
 
 {def $request_url = 'ezreco.gif'|ezimage('no')
-     $user_id=fetch( 'user', 'current_user' ).contentobject_id}
+     $user_id=fetch( 'user', 'current_user' ).contentobject_id
+     $parameters=array()}
 {if and( is_set( $content.content_info.object_id), $track )}
     {def $obj=fetch( 'content', 'object', hash( 'object_id', $content.content_info.object_id ) )}
 
@@ -15,12 +16,11 @@
             {def $data_array=fetch( 'ezrecommendation', 'recommendation_enable', hash( 'xmlDataText', $attribute.data_text ) )}
             {if eq( $data_array, 1 )}
 
-                {set $request_url=generate_html( $content, 'click' )}
+                {set $parameters = generate_html( $content, 'click' )}
 
-                {if eq( $request_url, false() )}
-                    {set $request_url='ezreco.gif'|ezimage( 'no' )}
-                {else}
-                    {set $request_url=$request_url|ezurl( 'no', 'full' )}
+                {if ne( $parameters, false() )}
+                    {set $request_url = '/ezrecommendation/request'|ezurl( 'no', 'full' )}
+                    {set $request_url = concat( $request_url, $parameters )}
                 {/if}
 
                 {break}
