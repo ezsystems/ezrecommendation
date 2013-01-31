@@ -1,4 +1,3 @@
-
 eZrecommendation extension installation documentation
 
 # Requirements
@@ -25,7 +24,10 @@ eZrecommendation extension installation documentation
 5. Clear cache
    Clear INI and template caches. (from admin 'Setup' tab or commandline)
 
-
+*IMPORTANT NOTICE*
+The extension contains an override pagelayout template for the ezdemo and ezwebin design to ease the activation and configuration process.
+The included pagelayout contains the tracking event of clicks which must be available. If you use a custom pagelayout.tpl integrate this tracking event in your custom template.
+You will find the required template code in the user handbook.
 
 # INTEGRATION OF THE PIXEL
 
