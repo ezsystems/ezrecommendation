@@ -41,7 +41,7 @@ class eZRecommendationFunctionCollection
 
         $recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
 
-        return $recommendationValue;
+        return  array( 'result' => $recommendationValue );
 
     }
 
