@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{$site.http_equiv.Content-language|wash}" lang="{$site.http_equiv.Content-language|wash}">
+<!DOCTYPE html>
+<html lang="{$site.http_equiv.Content-language|wash}">
 <head>
 {def $basket_is_empty   = cond( $current_user.is_logged_in, fetch( shop, basket ).is_empty, 1 )
      $user_hash         = concat( $current_user.role_id_list|implode( ',' ), ',', $current_user.limited_assignment_value_list|implode( ',' ) )}
@@ -77,18 +77,18 @@
 {/cache-block}
 
     <!-- Tracking code: START -->
-    {oscgeneratebymoduleresult( $module_result, array() )}
+    {* enable odoscope tracking of click events in pagelayout.tpl *}
+    {*oscgeneratebymoduleresult( $module_result, array() )*}
     <!-- Tracking code: END -->
 
     <!-- Recommendation code: START -->
-    {* enable tracking of click events in pagelayout.tpl *}
+    {* enable recommendation tracking of click events in pagelayout.tpl *}
     {include uri='design:content/ezrecommendation_html.tpl' content=$module_result track=true()}
     <!-- Recommendation code: END -->
 
     <!-- Main area: START -->
     {include uri='design:page_mainarea.tpl'}
     <!-- Main area: END -->
-{*cache-block subdir=my_footer keys=array( $module_result.uri, $user_hash, $access_type.name, $extra_cache_key )*}
 {cache-block keys=array( $module_result.uri, $user_hash, $access_type.name, $extra_cache_key )}
 
     {if is_unset($pagedesign)}
