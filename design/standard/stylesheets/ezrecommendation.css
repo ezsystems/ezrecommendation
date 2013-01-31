@@ -20,13 +20,16 @@ div.ultimately_bought
     margin-bottom: 1em;
 
 }
-
-div.top_clicked
+/*
+div.top_clicked,
+div.top_clicked_article
 {
     border: 1px solid red;
 }
 
-div.also_clicked
+
+div.also_clicked,
+div.also_clicked_article_global
 {
     border: 1px solid lime;
 }
@@ -50,6 +53,7 @@ div.ultimately_bought
 {
     border: 1px solid #660066;
 }
+*/
 
 /*
 .relatedContents.flyout.active
