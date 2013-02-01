@@ -161,4 +161,4 @@ var ezreco = new ezrecoClass();
          ezreco.consevt(e.innerHTML, timeelapsed);
      }
 
- }
+ };
