@@ -37,39 +37,34 @@ class eZRecoDataTypeContent
 
             case 'ezkeyword':
 
-                if ($key == "tags"){
-
+                if ( $key == "tags" )
+                {
                     //dataMap don t contain the tags as KeywordArray
                     //used from Bulk Interface
                     // also Using current language
                     $db = eZDB::instance();
                     $query  = "select keyword from ezkeyword
-
                             left join ezkeyword_attribute_link ON (ezkeyword_attribute_link.objectattribute_id = ".$dataMap[$attributeIdentifier]->ID.")
                             where
                             ezkeyword_attribute_link.keyword_id = ezkeyword.id and
                             class_id = ".$classID."
                             Group By ezkeyword.id";
 
-                    $rows = $db -> arrayQuery( $query );
-                    $rowCount = count($rows);
-                    for ($i = 0 ; $i <= $rowCount ; ++$i)
+                    $keywordsArray = array();
+                    foreach( $db->arrayQuery( $query ) as $row )
                     {
-                        $arr[] = $rows[$i]['keyword'];
+                        $keywordsArray[] = $row['keyword'];
                     }
-                    $keywords = implode (',', $arr);
+                    $keywords = implode( ',', $keywordsArray );
 
-                    return substr($keywords,0,-1);
-
-
-                }else{
+                    return substr( $keywords, 0, -1 );
+                }
+                else
+                {
                     //dataMap contain the tags as KeywordArray
                     //used by one content export
-
-                    $ContentArray = $dataMap[$attributeIdentifier]->Content ;
-
-                    $keywords = implode (',', $ContentArray->KeywordArray);
-
+                    $ContentArray = $dataMap[$attributeIdentifier]->Content;
+                    $keywords = implode( ',', $ContentArray->KeywordArray );
                     return $keywords;
                 }
 
