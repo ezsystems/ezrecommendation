@@ -36,13 +36,10 @@ class eZRecommendationFunctionCollection
         return array( 'result' => $contentClassAttributeList );
     }
 
-    function getRecommendationValue($data)
+    public function getRecommendationValue( $data )
     {
-
-        $recommendationValue = ezRecommendationXml::getNodeAttributeValue($data, 'recommendation-enable');
-
-        return $recommendationValue;
-
+        $recommendationValue = ezRecommendationXml::getNodeAttributeValue( $data, 'recommendation-enable' );
+        return array( 'result' => $recommendationValue );
     }
 
     function getCurrencyValues(){
