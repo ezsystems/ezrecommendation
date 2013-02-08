@@ -1,0 +1,9 @@
+Exception: STATUS_IN_PAGE_ERROR at eip=6FDFC2A0
+eax=00000033 ebx=0028A4D0 ecx=0000000D edx=0028A4EC esi=FFAD0000 edi=0028A4F9
+ebp=004D3540 esp=0028A460 program=C:\cygwin\bin\git.exe, pid 9540, thread main
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+004D3540  6FDFC2A0  (00000443, 43C70000, 00000008, 0C43C700)
+  11813 [main] git 9540 exception::handle: Exception: STATUS_ACCESS_VIOLATION
+  12655 [main] git 9540 exception::handle: Error while dumping state (probably corrupted stack)

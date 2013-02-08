@@ -1,14 +1,14 @@
 #!/usr/bin/env php
 <?php
 /**
-*
-* @copyright //autogen//
-* @license //autogen//
-* @version //autogen//
-* @package ezrecommendation
-*/
+ *
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezrecommendation
+ */
 require 'autoload.php';
-require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.php' ;
+require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.php';
 
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
@@ -22,13 +22,15 @@ $ini = eZINI::instance( 'ezrecommendation.ini' );
 $options = $script->getOptions(
     "[split:][classgroup:][parent_tree:][limit:][global_offset:]",
     "",
-    array ( 'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
-            'classgroup' => 'Filter classes by group, default group is 1 (Content)',
-            'parent_tree' => 'Subtree parent node ID. Default is 2.',
-            'limit' => 'Amount of items to fetch in each iteration. Default is 1000.',
-            'global_offset' => 'Initial offset for query. Used only in special cases where memory is a problem.' )
+    array(
+        'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
+        'classgroup' => 'Filter classes by group, default group is 1 (Content)',
+        'parent_tree' => 'Subtree parent node ID. Default is 2.',
+        'limit' => 'Amount of items to fetch in each iteration. Default is 1000.',
+        'global_offset' => 'Initial offset for query. Used only in special cases where memory is a problem.'
+    )
 );
-$split = $options[ 'split' ];
+$split = $options['split'];
 if ( $split == "" )
 {
     // default initial XML export split value
@@ -52,15 +54,15 @@ if ( empty( $solution ) )
     $script->shutdown( 1 );
 }
 
-$parent_tree = $options[ 'parent_tree' ];
+$parent_tree = $options['parent_tree'];
 if ( !$parent_tree )
     $parent_tree = 2; //Home
 
-$limit = $options[ 'limit' ];
+$limit = $options['limit'];
 if ( !$limit )
     $limit = 1000;
 
-$global_offset = $options[ 'global_offset' ];
+$global_offset = $options['global_offset'];
 
 $url = $ini->variable( 'BulkExportSettings', 'SiteURL' );
 $path = $ini->variable( 'BulkExportSettings', 'BulkPath' );
@@ -70,7 +72,7 @@ if ( empty( $url ) || empty( $path ) )
     $script->shutdown( 1 );
 }
 // Check paths
-if ( substr( $url, - 1 ) == '/' || $path[0] == '/' )
+if ( substr( $url, -1 ) == '/' || $path[0] == '/' )
 {
     $cli->output( "SiteURL must not end with a '/' and BulkPath must not begin with '/' in ezrecommendation.ini" );
     $script->shutdown( 1 );
@@ -93,7 +95,7 @@ $classRows = $db->arrayQuery( "SELECT `id`
                                 )
                                 AND group_id  IN (" . $class_group . ")
                                 GROUP BY id "
-    );
+);
 $classArray = array();
 
 foreach ( $classRows as $classRow )
@@ -108,7 +110,7 @@ foreach ( $classArray as $class_id )
     $rows_count = $db->arrayQuery( "SELECT COUNT(*) AS count FROM `ezcontentobject_tree` where `contentobject_id` in (SELECT `id` FROM `ezcontentobject` where `contentclass_id` = $class_id) " );
     $numRows = $rows_count[0]['count'];
     $cli->output( "Total count for class_id ($class_id): $numRows" );
-    while ($numRows > $offset)
+    while ( $numRows > $offset )
     {
         $node_rows = $db->arrayQuery( "SELECT `node_id`,`contentobject_id`,`path_string` FROM `ezcontentobject_tree` where `contentobject_id` in (SELECT `id` FROM `ezcontentobject` where `contentclass_id` = $class_id) ", array( 'offset' => $offset, 'limit' => $limit ) );
         foreach ( $node_rows as $node_id )
@@ -120,13 +122,12 @@ foreach ( $classArray as $class_id )
                         "object_id" => $node_id['contentobject_id'],
                         "node_path" => '/' . $path_string,
                         "class_id" => $class_id
-                        )
+                    )
                 );
         }
         //$cli->output( "Offset: " . $offset . " Count: " . count( $object_param_array ) );
         $offset += $limit;
-    }
-}
+    }}
 
 $exportFiles = generate_xml( $object_param_array );
 foreach ( $exportFiles as $xmlFiles )
@@ -157,8 +158,8 @@ function get_node_informations( $object_param_arrays )
     foreach ( $object_param_arrays_offset as $key => $object_param_arrays_part )
     {
         $index = $key + 1;
-        $cli->output( 'Processing part '. $index .' of ' . count( $object_param_arrays_offset ) . '. ', false );
-        $cli->output( 'Current memory usage: '. convertMemory( memory_get_usage( true ) ) );
+        $cli->output( 'Processing part ' . $index . ' of ' . count( $object_param_arrays_offset ) . '. ', false );
+        $cli->output( 'Current memory usage: ' . convertMemory( memory_get_usage( true ) ) );
 
         foreach ( $object_param_arrays_part as $object_param )
         {
@@ -185,8 +186,7 @@ function get_node_informations( $object_param_arrays )
                     throw new Exception( '[ezrecommendation] Recommendation XML mapping was not found for ezpublish class ID : ' . $class_id );
                 else
                     $ezRecomappingArray = ezRecommendationXml::ezRecommendationArrContent( $XmlDataText );
-            }
-            catch ( Exception $e )
+            } catch ( Exception $e )
             {
                 eZDebug::writeError( $e->getMessage() );
                 continue;
@@ -202,7 +202,7 @@ function get_node_informations( $object_param_arrays )
             if ( $solution == 'shop' )
             {
                 $currency = $ezRecomappingArray['currency'];
-                $price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['price'], $ezRecomappingArray['currency'] );
+                $price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['price'], $ezRecomappingArray['currency'] );
                 if ( empty( $currency ) || empty( $price ) )
                 {
                     $cli->output( "Missing currency or price for node $node_id (object Id $object_id)" );
@@ -213,8 +213,8 @@ function get_node_informations( $object_param_arrays )
             }
             elseif ( $solution == 'publisher' )
             {
-                $valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validfrom'], 'validfrom' );
-                $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['validto'], 'validto' );
+                $valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validfrom'], 'validfrom' );
+                $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validto'], 'validto' );
                 if ( empty( $valid_to ) || empty( $valid_from ) )
                 {
                     $cli->output( "Missing valid_to or valid_from for node $node_id (object Id $object_id)" );
@@ -229,7 +229,7 @@ function get_node_informations( $object_param_arrays )
             $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
             ;
             $content_section = array();
-            for ( $i = 0, $count = count( $recoXmlContentSection ); $i < $count ; ++$i )
+            for ( $i = 0, $count = count( $recoXmlContentSection ); $i < $count; ++$i )
             {
                 $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
 
@@ -240,10 +240,10 @@ function get_node_informations( $object_param_arrays )
                 {
                     $dataMapKey = $ezRecomappingArray[$key];
 
-                    if ( $dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword' )
+                    if ( $dataMap[$dataMapKey]->DataTypeString == 'ezkeyword' )
                         $tagsObject = "tags";
 
-                    $content_section[] = array( $key => htmlentities( eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject ) ) );
+                    $content_section[] = array( $key => htmlentities( eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray[$key], $tagsObject ) ) );
                 }
             }
 
@@ -253,26 +253,26 @@ function get_node_informations( $object_param_arrays )
             if ( isset( $ezRecomappingArray['counter'] ) )
             {
                 $addedOptAttributes = $ezRecomappingArray['counter'];
-                for ( $i = 1; $i < $addedOptAttributes ; ++$i )
+                for ( $i = 1; $i < $addedOptAttributes; ++$i )
                 {
                     $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
                     if ( isset( $ezRecomappingArray['addtomap' . $i] ) )
                     {
-                        if ( $dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword' )
+                        if ( $dataMap[$dataMapKey]->DataTypeString == 'ezkeyword' )
                             $tagsObject = "tags";
-                        $attributes_section[] = array( $ezRecomappingArray['addtomap' . $i] => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray['addtomap' . $i], $tagsObject ) );
+                        $attributes_section[] = array( $ezRecomappingArray['addtomap' . $i] => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['addtomap' . $i], $tagsObject ) );
                     }
                 }
             }
-            for ( $i = 0, $count = count( $recoXmlAttributesSection ); $i < $count ; ++$i )
+            for ( $i = 0, $count = count( $recoXmlAttributesSection ); $i < $count; ++$i )
             {
                 $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
                 $key = $recoXmlAttributesSection[$i];
                 if ( array_key_exists( $key, $ezRecomappingArray ) && $ezRecomappingArray[$key] != '0' )
                 {
-                    if ( $dataMap[$dataMapKey ]->DataTypeString == 'ezkeyword' )
+                    if ( $dataMap[$dataMapKey]->DataTypeString == 'ezkeyword' )
                         $tagsObject = "tags";
-                    array_push( $attributes_section, array( $key => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap , $ezRecomappingArray[$key], $tagsObject ) ) );
+                    array_push( $attributes_section, array( $key => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray[$key], $tagsObject ) ) );
                 }
             }
 
@@ -282,6 +282,7 @@ function get_node_informations( $object_param_arrays )
             $counter++;
         }
     }
+
     return $all_params_array;
 }
 
@@ -293,24 +294,24 @@ function generate_xml( $object_param_arrays )
     global $cli, $script, $db, $solution, $split, $path;
 
     $cli->output( 'Collecting object informations... ' );
-    $cli->output( 'Current memory usage: '. convertMemory( memory_get_usage( true ) ) );
+    $cli->output( 'Current memory usage: ' . convertMemory( memory_get_usage( true ) ) );
 
     $nodes_parameters = get_node_informations( $object_param_arrays );
     $cli->output( 'done' );
     if ( $nodes_parameters )
     {
-        $filesNumber = ceil( count( $nodes_parameters ) / $split ) ;
-        $fromEntry = 0 ;
+        $filesNumber = ceil( count( $nodes_parameters ) / $split );
+        $fromEntry = 0;
         $xml_files = array();
-        for( $i = 1 ; $i <= $filesNumber ; ++$i )
+        for ( $i = 1; $i <= $filesNumber; ++$i )
         {
             $cli->output( 'Generating bulkexport_' . $i . '.xml... ', false );
             $doc = new DOMDocument( '1.0', 'utf-8' );
             $root = $doc->createElement( 'items' );
             $root->setAttribute( 'version', 1 );
-            $toEntry = ( $i * $split ) - 1 ;
+            $toEntry = ( $i * $split ) - 1;
 
-            for( $j = $fromEntry ; $j <= $toEntry ; ++$j )
+            for ( $j = $fromEntry; $j <= $toEntry; ++$j )
             {
                 if ( !isset( $nodes_parameters[$j] ) || $nodes_parameters[$j]['node_id'] == "" )
                     break;
@@ -362,9 +363,9 @@ function generate_xml( $object_param_arrays )
                         $elementTypeContentChild = $doc->createElement( 'content-data' );
                         $elementTypeContentChild->setAttribute( 'key', key( $contentvalue ) );
                         $elementTypeContentChild->appendChild( $doc->createCDATASection(
-                                utf8_encode(current( $contentvalue ))
-                                )
-                            );
+                                utf8_encode( current( $contentvalue ) )
+                            )
+                        );
                         $elementTypeContent->appendChild( $elementTypeContentChild );
                     }
                 }
@@ -402,7 +403,7 @@ function generate_xml( $object_param_arrays )
 
             $cli->output( 'done' );
 
-            $xml_files [] .= 'bulkexport_' . $i . '.xml' ;
+            $xml_files [] .= 'bulkexport_' . $i . '.xml';
         }
     }
 
@@ -411,8 +412,9 @@ function generate_xml( $object_param_arrays )
 
 function convertMemory( $size )
 {
-    $unit=array( 'b', 'kb', 'mb', 'gb', 'tb', 'pb' );
-    return @round( $size / pow( 1024, ( $i = floor( log( $size,1024 ) ) ) ), 2 ).' '.$unit[$i];
+    $unit = array( 'b', 'kb', 'mb', 'gb', 'tb', 'pb' );
+
+    return @round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
 }
 
 
