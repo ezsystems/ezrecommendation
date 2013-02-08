@@ -141,20 +141,12 @@ class eZRecoDataTypeContent
 
             break;
             case 'ezauthor':
-
-                $doc = ezRecommendationXml::parseXML( $dataMap[$attributeIdentifier]->DataText );
-                $root = $doc->documentElement;
-
-                $nodes = $root->getElementsByTagName( 'author' );
-                $nodeListLength = $nodes->length; // this value will also change
-                for ($i = 0; $i < $nodeListLength; $i ++)
+                $authorsArray = array();
+                foreach( $dataMap[$attributeIdentifier]->attribute( 'content' )->attribute( 'author_list' ) as $author )
                 {
-                    if ( $nodes )
-                    {
-                        $content[] = $nodes->item($i)->getAttribute( 'name' );
-                    }
+                    $authorsArray[] = $author['name'];
                 }
-                return implode(",", $content);
+                return implode( ",", $authorsArray );
 
             break;
 
