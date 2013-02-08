@@ -14,7 +14,6 @@ class eZRecoDataTypeContent
 
     static function checkDatatypeString ($classID, $dataMap , $attributeIdentifier, $key = NULL)
     {
-
         switch ($dataMap[$attributeIdentifier]->DataTypeString)
         {
 
@@ -33,10 +32,8 @@ class eZRecoDataTypeContent
                 //$outputHandler = new eZXHTMLXMLOutput( $XMLContent, false, $contentObjectAttribute );
                 //$htmlContent =& $outputHandler->outputText();
                 //return $htmlContent;
-            break;
 
             case 'ezkeyword':
-
                 if ( $key == "tags" )
                 {
                     //dataMap don t contain the tags as KeywordArray
@@ -68,54 +65,35 @@ class eZRecoDataTypeContent
                     return $keywords;
                 }
 
-            break;
-
             case 'ezdatetime':
             case 'ezdate':
-                $type = $key ;
-
-
-                $unixDate = $dataMap[$attributeIdentifier]->DataInt ;
-                if($unixDate == 0){
-                    switch ($key){
+                $unixDate = $dataMap[$attributeIdentifier]->DataInt;
+                if ( $unixDate == 0 )
+                {
+                    switch ($key)
+                    {
                         case 'validfrom';
+                            $db = eZDB::instance();
+                            $query  = "select published from  ezcontentobject where id = ".$dataMap[$attributeIdentifier]->ContentObjectID ." and current_version = ". $dataMap[$attributeIdentifier]->Version   ;
+                            $rows = $db->arrayQuery( $query );
+                            $unixDate = $rows[0]['published'];
+                            return date( "Y-m-d", $unixDate ) . 'T' . date( "H:i:s", $unixDate );
 
-                                $db = eZDB::instance();
-                                $query  = "select published from  ezcontentobject where id = ".$dataMap[$attributeIdentifier]->ContentObjectID ." and current_version = ". $dataMap[$attributeIdentifier]->Version   ;
-                                $rows = $db -> arrayQuery( $query );
-                                $unixDate = $rows[0]['published'];
-
-                                return date("Y-m-d", $unixDate) . 'T' . date("H:i:s", $unixDate);
-
-
-                        break;
                         case 'validto';
                             $unixDate = '2147483647' ;
-
                             return date("Y-m-d", $unixDate) . 'T' . date("H:i:s", $unixDate);
 
-                        break;
                         default:
                             return 0;
-                        break;
-
                     }
                 }
-
-
-
                 return date("Y-m-d", $unixDate) . 'T' . date("H:i:s", $unixDate);
 
             break;
             case 'ezprice':
-                //Simple Price
-                 return $dataMap[$attributeIdentifier]->SortKeyInt;
-
-            break;
+                return $dataMap[$attributeIdentifier]->SortKeyInt;
 
             case 'ezmultiprice':
-                //Multiple Price
-
                 $datatypeCurrencySetting = $key;
                 $contentObjectAttrVersion = $dataMap[$attributeIdentifier]->Version;
                 $contentObjectAttrID = $dataMap[$attributeIdentifier]->ID;
@@ -124,22 +102,15 @@ class eZRecoDataTypeContent
                 $query  = "    SELECT value FROM ezmultipricedata
                             WHERE contentobject_attr_id = ".$contentObjectAttrID." AND contentobject_attr_version = ".$contentObjectAttrVersion." AND currency_code = '".$datatypeCurrencySetting."'";
 
-
                 $rows = $db -> arrayQuery( $query );
-                 return $rows[0]['value'] * 100;
+                return $rows[0]['value'] * 100;
 
-
-            break;
             case 'ezimage':
+                return null;
 
-                 return null;
-
-            break;
             case 'ezboolean':
+                return $dataMap[$attributeIdentifier]->DataInt;
 
-                 return $dataMap[$attributeIdentifier]->DataInt;
-
-            break;
             case 'ezauthor':
                 $authorsArray = array();
                 foreach( $dataMap[$attributeIdentifier]->attribute( 'content' )->attribute( 'author_list' ) as $author )
@@ -148,13 +119,9 @@ class eZRecoDataTypeContent
                 }
                 return implode( ",", $authorsArray );
 
-            break;
-
             default:
                 return $dataMap[$attributeIdentifier]->DataText;
-            break;
         }
-
     }
 
 }

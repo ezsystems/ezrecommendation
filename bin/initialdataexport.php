@@ -97,11 +97,11 @@ $classRows = $db->arrayQuery( "SELECT `id`
                                 GROUP BY id "
 );
 $classArray = array();
-
 foreach ( $classRows as $classRow )
 {
-    array_push( $classArray, $classRow['id'] );
+    $classArray[] = $classRow['id'];
 }
+unset( $classRows );
 
 $object_param_array = array();
 $offset = 0;
@@ -127,15 +127,28 @@ foreach ( $classArray as $class_id )
         }
         //$cli->output( "Offset: " . $offset . " Count: " . count( $object_param_array ) );
         $offset += $limit;
-    }}
+    }
+    unset( $path_string, $arr_path_string, $class_id, $classArray, $node_rows );
+}
 
 $exportFiles = generate_xml( $object_param_array );
+unset( $object_param_array );
+
 foreach ( $exportFiles as $xmlFiles )
 {
-    ezRecoFunctions::send_bulk_request( $url, $path, $xmlFiles );
+    try
+    {
+        ezRecoFunctions::send_bulk_request( $url, $path, $xmlFiles );
+    }
+    catch( Exception $e )
+    {
+        echo $e->getMessage() . "\n";
+    }
 }
 
 $cli->output( 'Script finished succesfully.' );
+
+$script->shutdown();
 
 /*
  *
@@ -144,15 +157,17 @@ function get_node_informations( $object_param_arrays )
 {
     global $cli, $script, $db, $solution, $limit, $global_offset;
 
+    $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
+    $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
+
     $params_array = array();
     $counter = 0;
-    $offset = 0;
 
     // use only a portion of the total object set to avoid memory errors (only used in special cases );
     if ( $global_offset )
         $object_param_arrays = array_slice( $object_param_arrays, $global_offset );
 
-    //split the array in several smaller chunks
+    // split the array in several smaller chunks
     $object_param_arrays_offset = array_chunk( $object_param_arrays, $limit );
 
     foreach ( $object_param_arrays_offset as $key => $object_param_arrays_part )
@@ -160,7 +175,7 @@ function get_node_informations( $object_param_arrays )
         $index = $key + 1;
         $cli->output( 'Processing part ' . $index . ' of ' . count( $object_param_arrays_offset ) . '. ', false );
         $cli->output( 'Current memory usage: ' . convertMemory( memory_get_usage( true ) ) );
-
+        
         foreach ( $object_param_arrays_part as $object_param )
         {
             $object_id = $object_param['object_id'];
@@ -174,6 +189,7 @@ function get_node_informations( $object_param_arrays )
 
             // Get Datatype information from class definition
             $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $class_id );
+
             $XmlDataText = $classIDArray['result']['recoXmlMap'];
             $recoItemTypeId = $classIDArray['result']['recoItemType'];
 
@@ -195,9 +211,8 @@ function get_node_informations( $object_param_arrays )
             if ( $ezRecomappingArray['export-enable'] == 0 )
                 continue;
 
-            $data_map = null;
-            $contentClass = eZContentObject::fetch( $object_id );
-            $dataMap = $contentClass->attribute( 'data_map' );
+            $dataMap = eZContentObject::fetch( $object_id )->attribute( 'data_map' );
+            eZContentObject::clearCache( array( $object_id ) );
 
             if ( $solution == 'shop' )
             {
@@ -210,6 +225,7 @@ function get_node_informations( $object_param_arrays )
                 }
                 $params_array['currency'] = $currency;
                 $params_array['price'] = $price;
+                unset( $price, $currency );
             }
             elseif ( $solution == 'publisher' )
             {
@@ -222,24 +238,17 @@ function get_node_informations( $object_param_arrays )
                 }
                 $params_array['valid_from'] = $valid_from;
                 $params_array['valid_to'] = $valid_to;
+                unset( $valid_from, $valid_to );
             }
 
 
-            $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
-            $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
-            ;
             $content_section = array();
-            for ( $i = 0, $count = count( $recoXmlContentSection ); $i < $count; ++$i )
+            foreach( $recoXmlContentSection as $key )
             {
                 $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
-
-                // -Get content data
-                $key = $recoXmlContentSection[$i];
-
                 if ( array_key_exists( $key, $ezRecomappingArray ) and $ezRecomappingArray[$key] != '0' )
                 {
                     $dataMapKey = $ezRecomappingArray[$key];
-
                     if ( $dataMap[$dataMapKey]->DataTypeString == 'ezkeyword' )
                         $tagsObject = "tags";
 
@@ -248,12 +257,12 @@ function get_node_informations( $object_param_arrays )
             }
 
             $params_array['content'] = $content_section;
+
             // attributes
             $attributes_section = array();
             if ( isset( $ezRecomappingArray['counter'] ) )
             {
-                $addedOptAttributes = $ezRecomappingArray['counter'];
-                for ( $i = 1; $i < $addedOptAttributes; ++$i )
+                for ( $i = 1; $i < $ezRecomappingArray['counter']; ++$i )
                 {
                     $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
                     if ( isset( $ezRecomappingArray['addtomap' . $i] ) )
@@ -264,21 +273,23 @@ function get_node_informations( $object_param_arrays )
                     }
                 }
             }
-            for ( $i = 0, $count = count( $recoXmlAttributesSection ); $i < $count; ++$i )
+
+            foreach ( $recoXmlAttributesSection as $key )
             {
                 $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
-                $key = $recoXmlAttributesSection[$i];
-                if ( array_key_exists( $key, $ezRecomappingArray ) && $ezRecomappingArray[$key] != '0' )
+                if ( isset( $ezRecomappingArray[$key] ) && $ezRecomappingArray[$key] != '0' )
                 {
                     if ( $dataMap[$dataMapKey]->DataTypeString == 'ezkeyword' )
                         $tagsObject = "tags";
                     array_push( $attributes_section, array( $key => eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray[$key], $tagsObject ) ) );
                 }
             }
+            unset( $key );
 
             $params_array['attribute'] = $attributes_section;
 
             $all_params_array[$counter] = $params_array;
+            unset( $params_array );
             $counter++;
         }
     }
@@ -297,6 +308,7 @@ function generate_xml( $object_param_arrays )
     $cli->output( 'Current memory usage: ' . convertMemory( memory_get_usage( true ) ) );
 
     $nodes_parameters = get_node_informations( $object_param_arrays );
+
     $cli->output( 'done' );
     if ( $nodes_parameters )
     {
@@ -414,8 +426,5 @@ function convertMemory( $size )
 {
     $unit = array( 'b', 'kb', 'mb', 'gb', 'tb', 'pb' );
 
-    return @round( $size / pow( 1024, ( $i = floor( log( $size, 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
+    return @round( $size / pow( 1024, ( $i = floor( log( abs($size), 1024 ) ) ) ), 2 ) . ' ' . $unit[$i];
 }
-
-
-$script->shutdown();

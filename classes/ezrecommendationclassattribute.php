@@ -9,46 +9,54 @@
 
 class ezRecommendationClassAttribute
 {
+    private static $classAttributeList = array();
+
     function ezRecommendationClassAttribute()
     {
     }
 
-     static function  fetchClassAttributeList( $classID )
+    static function  fetchClassAttributeList( $classID )
     {
-
-        $contentClassAttributeList = array();
-        $result = array();
-        $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_MODIFIED );
-        if ( !is_object( $contentClass ) )
-            $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_TEMPORARY );
-        if ( !is_object( $contentClass ) )
-            $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_DEFINED );
-
-        if ( is_object( $contentClass ) )
+        if ( !isset( self::$classAttributeList[$classID] ) )
         {
-            $contentClassAttributeList = $contentClass->fetchAttributes();
+            $result = array();
+            $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_MODIFIED );
+            if ( !is_object( $contentClass ) )
+                $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_TEMPORARY );
+            if ( !is_object( $contentClass ) )
+                $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_DEFINED );
 
-
-            foreach ($contentClassAttributeList as $thisAttribute)
+            if ( is_object( $contentClass ) )
             {
-
-                if ( $thisAttribute->DataTypeString == 'ezrecommendation' )
+                $contentClassAttributeList = $contentClass->fetchAttributes( false, false );
+                foreach ( $contentClassAttributeList as $thisAttribute )
                 {
-                        $result['recoItemType']=  $thisAttribute->DataInt1 ;
-                        $result['recoRecommend']=  $thisAttribute->DataInt2 ;
-                        $result['recoExport']=  $thisAttribute->DataInt3 ;
-                        $result['recoTimeTrigger']=  $thisAttribute->DataInt4 ;
-                        $result['recoXmlMap']=  $thisAttribute->DataText5 ;
+                    if ( $thisAttribute['data_type_string'] == 'ezrecommendation' )
+                    {
+                        self::$classAttributeList[$classID] = array(
+                            'recoItemType' => $thisAttribute['data_int1'],
+                            'recoRecommend' => $thisAttribute['data_int2'],
+                            'recoExport' => $thisAttribute['data_int3'],
+                            'recoTimeTrigger' => $thisAttribute['data_int4'],
+                            'recoXmlMap' => $thisAttribute['data_text5']
+                        );
+                        break;
+                    }
                 }
-
             }
         }
 
+        if ( !isset( self::$classAttributeList[$classID] ) )
+        {
+            return array(
+                'error' => array(
+                    'error_type' => 'kernel',
+                    'error_code' => eZError::KERNEL_NOT_FOUND
+                )
+            );
+        }
 
-        if ( $contentClassAttributeList === null )
-            return array( 'error' => array( 'error_type' => 'kernel',
-                                            'error_code' => eZError::KERNEL_NOT_FOUND ) );
-        return array( 'result' => $result );
+        return array( 'result' => self::$classAttributeList[$classID] );
     }
 }
 
