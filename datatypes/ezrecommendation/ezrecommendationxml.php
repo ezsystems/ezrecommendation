@@ -117,6 +117,8 @@ class ezRecommendationXml
 
     static function getNodeAttributeValue($xml, $node)
     {
+        if ( $xml == '' )
+            return false;
 
         $doc = ezRecommendationXml::parseXML( $xml );
         $root = $doc->documentElement;
