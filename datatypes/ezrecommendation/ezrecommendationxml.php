@@ -117,7 +117,7 @@ class ezRecommendationXml
 
     static function getNodeAttributeValue($xml, $node)
     {
-        if ( $xml == '' )
+        if ( trim( $xml ) == '' )
             return false;
 
         $doc = ezRecommendationXml::parseXML( $xml );
@@ -133,10 +133,10 @@ class ezRecommendationXml
 
     static function setNodeAttributeValue($xml, $node, $value)
     {
-        $doc = ezRecommendationXml::parseXML( $xml );
+        if ( !$doc = ezRecommendationXml::parseXML( $xml ) )
+            return false;
 
         $root = $doc->documentElement;
-
         $type = $root->getElementsByTagName( $node )->item( 0 );
 
         $type->setAttribute('value',$value);
@@ -150,8 +150,11 @@ class ezRecommendationXml
 
     static function parseXML( $xml )
     {
+        if ( trim( $xml ) == '' )
+            return false;
+
         $dom = new DOMDocument;
-        $success = $dom->loadXML( $xml);
+        $dom->loadXML( $xml );
         return $dom;
     }
 }
