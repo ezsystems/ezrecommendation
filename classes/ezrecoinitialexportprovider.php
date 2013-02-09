@@ -34,10 +34,10 @@ class eZRecoInitialExportProvider
 
     private $offset = 0;
 
-    private $limit = 5;
+    private $limit = 100;
 
     /**
-     * @param $classIdArray
+    * @param $classIdArray
      * @param $rootPathString
      */
     public function __construct( $classIdArray, $rootPathString, eZCli $cli, eZDBInterface $db )

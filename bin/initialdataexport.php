@@ -22,13 +22,13 @@ $db = eZDB::instance();
 $ini = eZINI::instance( 'ezrecommendation.ini' );
 
 $options = $script->getOptions(
-    "[split:][classgroup:][parent_tree:][limit:][global_offset:]",
+    "[split:][classgroup:][parent-tree:][limit:][global_offset:][memory-debug:]",
     "",
     array(
         'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
         'classgroup' => 'Filter classes by group, default group is 1 (Content)',
-        'parent_tree' => 'Subtree parent node ID. Default is 2.',
-        'memory-debug' => 'Initial offset for query. Used only in special cases where memory is a problem.',
+        'parent-tree' => 'Subtree parent node ID. Default is 2.',
+        'memory-debug' => 'Memory debug level, 1 or 2',
     )
 );
 
@@ -56,7 +56,7 @@ if ( empty( $solution ) )
     $script->shutdown( 1 );
 }
 
-$parent_tree = $options['parent_tree'];
+$parent_tree = $options['parent-tree'];
 if ( !$parent_tree )
     $parent_tree = 2; //Home
 
@@ -65,6 +65,7 @@ if ( !$limit )
     $limit = 1000;
 
 $global_offset = $options['global_offset'];
+$optMemoryDebug = isset( $options['memory-debug'] ) ? (int)$options['memory-debug'] : 1;
 
 $url = $ini->variable( 'BulkExportSettings', 'SiteURL' );
 $path = $ini->variable( 'BulkExportSettings', 'BulkPath' );
@@ -104,19 +105,19 @@ foreach ( $classRows as $classRow )
     $classArray[] = $classRow['id'];
 }
 unset( $classRows );
-printMemoryUsageDelta( "bootstrap ", $previousMemoryUsage, $cli );
+if ( $optMemoryDebug >= 1 )
+    printMemoryUsageDelta( "bootstrap ", $previousMemoryUsage, $cli );
 
 $cli->output( "Exporting objects" );
 $provider = new eZRecoInitialExportProvider( $classArray, $parent_tree, $cli, $db );
 $cli->output( "Total objects: " . $provider->getItemsCount() );
-
 $cli->output( "Generating XML file(s)" );
 $domDocument = new DOMDocument( '1.0', 'utf-8' );
 $domDocumentRoot = $domDocument->createElement( 'items' );
 $domDocumentRoot->setAttribute( 'version', 1 );
 $domDocument->appendChild( $domDocumentRoot );
 $exportedElements = 0; $xmlFiles = array();
-$initialMemoryUsage = $previousMemoryUsage = memory_get_usage();
+$initialMemoryUsage = $previousMemoryUsage = $exportMemoryUsage = memory_get_usage();
 while( $node = $provider->getNext() )
 {
     $objectData = eZRecoInitialExport::generateNodeData( $node, $solution, $cli );
@@ -125,14 +126,21 @@ while( $node = $provider->getNext() )
     eZRecoInitialExport::generateDOMNode( $objectData, $domDocument, $domNode );
     $exportedElements++;
 
-    printMemoryUsageDelta( '- export iteration', $previousMemoryUsage, $cli );
+    if ( $optMemoryDebug >= 3 )
+    {
+        printMemoryUsageDelta( 'Export iteration', $exportMemoryUsage, $cli );
+    }
 
     // file limit reached, write data to output file
     if ( $exportedElements == $split )
     {
         $cli->output( "Writing $exportedElements entries to disk... ", false );
         $filename = eZRecoInitialExport::writeXmlFile( $domDocument, $path );
-        $cli->output( " done ($filename)" );
+        $cli->output( "done ($filename)" );
+
+        $domNode = null;
+        $domDocumentRoot = null;
+        $domDocument = null;
         $domDocument = new DOMDocument( '1.0', 'utf-8' );
         $domDocumentRoot = $domDocument->createElement( 'items' );
         $domDocumentRoot->setAttribute( 'version', 1 );
@@ -141,11 +149,10 @@ while( $node = $provider->getNext() )
         $exportedElements = 0;
         $xmlFiles[] = $filename;
 
-        printMemoryUsageDelta( "write operation", $previousMemoryUsage, $cli );
+        if ( $optMemoryDebug >= 2 )
+            printMemoryUsageDelta( "XML file generation", $previousMemoryUsage, $cli );
     }
 }
-printMemoryUsageDelta( "XML export total", $initialMemoryUsage, $cli );
-
 $memoryUsage = memory_get_usage( true );
 if ( $exportedElements > 0 )
 {
@@ -153,7 +160,11 @@ if ( $exportedElements > 0 )
     $filename = eZRecoInitialExport::writeXmlFile( $domDocument, $path );
     $cli->output( " done ($filename)" );
 }
-printMemoryUsageDelta( "XML writing total", $memoryUsage, $cli );
+if ( $optMemoryDebug >= 1 )
+    printMemoryUsageDelta( "XML file generation", $memoryUsage, $cli );
+
+if ( $optMemoryDebug >= 1 )
+    printMemoryUsageDelta( "Global XML export", $initialMemoryUsage, $cli );
 
 // Store files to cluster, and send HTTP request
 $memoryUsage = memory_get_usage( true );
@@ -165,15 +176,16 @@ foreach( $xmlFiles as $xmlFile )
     try
     {
         ezRecoFunctions::send_bulk_request( $url, $path, $xmlFiles );
+        $cli->output( "done" );
     }
     catch( Exception $e )
     {
         $cli->error( "failure" );
         $cli->error( $e->getMessage() );
     }
-    $cli->output( "done" );
 }
-printMemoryUsageDelta( "HTTP total", $memoryUsage, $cli );
+if ( $optMemoryDebug >= 1 )
+    printMemoryUsageDelta( "HTTP total", $memoryUsage, $cli );
 
 $cli->output( 'Script finished successfully.' );
 $script->shutdown();
@@ -190,13 +202,28 @@ function convertMemory( $size )
     );
 }
 
-function printMemoryUsageDelta( $label, &$previousMemoryUsage, eZCli $cli )
+/**
+ * Prints the memory usage delta as compared to $previousMemoryUsage
+ *
+ * @param string $label text label to print
+ * @param int $previousMemoryUsage
+ * @param eZCLI $cli
+ * @param bool $force Set to true to show delta == 0
+ *
+ * @return void
+ */
+function printMemoryUsageDelta( $label, &$previousMemoryUsage, eZCli $cli, $force = false )
 {
     $memoryUsage = memory_get_usage( true );
     $memoryUsageDelta = $memoryUsage - $previousMemoryUsage;
+
+    if ( !$force && $memoryUsageDelta == 0 )
+        return;
+
+
     $usagePrefix =  ( $memoryUsageDelta >= 0 ) ? '+' : '';
     $memoryUsageDelta = $usagePrefix . convertMemory( $memoryUsageDelta );
     $cli->output( "# $label memory usage: ", false );
-    $cli->output( convertMemory( $memoryUsage ) . " (delta: $memoryUsageDelta)" );
+    $cli->output( $memoryUsageDelta . " (total: " . convertMemory( $memoryUsage ). ")" );
     $previousMemoryUsage = $memoryUsage;
 }

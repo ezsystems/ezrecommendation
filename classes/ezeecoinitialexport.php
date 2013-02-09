@@ -8,10 +8,11 @@
  */
 class eZRecoInitialExport
 {
+    private static $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
+    private static $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
+
     public static function generateNodeData( $node, $solution, eZCli $cli )
     {
-        $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
-        $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
 
         $params_array = array();
 
@@ -50,7 +51,7 @@ class eZRecoInitialExport
             return false;
 
         $dataMap = eZContentObject::fetch( $object_id )->attribute( 'data_map' );
-        eZContentObject::clearCache( array( $object_id ) );
+        eZContentObject::clearCache( $object_id );
 
         if ( $solution == 'shop' )
         {
@@ -81,7 +82,7 @@ class eZRecoInitialExport
 
 
         $content_section = array();
-        foreach( $recoXmlContentSection as $key )
+        foreach( self::$recoXmlContentSection as $key )
         {
             $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
             if ( isset( $ezRecomappingArray[$key] ) && $ezRecomappingArray[$key] != '0' )
@@ -118,7 +119,7 @@ class eZRecoInitialExport
             }
         }
 
-        foreach ( $recoXmlAttributesSection as $key )
+        foreach ( self::$recoXmlAttributesSection as $key )
         {
             $tagsObject = ''; //because tags (Keywords) are not on the dataMap array
             if ( isset( $ezRecomappingArray[$key] ) && $ezRecomappingArray[$key] != '0' )
