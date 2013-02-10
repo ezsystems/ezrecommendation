@@ -19,7 +19,6 @@ class ezRecommendationClassAttribute
     {
         if ( !isset( self::$classAttributeList[$classID] ) )
         {
-            $result = array();
             $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_MODIFIED );
             if ( !is_object( $contentClass ) )
                 $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_TEMPORARY );

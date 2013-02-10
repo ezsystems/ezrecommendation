@@ -112,47 +112,81 @@ $cli->output( "Exporting objects" );
 $provider = new eZRecoInitialExportProvider( $classArray, $parent_tree, $cli, $db );
 $cli->output( "Total objects: " . $provider->getItemsCount() );
 $cli->output( "Generating XML file(s)" );
-$domDocument = new DOMDocument( '1.0', 'utf-8' );
-$domDocumentRoot = $domDocument->createElement( 'items' );
-$domDocumentRoot->setAttribute( 'version', 1 );
-$domDocument->appendChild( $domDocumentRoot );
 $exportedElements = 0; $xmlFiles = array();
-$initialMemoryUsage = $previousMemoryUsage = $exportMemoryUsage = memory_get_usage();
-while( $node = $provider->getNext() )
+$initialMemoryUsage = $previousMemoryUsage = $exportMemoryUsage = memory_get_usage( true );
+while( $nodeList = $provider->getNextBatch( $split ) )
 {
-    $objectData = eZRecoInitialExport::generateNodeData( $node, $solution, $cli );
-    $domNode = $domDocument->createElement( 'item' );
-    $domDocumentRoot->appendChild( $domNode );
-    eZRecoInitialExport::generateDOMNode( $objectData, $domDocument, $domNode );
-    $exportedElements++;
-
-    if ( $optMemoryDebug >= 3 )
+    // we fork the process to handle the loop
+    // $exportedElements is only incremented by the child process, and always has the value 0 in the parent
+    if ( $exportedElements == 0 )
     {
-        printMemoryUsageDelta( 'Export iteration', $exportMemoryUsage, $cli );
+        $xmlFilePath = eZRecoInitialExport::getXmlFilePath( $path );
+
+        $cli->output( "Exporting " . count( $nodeList ) . " items to $xmlFilePath..." );
+
+        eZClusterFileHandler::preFork();
+
+        $pid = pcntl_fork();
+
+        // re-initialize the database
+        $provider->setDb( null );
+        $db = eZDB::instance();
+        $db->close();
+        $db = null;
+        eZDB::setInstance( null );
+
+        // the parent process waits until the child is done
+        if ( $pid  )
+        {
+            pcntl_waitpid( $pid, $status, WUNTRACED );
+            if ( pcntl_wifexited( $status ) )
+                $cli->output( "done" );
+            else
+                $cli->error( "error" );
+            $provider->setDb( eZDB::instance() );
+            continue;
+        }
     }
 
-    // file limit reached, write data to output file
-    if ( $exportedElements == $split )
+    // stop output completely
+    fclose( STDIN );
+    fclose( STDOUT );
+    fclose( STDERR );
+
+    // the child process iterates until a file has been written, or until it runs out of objects
+    // START CHILD PROCESS
+    $previousMemoryUsage = memory_get_usage( true );
+    $domDocument = new DOMDocument( '1.0', 'utf-8' );
+    $domDocumentRoot = $domDocument->createElement( 'items' );
+    $domDocumentRoot->setAttribute( 'version', 1 );
+    $domDocument->appendChild( $domDocumentRoot );
+
+    foreach ( $nodeList as $node )
     {
-        $cli->output( "Writing $exportedElements entries to disk... ", false );
-        $filename = eZRecoInitialExport::writeXmlFile( $domDocument, $path );
-        $cli->output( "done ($filename)" );
-
-        $domNode = null;
-        $domDocumentRoot = null;
-        $domDocument = null;
-        $domDocument = new DOMDocument( '1.0', 'utf-8' );
-        $domDocumentRoot = $domDocument->createElement( 'items' );
-        $domDocumentRoot->setAttribute( 'version', 1 );
-        $domDocument->appendChild( $domDocumentRoot );
-
-        $exportedElements = 0;
-        $xmlFiles[] = $filename;
-
-        if ( $optMemoryDebug >= 2 )
-            printMemoryUsageDelta( "XML file generation", $previousMemoryUsage, $cli );
+        try
+        {
+            $objectData = eZRecoInitialExport::generateNodeData( $node, $solution, $cli );
+            $domNode = $domDocument->createElement( 'item' );
+            $domDocumentRoot->appendChild( $domNode );
+            eZRecoInitialExport::generateDOMNode( $objectData, $domDocument, $domNode );
+            $exportedElements++;
+        }
+        catch ( Exception $e )
+        {
+            eZRecoLog::write( "An exception occured: " . $e->getMessage() );
+            $script->shutdown( 1 );
+            exit;
+        }
     }
+
+    eZRecoInitialExport::writeXmlFile( $domDocument, $xmlFilePath );
+
+    $script->shutdown();
+    $db->close();
+    exit;
+    // END CHILD PROCESS
 }
+
 $memoryUsage = memory_get_usage( true );
 if ( $exportedElements > 0 )
 {
@@ -226,4 +260,12 @@ function printMemoryUsageDelta( $label, &$previousMemoryUsage, eZCli $cli, $forc
     $cli->output( "# $label memory usage: ", false );
     $cli->output( $memoryUsageDelta . " (total: " . convertMemory( $memoryUsage ). ")" );
     $previousMemoryUsage = $memoryUsage;
+}
+
+class eZRecoLog
+{
+    public static function write( $message )
+    {
+        eZLog::write( $message, 'ezrecommendation.log' );
+    }
 }

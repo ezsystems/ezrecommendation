@@ -13,13 +13,12 @@ class eZRecoInitialExport
 
     public static function generateNodeData( $node, $solution, eZCli $cli )
     {
-
         $params_array = array();
 
-        $object_id = $node['object_id'];
+        $object_id = $node['contentobject_id'];
         $node_id = $node['node_id'];
-        $path_string = $node['node_path'];
-        $class_id = $node['class_id'];
+        $path_string = $node['path_string'];
+        $class_id = $node['contentclass_id'];
 
         $params_array['node_id'] = $node_id;
         $params_array['object_id'] = $object_id;
@@ -59,7 +58,7 @@ class eZRecoInitialExport
             $price = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['price'], $ezRecomappingArray['currency'] );
             if ( empty( $currency ) || empty( $price ) )
             {
-                $cli->output( "Missing currency or price for node $node_id (object Id $object_id)" );
+                eZRecoLog::write( "Missing currency or price for node $node_id (object Id $object_id)" );
                 return false;
             }
             $params_array['currency'] = $currency;
@@ -72,7 +71,7 @@ class eZRecoInitialExport
             $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validto'], 'validto' );
             if ( empty( $valid_to ) || empty( $valid_from ) )
             {
-                $cli->output( "Missing valid_to or valid_from for node $node_id (object Id $object_id)" );
+                eZRecoLog::write( "Missing valid_to or valid_from for node $node_id (object Id $object_id)" );
                 return false;
             }
             $params_array['valid_from'] = $valid_from;
@@ -211,18 +210,26 @@ class eZRecoInitialExport
     }
 
     /**
-     * Writes the XML from $domDocument to an auto-incremented file in $path
+     * Writes the XML $filePath with the data from $domDocument
+     * @param DOMDocument $domDocument
+     * @param string $filePath
      */
-    public function writeXmlFile( DOMDocument $domDocument, $path )
+    public static function writeXmlFile( DOMDocument $domDocument, $filePath )
     {
-        static $autoIncrement = 1;
-
-        $filename = "$path/bulkexport_$autoIncrement.xml";
-
-        $fh = fopen( $filename, 'w' );
+        $fh = fopen( $filePath, 'w' );
         fwrite( $fh, $domDocument->saveXML() );
         fclose( $fh );
+    }
 
+    /**
+     * Return the next XML bulkexport file's path
+     * @param string $prefix
+     * @return string
+     */
+    public static function getXmlFilePath( $prefix )
+    {
+        static $autoIncrement = 1;
+        $filename = "$prefix/bulkexport_$autoIncrement.xml";
         $autoIncrement++;
 
         return $filename;

@@ -48,6 +48,15 @@ class eZRecoInitialExportProvider
         $this->rootPathString = $rootPathString;
     }
 
+    /**
+     * @param eZDBInterface|null $db
+     */
+    public function setDb( $db )
+    {
+        unset( $this->db );
+        $this->db = $db;
+    }
+
     public function getNext()
     {
         $return = false;
@@ -68,6 +77,39 @@ class eZRecoInitialExportProvider
         }
 
         return $return;
+    }
+
+    /**
+     * Returns a batch of up to $split items. Each call to the method advances the pointer.
+     * @param int $split
+     * @return array
+     */
+    public function getNextBatch( $split )
+    {
+        static $batchIndex = 0;
+
+        $offset = $batchIndex * $split;
+
+        $classIdList = implode( ',', $this->classIdArray );
+        $rows = $this->db->arrayQuery(
+            "SELECT node_id, contentobject_id, path_string, contentclass_id
+            FROM ezcontentobject_tree, ezcontentobject
+            WHERE ezcontentobject_tree.contentobject_id = ezcontentobject.id
+              AND contentclass_id IN ($classIdList)",
+            array(
+                'offset' => $offset,
+                'limit' => $split
+            )
+        );
+
+        $batchIndex++;
+
+        if ( empty( $rows ) )
+        {
+            return false;
+        }
+
+        return $rows;
     }
 
     public function getItemsCount()
