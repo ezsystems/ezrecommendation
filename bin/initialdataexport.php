@@ -22,13 +22,13 @@ $db = eZDB::instance();
 $ini = eZINI::instance( 'ezrecommendation.ini' );
 
 $options = $script->getOptions(
-    "[split:][classgroup:][parent-tree:][limit:][global_offset:][memory-debug:]",
+    "[split:][class-group:][parent-tree:][memory-debug:]",
     "",
     array(
-        'split' => 'Define how many entrys are defined in each ezrecommendation initial XML export file. ',
-        'classgroup' => 'Filter classes by group, default group is 1 (Content)',
-        'parent-tree' => 'Subtree parent node ID. Default is 2.',
-        'memory-debug' => 'Memory debug level, 1 or 2',
+        'split' => 'Maximum number of entries per XML file. Default: ' . $ini->variable( 'BulkExportSettings', 'XmlEntries' ),
+        'class-group' => 'Filter classes by group. Default: 1 (Content)',
+        'parent-tree' => 'Subtree parent node ID. Default: 2.',
+        'memory-debug' => 'Memory debug level, 1, 2 or 3. Default: 0',
     )
 );
 
