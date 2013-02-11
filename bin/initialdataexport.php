@@ -23,8 +23,6 @@ if ( !function_exists( 'pcntl_fork' ) )
 
 $script = eZScript::instance();
 $script->startup();
-$script->initialize();
-$db = eZDB::instance();
 $ini = eZINI::instance( 'ezrecommendation.ini' );
 
 $options = $script->getOptions(
@@ -37,6 +35,9 @@ $options = $script->getOptions(
         'memory-debug' => 'Memory debug level, either 1 or 2. Default: 0 (disabled)',
     )
 );
+
+$script->initialize();
+$db = eZDB::instance();
 
 if ( !$split = $options['split'] )
 {
