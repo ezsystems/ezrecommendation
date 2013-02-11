@@ -149,8 +149,6 @@ while( $nodeList = $provider->getNextBatch( $split ) )
         }
     }
 
-    new \eZ\Publish\Core\Base\Exceptions\InvalidArgumentValue()
-
     // stop output completely
     fclose( STDIN );
     fclose( STDOUT );
@@ -217,8 +215,7 @@ foreach( $xmlFiles as $xmlFile )
     }
     catch( Exception $e )
     {
-        $cli->error( "failure" );
-        $cli->error( $e->getMessage() );
+        $cli->error( "failure: " . $e->getMessage() );
     }
 }
 if ( $optMemoryDebug >= 1 )
