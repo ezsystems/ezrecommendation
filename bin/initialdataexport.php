@@ -15,6 +15,12 @@ require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
 
+if ( !function_exists( 'pcntl_fork' ) )
+{
+    $cli->error( "The PCNTL php extension isn't installed / enabled on your system" );
+    $script->shutdown( 2 );
+}
+
 $script = eZScript::instance();
 $script->startup();
 $script->initialize();
