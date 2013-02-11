@@ -152,23 +152,22 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
                 $cli->error( "error" );
             $provider->setDb( eZDB::instance() );
             $xmlFiles[] = $xmlFilePath;
+
+            if ( $optMemoryDebug >= 2 )
+                printMemoryUsageDelta( "$xmlFilePath export", $memoryUsageTwo, $cli );
             continue;
         }
     }
 
-    // stop output completely
-    fclose( STDIN );
-    fclose( STDOUT );
-    fclose( STDERR );
-
-    // the child process iterates until a file has been written, or until it runs out of objects
     // START CHILD PROCESS
-    $previousMemoryUsage = memory_get_usage( true );
+    $initialMemoryUsage = memory_get_usage( true );
     $domDocument = new DOMDocument( '1.0', 'utf-8' );
     $domDocumentRoot = $domDocument->createElement( 'items' );
     $domDocumentRoot->setAttribute( 'version', 1 );
     $domDocument->appendChild( $domDocumentRoot );
 
+    $iterationMemoryUsage = memory_get_usage( true );
+    // the child process iterates until a file has been written, or until it runs out of objects
     foreach ( $nodeList as $node )
     {
         try
@@ -178,10 +177,12 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
             $domDocumentRoot->appendChild( $domNode );
             eZRecoInitialExport::generateDOMNode( $objectData, $domDocument, $domNode );
             $exportedElements++;
+            if ( $optMemoryDebug >= 3 )
+                printMemoryUsageDelta( "export child iteration", $iterationMemoryUsage, $cli, true );
         }
         catch ( Exception $e )
         {
-            eZRecoLog::write( "An exception occured: " . $e->getMessage() );
+            $cli->error( "Export child: an exception has occured: " . $e->getMessage() );
             $script->shutdown( 1 );
             exit;
         }
@@ -189,8 +190,13 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
 
     eZRecoInitialExport::writeXmlFile( $domDocument, $xmlFilePath );
 
+    if ( $optMemoryDebug >= 2 )
+    {
+        $cli->output();
+        printMemoryUsageDelta( "Export child total", $initialMemoryUsage, $cli );
+    }
     $script->shutdown();
-    $db->close();
+    eZDB::instance()->close();
     exit;
     // END CHILD PROCESS
 }
