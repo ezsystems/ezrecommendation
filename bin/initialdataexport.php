@@ -7,7 +7,7 @@
  * @version //autogen//
  * @package ezrecommendation
  */
-$previousMemoryUsage = memory_get_usage( true );
+$initialMemoryUsage = memory_get_usage( true );
 
 require 'autoload.php';
 require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.php';
@@ -28,7 +28,7 @@ $options = $script->getOptions(
         'split' => 'Maximum number of entries per XML file. Default: ' . $ini->variable( 'BulkExportSettings', 'XmlEntries' ),
         'class-group' => 'Filter classes by group. Default: 1 (Content)',
         'parent-tree' => 'Subtree parent node ID. Default: 2.',
-        'memory-debug' => 'Memory debug level, 1, 2 or 3. Default: 0',
+        'memory-debug' => 'Memory debug level, either 1 or 2. Default: 0 (disabled)',
     )
 );
 
@@ -113,8 +113,8 @@ $cli->output( "Total objects: " . $provider->getItemsCount() );
 $cli->output( "Generating XML file(s)" );
 $exportedElements = 0;
 $xmlFiles = array();
-$initialMemoryUsage = $previousMemoryUsage = $exportMemoryUsage = memory_get_usage( true );
-while( $nodeList = $provider->getNextBatch( $split ) )
+$memoryUsageOne = $memoryUsageTwo = memory_get_usage( true );
+while ( $nodeList = $provider->getNextBatch( $split ) )
 {
     // we fork the process to handle the loop
     // $exportedElements is only incremented by the child process, and always has the value 0 in the parent
@@ -188,23 +188,13 @@ while( $nodeList = $provider->getNextBatch( $split ) )
     // END CHILD PROCESS
 }
 
-$memoryUsage = memory_get_usage( true );
-if ( $exportedElements > 0 )
-{
-    $cli->output( "Writing $exportedElements entries to disk... ", false );
-    $filename = eZRecoInitialExport::writeXmlFile( $domDocument, $path );
-    $cli->output( " done ($filename)" );
-}
 if ( $optMemoryDebug >= 1 )
-    printMemoryUsageDelta( "XML file generation", $memoryUsage, $cli );
-
-if ( $optMemoryDebug >= 1 )
-    printMemoryUsageDelta( "Global XML export", $initialMemoryUsage, $cli );
+    printMemoryUsageDelta( "XML export", $memoryUsageOne, $cli );
 
 // Store files to cluster, and send HTTP request
-$memoryUsage = memory_get_usage( true );
 $clusterHandler = eZClusterFileHandler::instance();
-foreach( $xmlFiles as $xmlFile )
+$memoryUsageTwo = memory_get_usage( true );
+foreach ( $xmlFiles as $xmlFile )
 {
     $cli->output( "Sending $xmlFile... ", false );
     $clusterHandler->fileStore( $xmlFile );
@@ -213,13 +203,15 @@ foreach( $xmlFiles as $xmlFile )
         ezRecoFunctions::send_bulk_request( $url, $path, $xmlFile );
         $cli->output( "done" );
     }
-    catch( Exception $e )
+    catch ( Exception $e )
     {
         $cli->error( "failure: " . $e->getMessage() );
     }
+    if ( $optMemoryDebug >= 2 )
+        printMemoryUsageDelta( "HTTP sending of $xmlFile", $memoryUsageTwo, $cli, true );
 }
 if ( $optMemoryDebug >= 1 )
-    printMemoryUsageDelta( "HTTP total", $memoryUsage, $cli );
+    printMemoryUsageDelta( "HTTP sending total", $memoryUsageOne, $cli, true );
 
 $cli->output( 'Script finished successfully.' );
 $script->shutdown();
