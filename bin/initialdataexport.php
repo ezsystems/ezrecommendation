@@ -144,9 +144,12 @@ while( $nodeList = $provider->getNextBatch( $split ) )
             else
                 $cli->error( "error" );
             $provider->setDb( eZDB::instance() );
+            $xmlFiles[] = $xmlFilePath;
             continue;
         }
     }
+
+    new \eZ\Publish\Core\Base\Exceptions\InvalidArgumentValue()
 
     // stop output completely
     fclose( STDIN );
@@ -209,7 +212,7 @@ foreach( $xmlFiles as $xmlFile )
     $clusterHandler->fileStore( $xmlFile );
     try
     {
-        ezRecoFunctions::send_bulk_request( $url, $path, $xmlFiles );
+        ezRecoFunctions::send_bulk_request( $url, $path, $xmlFile );
         $cli->output( "done" );
     }
     catch( Exception $e )
