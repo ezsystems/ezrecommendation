@@ -54,7 +54,7 @@ if ( !$solution = $ini->variable( 'SolutionSettings', 'solution' ) )
 if ( !$parentTree = $options['parent-tree'] )
     $parentTree = 2;
 
-$optMemoryDebug = isset( $options['memory-debug'] ) ? (int)$options['memory-debug'] : 1;
+$optMemoryDebug = isset( $options['memory-debug'] ) ? (int)$options['memory-debug'] : 0;
 
 if ( !$url = $ini->variable( 'BulkExportSettings', 'SiteURL' ) )
 {
@@ -136,7 +136,7 @@ while( $nodeList = $provider->getNextBatch( $split ) )
         eZDB::setInstance( null );
 
         // the parent process waits until the child is done
-        if ( $pid  )
+        if ( $pid )
         {
             pcntl_waitpid( $pid, $status, WUNTRACED );
             if ( pcntl_wifexited( $status ) )
