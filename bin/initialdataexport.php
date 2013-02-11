@@ -32,57 +32,56 @@ $options = $script->getOptions(
     )
 );
 
-$split = $options['split'];
-if ( !$split )
+if ( !$split = $options['split'] )
 {
     // default initial XML export split value
-    $split = $ini->variable( 'BulkExportSettings', 'XmlEntries' );
-
-    if ( empty( $split ) )
+    if ( !$split = $ini->variable( 'BulkExportSettings', 'XmlEntries' ) )
     {
         $cli->output( 'Missing XmlEntries parameter in ezrecommendation.ini' );
         $script->shutdown( 1 );
     }
 }
 
-$classgroup = $options['classgroup'];
-if ( !$classgroup )
-    $classgroup = 1;
-$solution = $ini->variable( 'SolutionSettings', 'solution' );
+if ( !$classGroup = $options['class-group'] )
+    $classGroup = 1;
 
-if ( empty( $solution ) )
+if ( !$solution = $ini->variable( 'SolutionSettings', 'solution' ) )
 {
     $cli->output( 'Missing solution in ezrecommendation.ini' );
     $script->shutdown( 1 );
 }
 
-$parent_tree = $options['parent-tree'];
-if ( !$parent_tree )
-    $parent_tree = 2; //Home
+if ( !$parentTree = $options['parent-tree'] )
+    $parentTree = 2;
 
-$limit = $options['limit'];
-if ( !$limit )
-    $limit = 1000;
-
-$global_offset = $options['global_offset'];
 $optMemoryDebug = isset( $options['memory-debug'] ) ? (int)$options['memory-debug'] : 1;
 
-$url = $ini->variable( 'BulkExportSettings', 'SiteURL' );
-$path = $ini->variable( 'BulkExportSettings', 'BulkPath' );
-if ( empty( $url ) || empty( $path ) )
+if ( !$url = $ini->variable( 'BulkExportSettings', 'SiteURL' ) )
 {
-    $cli->output( 'Missing SiteURL or BulkPath in ezrecommendation.ini' );
+    $cli->output( 'Missing or empty SiteURL in ezrecommendation.ini' );
     $script->shutdown( 1 );
 }
-// Check paths
-if ( substr( $url, -1 ) == '/' || $path[0] == '/' )
+
+if ( !$path = $ini->variable( 'BulkExportSettings', 'BulkPath' ) )
 {
-    $cli->output( "SiteURL must not end with a '/' and BulkPath must not begin with '/' in ezrecommendation.ini" );
+    $cli->output( 'Missing or empty BulkPath in ezrecommendation.ini' );
+    $script->shutdown( 1 );
+}
+
+// Check paths
+if ( substr( $url, -1 ) == '/' )
+{
+    $cli->output( "SiteURL must not end with a '/' in ezrecommendation.ini" );
+    $script->shutdown( 1 );
+}
+
+if ( $path[0] == '/' )
+{
+    $cli->output( "BulkPath must not begin with '/' in ezrecommendation.ini" );
     $script->shutdown( 1 );
 }
 
 $cli->output( 'Starting script.' );
-$class_group = '1'; //ezcontentclass_classgroup
 
 $classRows = $db->arrayQuery( "SELECT `id`
                                 FROM `ezcontentclass`
@@ -96,7 +95,7 @@ $classRows = $db->arrayQuery( "SELECT `id`
                                 FROM `ezcontentclass_attribute`
                                 WHERE `data_type_string` = 'ezrecommendation'
                                 )
-                                AND group_id  IN (" . $class_group . ")
+                                AND group_id  IN ($classGroup)
                                 GROUP BY id "
 );
 $classArray = array();
@@ -104,15 +103,16 @@ foreach ( $classRows as $classRow )
 {
     $classArray[] = $classRow['id'];
 }
-unset( $classRows );
+unset( $classRows, $classRow );
 if ( $optMemoryDebug >= 1 )
     printMemoryUsageDelta( "bootstrap ", $previousMemoryUsage, $cli );
 
 $cli->output( "Exporting objects" );
-$provider = new eZRecoInitialExportProvider( $classArray, $parent_tree, $cli, $db );
+$provider = new eZRecoInitialExportProvider( $classArray, $parentTree, $cli, $db );
 $cli->output( "Total objects: " . $provider->getItemsCount() );
 $cli->output( "Generating XML file(s)" );
-$exportedElements = 0; $xmlFiles = array();
+$exportedElements = 0;
+$xmlFiles = array();
 $initialMemoryUsage = $previousMemoryUsage = $exportMemoryUsage = memory_get_usage( true );
 while( $nodeList = $provider->getNextBatch( $split ) )
 {
