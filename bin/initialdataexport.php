@@ -129,7 +129,7 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
     {
         $xmlFilePath = eZRecoInitialExport::getXmlFilePath( $path );
 
-        $cli->output( "Exporting " . count( $nodeList ) . " items to $xmlFilePath..." );
+        $cli->output( "Exporting " . count( $nodeList ) . " items to $xmlFilePath...", false );
 
         eZClusterFileHandler::preFork();
 
