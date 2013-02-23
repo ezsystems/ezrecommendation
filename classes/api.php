@@ -18,8 +18,6 @@ class eZRecommendationApi
     {
         $ini = eZINI::instance( 'ezrecommendation.ini' );
 
-        $recoitemtypeid = '';
-
         // item type id
         $itemTypeId = $this->getItemTypeId( $parameters->node->attribute( 'class_identifier' ) );
 
@@ -32,7 +30,7 @@ class eZRecommendationApi
             $userId = $currentUser->attribute( 'contentobject_id' );
 
         }
-        elseif( isset( $_COOKIE['ezreco'] ) )
+        elseif ( isset( $_COOKIE['ezreco'] ) )
         {
             $userId = $_COOKIE['ezreco'];
         }

@@ -9,9 +9,9 @@
 
 class eZRecommendationApiException extends Exception
 {
-    public function __construct( $message )
+    public function __construct( $message, Exception $previous = null )
     {
-        $this->message = $message;
+        parent::__construct( $message, 0, $previous );
     }
 }
 ?>
