@@ -223,22 +223,20 @@ class ezRecoFunctions
     public static function send_bulk_request( $xml_url, $xml_path, $xml_file )
     {
 
-        $ini = eZINI::instance('ezrecommendation.ini');
-
+        $ini = eZINI::instance( 'ezrecommendation.ini' );
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
-        $customerID = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-        $LicKey = $ini->variable( 'ClientIdSettings', 'LicenseKey' );
+        $path = sprintf(
+            "/%s/%s/item/upload?url=%s/%s%s",
+            $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) ),
+            $ini->variable( 'ClientIdSettings', 'CustomerID' ),
+            $xml_url,
+            $xml_path,
+            $xml_file
+        );
 
-        $solution = $ini->variable( 'SolutionSettings', 'solution' );
-        $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
+        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url . $path, 'Trying bulk HTTP Request' );
 
-        $path = "/$mapSetting/$customerID/item/upload?url=".$xml_url.'/'.$xml_path.$xml_file;
-
-        $contenttype = "text/xml";
-
-        eZDebugSetting::writeNotice('extension-ezrecommendation', $url.$path, 'Trying bulk HTTP Request' );
-
-        $request = new ezpHttpRequest( "https://{$url}" );
+        $request = new ezpHttpRequest( "https://{$url}{$path}" );
         $request->addHeaders(
             array(
                 "Authorization" => self::getAuthorizationHeaderValue(),
@@ -247,11 +245,10 @@ class ezRecoFunctions
 
         try
         {
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $xml_url, "Sending HTTP request to $url" );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', $request->getRawRequestMessage(), "Sending HTTP request to $url" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
             self::verifyHttpResponse( $response );
-
             return true;
         }
         catch ( Exception $e )
