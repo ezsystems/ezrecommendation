@@ -17,17 +17,15 @@ class ezRecoFunctions
      */
     public static function send_http_request( $url, $path )
     {
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url . $path, 'Trying HTTP Request' );
-
-        $request = new ezpHttpRequest( $url );
+        $request = new ezpHttpRequest( "http://{$url}{$path}" );
         $request->addHeaders( array( "Authorization" => self::getAuthorizationHeaderValue() ) );
 
         try
         {
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sending HTTP Request to $url" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "GET http://{$url}{$path}", "Sending HTTP Request" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
-
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
             self::verifyHttpResponse( $response );
             return true;
         }
@@ -49,9 +47,10 @@ class ezRecoFunctions
         try
         {
 
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sending request to $url" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "GET http://{$url}{$path}", "Sending HTTP request" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
 
             self::verifyHttpResponse( $response );
 
@@ -76,7 +75,6 @@ class ezRecoFunctions
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
         $path = "/$mapSetting/$customerID/item";
 
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', "POST https://{$url}{$path}", 'Trying HTTP Request' );
 
         $request = new ezpHttpRequest( "https://{$url}{$path}", HTTP_METH_POST );
         $request->addHeaders(
@@ -89,10 +87,10 @@ class ezRecoFunctions
         $request->addBody( $data );
         try
         {
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "https://{$url}{$path}", "Sending HTTP request" );
+            eZDebugSetting::writeNotice( 'extension-ezrecommendation', "POST https://{$url}{$path}", 'Sending HTTP request' );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), 'Sent request' );
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response, 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
             self::verifyHttpResponse( $response );
 
             return true;
@@ -135,9 +133,9 @@ class ezRecoFunctions
         {
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', "DELETE https://{$url}{$path}", "Sending HTTP request" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
             self::verifyHttpResponse( $response );
-
             return true;
         }
         catch ( Exception $e )
@@ -162,8 +160,6 @@ class ezRecoFunctions
 
         $path = "/$mapSetting/v3/$customerID/revenue/last_seven_days";
 
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url.$path, 'Trying stats HTTP Request' );
-
         $request = new ezpHttpRequest( "https://{$url}{$path}" );
         $request->addHeaders(
             array(
@@ -172,9 +168,10 @@ class ezRecoFunctions
         );
         try
         {
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sending HTTP request to $url" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "GET https://{$url}{$path}", "Sending HTTP request" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
 
             self::verifyHttpResponse( $response );
 
@@ -224,7 +221,6 @@ class ezRecoFunctions
      */
     public static function send_bulk_request( $xml_url, $xml_path, $xml_file )
     {
-
         $ini = eZINI::instance( 'ezrecommendation.ini' );
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
         $path = sprintf(
@@ -236,8 +232,6 @@ class ezRecoFunctions
             $xml_file
         );
 
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url . $path, 'Trying bulk HTTP Request' );
-
         $request = new ezpHttpRequest( "https://{$url}{$path}" );
         $request->addHeaders(
             array(
@@ -247,9 +241,10 @@ class ezRecoFunctions
 
         try
         {
-            eZDebugSetting::writeDebug('extension-ezrecommendation', $request->getRawRequestMessage(), "Sending HTTP request to $url" );
+            eZDebugSetting::writeDebug('extension-ezrecommendation', "GET https://{$url}{$path}", "Sending HTTP request to $url" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sent request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawResponseMessage(), 'Received response' );
             self::verifyHttpResponse( $response );
             return true;
         }
