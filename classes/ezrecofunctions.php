@@ -44,8 +44,6 @@ class ezRecoFunctions
      */
     public static function send_reco_request( $url, $path )
     {
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url.$path, 'Trying request' );
-
         $request = new ezpHttpRequest( "http://{$url}{$path}" );
         $request->addHeaders( array( "Authorization" => self::getAuthorizationHeaderValue() ) );
         try
@@ -53,7 +51,7 @@ class ezRecoFunctions
 
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sending request to $url" );
             $response = $request->send();
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', compact( 'header', 'content' ), 'Received response' );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
 
             self::verifyHttpResponse( $response );
 
@@ -105,19 +103,23 @@ class ezRecoFunctions
     }
 
 
-    /*
-     *
+    /**
+     * Sends a DELETE request for item $path
+     * @param string $path
+     * @return bool true if the request was sent successfully
      */
-    public static function delete_item_request( $item_path )
+    public static function sendDeleteItemRequest( $item_path )
     {
         $ini = eZINI::instance( 'ezrecommendation.ini' );
 
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
-        $solution = $ini->variable( 'SolutionSettings', 'solution' );
-        $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
-        $customerID = $ini->variable( 'ClientIdSettings', CustomerID );
 
-        $path = "/$mapSetting/$customerID/item/$item_path";
+        $path = sprintf(
+            "/%s/%s/item/%s",
+            $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) ),
+            $ini->variable( 'ClientIdSettings', "CustomerID" ),
+            $item_path
+        );
 
         $request = new ezpHttpRequest( "https://{$url}{$path}", HTTP_METH_DELETE );
         $request->addHeaders(
@@ -129,7 +131,7 @@ class ezRecoFunctions
 
         try
         {
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "https://{$url}{$path}", "Sending HTTP request" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "DELETE https://{$url}{$path}", "Sending HTTP request" );
             $response = $request->send();
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response->getBody(), 'Received response' );
             self::verifyHttpResponse( $response );

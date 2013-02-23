@@ -120,6 +120,33 @@ class eZRecommendationApi
     }
 
     /**
+     * Deletes item with node ID $node in the recommendation index
+     * @param int $nodeID
+     *
+     * @return bool
+     */
+    public function deleteItem( $nodeID )
+    {
+        if ( $node = eZContentObjectTreeNode::fetch( $nodeID ) )
+        {
+            $classAttributesList = ezRecommendationClassAttribute::fetchClassAttributeList( $node->ContentObject->ClassID );
+            if ( !isset( $classAttributesList['result']['recoItemType'] )  )
+                return false;
+            ezRecoFunctions::sendDeleteItemRequest( $classAttributesList['result']['recoItemType'] . '/' . $nodeID );
+            eZDebugSetting::writeDebug( 'ezrecommendation-extension', 'Delete event on node $nodeID executed' );
+            return true;
+        }
+        else
+        {
+            eZDebug::writeError(
+                "Unable to find node with ID $nodeID",
+                "[ezrecommendation] eZRecommendationApi::deleteItem( $nodeID)"
+            );
+            return false;
+        }
+    }
+
+    /**
      * Instance of ezrecommendation.ini
      * @var eZINI
      */
