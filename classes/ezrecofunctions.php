@@ -76,20 +76,22 @@ class ezRecoFunctions
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
         $path = "/$mapSetting/$customerID/item";
 
-        eZDebugSetting::writeNotice( 'extension-ezrecommendation', $url . $path, 'Trying HTTP Request' );
+        eZDebugSetting::writeNotice( 'extension-ezrecommendation', "POST https://{$url}{$path}", 'Trying HTTP Request' );
 
-        $request = new ezpHttpRequest( "https://{$url}{$path}", HTTP_METHOD_POST );
+        $request = new ezpHttpRequest( "https://{$url}{$path}", HTTP_METH_POST );
         $request->addHeaders(
             array(
                 "Authorization" => self::getAuthorizationHeaderValue(),
-                "Content-Length" => strlen( $data )
+                "Content-Length" => strlen( $data ),
+                "Content-Type" => "text/xml"
             )
         );
-        $request->addRawPostData( $data );
+        $request->addBody( $data );
         try
         {
-            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), "Sending HTTP request to {$url}{$path}" );
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', "https://{$url}{$path}", "Sending HTTP request" );
             $response = $request->send();
+            eZDebugSetting::writeDebug( 'extension-ezrecommendation', $request->getRawRequestMessage(), 'Sent request' );
             eZDebugSetting::writeDebug( 'extension-ezrecommendation', $response, 'Received response' );
             self::verifyHttpResponse( $response );
 

@@ -63,8 +63,8 @@ class eZRecoDataTypeContent
                 {
                     //dataMap contain the tags as KeywordArray
                     //used by one content export
-                    $ContentArray = $dataMap[$attributeIdentifier]->Content;
-                    $keywords = implode( ',', $ContentArray->KeywordArray );
+                    $contentArray = $dataMap[$attributeIdentifier]->attribute( 'content' );
+                    $keywords = implode( ',', $contentArray->KeywordArray );
                     return $keywords;
                 }
 
