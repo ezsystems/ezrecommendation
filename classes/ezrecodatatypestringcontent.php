@@ -19,8 +19,8 @@ class eZRecoDataTypeContent
         {
 
             case 'ezxmltext':
-                $Content =& $dataMap[$attributeIdentifier]->content();
-                $ContentOutput =& $Content->attribute('output');
+                $Content = $dataMap[$attributeIdentifier]->content();
+                $ContentOutput = $Content->attribute('output');
                 $ContentOutputText = $ContentOutput->attribute('output_text');
                 return preg_replace('/<!--(.*)-->/Uis', '', $ContentOutputText);
                 /*Another way to get the xml content*/
