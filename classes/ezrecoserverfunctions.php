@@ -51,16 +51,20 @@ class ezRecoServerFunctions
         $requestParameters->object = $node->attribute( 'object' );
 
         // scenario argument
+        $api = new eZRecommendationAPI;
         $requestParameters->scenario = array_shift( $args );
-        $availableScenario = $recommendationIni->variable( 'BackendSettings', 'AvailableScenarios' );
-        if ( !in_array( $requestParameters->scenario, array_keys( $availableScenario ) ) )
+        $availableScenarios = $api->getScenarioList();
+        if ( !in_array( $requestParameters->scenario, array_keys( $availableScenarios ) ) )
         {
             throw new InvalidArgumentException(
                 ezpI18n::tr(
                     'extension/ezrecommendation',
-                    'Unknown scenario %scenario. Available scenarios: %available_scenarii',
+                    'Unknown scenario %scenario. Available scenarios: %available_scenarios',
                     null,
-                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => implode( ', ', $availableScenario ) )
+                    array(
+                        '%scenario' => $requestParameters->scenario,
+                        '%available_scenarios' => implode( ', ', array_keys( $availableScenarios ) )
+                    )
                 )
             );
         }
@@ -74,7 +78,7 @@ class ezRecoServerFunctions
         $trackRenderedItems = (bool)array_shift( $args );
         $createClickRecommendedEvent = (bool)array_shift( $args );
 
-        $api = new eZRecommendationApi();
+        $api = new eZRecommendationServerAPI();
         $recommendations = $api->getRecommendations( $requestParameters );
 
         $tpl = eZTemplate::factory();

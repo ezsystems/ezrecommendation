@@ -33,4 +33,14 @@ $FunctionList['currency_list'] = array( 'name' => 'currency_list',
                                                                  'method' => 'getCurrencyValues' ),
 
                                           );
+
+$FunctionList['scenario_list'] = array(
+    'name' => 'scenario_list',
+    'call_method' => array(
+        'class' => 'eZRecommendationFunctionCollection',
+        'method' => 'getAvailableScenario',
+    ),
+    'parameter_type' => 'standard',
+    'parameters' => array()
+);
 ?>
