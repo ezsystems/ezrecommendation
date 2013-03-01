@@ -8,7 +8,7 @@
 /**
  * High level class that provides interaction with the recommendation services
  */
-class eZRecommendationApi
+class eZRecommendationServerAPI
 {
     public function __construct()
     {
@@ -348,6 +348,40 @@ class eZRecommendationApi
 
         return true;
     }
+
+    /**
+     * Returns the list of configured scenarii on the yoochoose server
+     * @return array
+     */
+    public static function getScenarioList()
+    {
+        $ini = eZINI::instance( 'ezrecommendation.ini' );
+
+        $url = sprintf(
+            'https://%s/restfrontend/ebl/v3/%d/structure/get_scenario_list',
+            $ini->variable( 'URLSettings', 'ConfigURL' ),
+            $ini->variable( 'ClientIdSettings', 'CustomerID' )
+        );
+        $request = new ezpHttpRequest( $url );
+        $request->setOptions(
+            array(
+                'httpauthtype' => HTTP_AUTH_BASIC,
+                'httpauth' => $ini->variable( 'ClientIdSettings', 'CustomerID' ) . ':' . $ini->variable( 'ClientIdSettings', 'LicenseKey' )
+            )
+        );
+        try
+        {
+            $response = $request->send();
+            print_r( $request->getRawRequestMessage() );
+        }
+        catch ( HttpRuntimeException $e )
+        {
+            eZDebugSetting::writeError( 'extensionezrecommendation', $e->getMessage() );
+        }
+
+        return json_decode( $response->getBody() );
+    }
+
     /**
      * Instance of ezrecommendation.ini
      * @var eZINI
