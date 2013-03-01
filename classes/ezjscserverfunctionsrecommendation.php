@@ -75,7 +75,7 @@ class ezjscServerFunctionsRecommendation
         $trackRenderedItems = (bool) array_shift( $args );
         $createClickRecommendedEvent = (bool) array_shift( $args );
 
-        $api = new eZRecommendationApi();
+        $api = new eZRecommendationServerAPI();
         $recommendations = $api->getRecommendations( $requestParameters );
 
         $tpl = eZTemplate::factory();
