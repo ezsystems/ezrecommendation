@@ -72,6 +72,16 @@ class eZRecommendationFunctionCollection
          return array( 'result' => $systemCurrency );
 
     }
-}
 
+    /**
+     * Fetches available scenarii from server/cache
+     *
+     * @return array an array of hashes with the keys id, title and description
+     */
+    public function fetchAvailableScenario()
+    {
+        $api = new eZRecommendationAPI;
+        return array( 'result' => $api->getScenarioList() );
+    }
+}
 ?>

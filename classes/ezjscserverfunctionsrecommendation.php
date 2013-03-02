@@ -47,8 +47,9 @@ class ezjscServerFunctionsRecommendation
         $requestParameters->node = $node;
 
         // scenario argument
+        $api = new eZRecommendationAPI;
         $requestParameters->scenario = array_shift( $args );
-        $availableScenarii = $recommendationIni->variable( 'BackendSettings', 'AvailableScenarios' );
+        $availableScenarii = $api->getScenarioList();
         if ( !in_array( $requestParameters->scenario, array_keys( $availableScenarii ) ) )
         {
             throw new InvalidArgumentException(
@@ -56,7 +57,10 @@ class ezjscServerFunctionsRecommendation
                     'extension/ezrecommendation',
                     'Unknown scenario %scenario. Available scenarios: %available_scenarii',
                     null,
-                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => implode( ', ', $availableScenarii ) )
+                    array(
+                        '%scenario' => $requestParameters->scenario,
+                        '%available_scenarii' => implode( ', ', array_keys( $availableScenarii ) )
+                    )
                 )
             );
         }
