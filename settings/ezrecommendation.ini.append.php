@@ -1,4 +1,3 @@
-<?php /* #?ini charset="utf8"?
 # Choose the ezrecommendation solution for your site between shop and publisher
 # Do not forget to clear template cache if you change the solution
 [SolutionSettings]
@@ -87,3 +86,11 @@ AvailableScenarios[top_purchased]=Top purchased
 AvailableScenarios[top_purchased_product]=Top purchased product
 AvailableScenarios[ultimately_bought]=Ultimately bought
 DefaultItemLimit=3
+
+[TypeSettings]
+Map[]
+Map[1]=Product
+Map[2]=Article
+Map[3]=Image
+Map[4]=Media
+Map[5]=User generated content

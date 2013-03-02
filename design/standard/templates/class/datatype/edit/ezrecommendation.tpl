@@ -25,14 +25,11 @@
 {*ezrecommendation Item Type ID*}
 <div class="block">
     <label for="ContentClass_ezrecommendation_class_reco_item_type_value_{$class_attribute.id}">{'Item type (for recommendation)'|i18n( 'design/standard/class/datatype' )}: </label>
-      <select id="ContentClass_ezrecommendation_class_reco_item_type_value_{$class_attribute.id}" name="ContentClass_ezrecommendation_class_reco_item_type_value_{$class_attribute.id}" size="1">
-          <option value="1" {if eq( $class_attribute.data_int1, 1 )}selected="selected"{/if}>1</option>
-          <option value="2" {if eq( $class_attribute.data_int1, 2 )}selected="selected"{/if}>2</option>
-          <option value="3" {if eq( $class_attribute.data_int1, 3 )}selected="selected"{/if}>3</option>
-          <option value="4" {if eq( $class_attribute.data_int1, 4 )}selected="selected"{/if}>4</option>
-          <option value="5" {if eq( $class_attribute.data_int1, 5 )}selected="selected"{/if}>5</option>
-          <option value="6" {if eq( $class_attribute.data_int1, 6 )}selected="selected"{/if}>6</option>
-        </select>
+    <select id="ContentClass_ezrecommendation_class_reco_item_type_value_{$class_attribute.id}" name="ContentClass_ezrecommendation_class_reco_item_type_value_{$class_attribute.id}" size="1">
+    {foreach ezini( 'TypeSettings', 'Map', 'ezrecommendation.ini' ) as $id => $label}
+        <option value="{$id}" {if eq( $class_attribute.data_int1, $id )}selected="selected"{/if}>{$label|i18n( 'extension/ezrecommendation', false, 'item type' )} ({$id})</option>
+    {/foreach}
+    </select>
 </div>
 
 <br />
