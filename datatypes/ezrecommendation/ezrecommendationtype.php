@@ -218,14 +218,19 @@ class eZRecommendationType extends eZDataType
         $classAttribute->store();
     }
 
+    /**
+     * @param eZHTTPTool $http
+     * @param string $base
+     * @param eZContentClassAttribute $classAttribute
+     *
+     * @return int
+     */
     function validateClassAttributeHTTPInput( $http, $base, $classAttribute )
     {
-        $flagValidation = '';
+        $errors = array();
 
         $ttlValueName = $base . self::TTL_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $recommendValueName = $base . self::RECOMMEND_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $exportValueName = $base . self::EXPORT_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $itemTypeValueName = $base . self::ITEM_TYPE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $validfromTypeValueName = $base . self::VALIDFROM_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $validtoTypeValueName = $base . self::VALIDTO_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $priceTypeValueName = $base . self::PRICE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
@@ -235,15 +240,15 @@ class eZRecommendationType extends eZDataType
         {
             if ( $http->postVariable( $validfromTypeValueName ) == '0' ||  $http->postVariable( $validtoTypeValueName ) == '0')
             {
-                $flagValidation .= '[ezrecommendation]: Missing required Field for the publisher solution.' ;
+                $errors[] = '[ezrecommendation]: Missing required Field for the publisher solution.' ;
             }
         }
 
-        if ($this->solution == 'shop' && $http->postVariable( $exportValueName ) != '')
+        if ( $this->solution == 'shop' && $http->postVariable( $exportValueName ) != '' )
         {
             if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
             {
-                $flagValidation .= '[ezrecommendation]: Missing required Field for the shop solution.' ;
+                $errors[] = '[ezrecommendation]: Missing required Field for the shop solution.' ;
             }
         }
 
@@ -256,26 +261,33 @@ class eZRecommendationType extends eZDataType
                 $ttl_state = $this->IntegerValidator->validate( $ttlValueValue );
                 if ( ( $ttl_state != eZInputValidator::STATE_ACCEPTED ) )
                 {
-                    $flagValidation .= '[ezrecommendation]: Wrong Format (Time to trigger consumption event)';
+                    $errors[] = '[ezrecommendation]: Wrong Format (Time to trigger consumption event)';
                 }
             }
         }
 
-        if ( $flagValidation == '' )
+        if ( !count( $errors ) )
         {
             return eZInputValidator::STATE_ACCEPTED;
         }
         else
         {
-            eZDebug::writeError( $flagValidation );
+            foreach( $errors as $error )
+            {
+                eZDebug::writeError( $error );
+            }
             return eZInputValidator::STATE_INVALID;
         }
-
-        return eZInputValidator::STATE_INVALID;
     }
 
 
-
+    /**
+     * @param $http
+     * @param $base
+     * @param $classAttribute
+     *
+     * @return bool
+     */
     function fetchClassAttributeHTTPInput( $http, $base, $classAttribute )
     {
 
@@ -349,18 +361,6 @@ class eZRecommendationType extends eZDataType
         }
 
         //get attribute mapping
-        $validfromValueName = $base . self::VALIDFROM_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $validtoValueName = $base . self::VALIDTO_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $priceValueName = $base . self::PRICE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $currencyValueName = $base . self::CURRENCY_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $titleValueName = $base . self::TITLE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $abstractValueName = $base . self::ABSTRACT_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $authorValueName = $base . self::AUTHOR_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $newsagencyValueName = $base . self::NEWSAGENCY_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $vendorValueName = $base . self::VENDOR_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $geolocationValueName = $base . self::GEOLOCATION_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $dateValueName = $base . self::DATE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $tagsValueName = $base . self::TAGS_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $countAttr = $base . '_ezrecommendation_attribute_mapping_counter_' . $classAttribute->attribute( 'id' ) ;
 
         if ( $http->hasPostVariable( $countAttr ))
@@ -382,42 +382,46 @@ class eZRecommendationType extends eZDataType
                     }
                 }
             }
-            //create also itemTypeId , recommendation and export node for the workflow evaluation
-            if ($exportValueNameValue == 1)
+
+            // create also itemTypeId , recommendation and export node for the workflow evaluation
+            if ( $exportValueNameValue == 1 )
             {
                 $elementType = $doc->createElement( 'export-enable' );
                 $elementType->setAttribute( 'value', 1 );
                 $root->appendChild( $elementType );
             }
-            else{
+            else
+            {
                 $elementType = $doc->createElement( 'export-enable' );
                 $elementType->setAttribute( 'value', 0 );
                 $root->appendChild( $elementType );
             }
-            if ($recommendValueValue == 1)
+
+            if ( $recommendValueValue == 1 )
             {
                 $elementType = $doc->createElement( 'recommendation-enable' );
                 $elementType->setAttribute( 'value', 1 );
                 $root->appendChild( $elementType );
             }
-            else{
+            else
+            {
                 $elementType = $doc->createElement( 'recommendation-enable' );
                 $elementType->setAttribute( 'value', 0 );
                 $root->appendChild( $elementType );
             }
-            if($itemTypeXMLNode != '')
+
+            if ( $itemTypeXMLNode != '' )
             {
                 $elementType = $doc->createElement( 'itemtypeid' );
                 $elementType->setAttribute( 'value', $itemTypeXMLNode );
                 $root->appendChild( $elementType );
-
             }
-            //
+
             $doc->appendChild( $root );
             $docText = $doc->saveXML();
             $classAttribute->setAttribute( self::MAPPING_VALUE_FIELD , $docText );
-
         }
+
         return true;
     }
     function contentObjectArrayXMLMap($countAdded)
