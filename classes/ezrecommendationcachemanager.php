@@ -9,23 +9,38 @@
 
 class eZRecommendationCacheManager
 {
-    /** @var eZRecommendationClusterProvider */
-    private $clusterProvider;
-
-    public function __construct( eZRecommendationClusterProvider $clusterProvider = null)
+    public function getFromCache( $path, $key )
     {
-        if ( $clusterProvider == null )
-            $clusterProvider = new eZRecommendationClusterProvider();
+        $expiryHandler = eZExpiryHandler::instance();
 
-        $this->clusterProvider = $clusterProvider;
+        if ( !$expiryHandler->hasTimestamp( $key ) )
+        {
+            return false;
+        }
+
+        if ( !file_exists( $path ) || filemtime( $path ) < $expiryHandler->timestamp( $key ) )
+        {
+            return false;
+        }
+
+        return include( $path );
     }
 
-    public function getFromCache( $path )
+    public function storeCache( $path, $key, $data )
     {
-        return false;
-    }
+        if ( !is_array( $data ) )
+        {
+            throw new InvalidArgumentException( "\$data argument must be a valid array" );
+        }
 
-    public function storeCache( $path, $data )
-    {
+        $dataString = "<" . "?php\nreturn ". var_export( $data, true ) . ";\n?" . ">\n";
+        if ( !eZFile::create( basename( $path ), dirname( $path ), $dataString ) )
+        {
+            throw new InvalidArgumentException( "Unable to open cache file $path for writing" );
+        }
+
+        $expiryHandler = eZExpiryHandler::instance();
+        eZExpiryHandler::registerShutdownFunction();
+        $expiryHandler->setTimestamp( $key, time() );
     }
 }
