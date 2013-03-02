@@ -372,14 +372,30 @@ class eZRecommendationServerAPI
         try
         {
             $response = $request->send();
-            print_r( $request->getRawRequestMessage() );
         }
         catch ( HttpRuntimeException $e )
         {
             eZDebugSetting::writeError( 'extensionezrecommendation', $e->getMessage() );
         }
 
-        return json_decode( $response->getBody() );
+        $rawScenarioList = json_decode( $response->getBody() );
+        if ( !is_object( $rawScenarioList ) || !count( $rawScenarioList->scenarioInfoList ) )
+            return array();
+
+        $scenarioList = array();
+        foreach ( $rawScenarioList->scenarioInfoList as $rawScenario )
+        {
+            if ( $rawScenario->enabled != 'ENABLED' )
+                continue;
+
+            $scenarioList[] = array(
+                'referenceCode' => $rawScenario->referenceCode,
+                'title' => $rawScenario->title,
+                'description' => $rawScenario->description
+            );
+        }
+
+        return $scenarioList;
     }
 
     /**
