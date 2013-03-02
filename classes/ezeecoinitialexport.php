@@ -67,18 +67,15 @@ class eZRecoInitialExport
         }
         elseif ( $solution == 'publisher' )
         {
-            $valid_from = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validfrom'], 'validfrom' );
-            $valid_to = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validto'], 'validto' );
-            if ( empty( $valid_to ) || empty( $valid_from ) )
+            if ( $ezRecomappingArray['validfrom'] )
             {
-                eZRecoLog::write( "Missing valid_to or valid_from for node $node_id (object Id $object_id)" );
-                return false;
+                $params_array['valid_from'] = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validfrom'], 'validfrom' );
             }
-            $params_array['valid_from'] = $valid_from;
-            $params_array['valid_to'] = $valid_to;
-            unset( $valid_from, $valid_to );
+            if ( $ezRecomappingArray['validto'] )
+            {
+                $params_array['valid_to'] = eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray['validto'], 'validto' );
+            }
         }
-
 
         $content_section = array();
         foreach( self::$recoXmlContentSection as $key )
@@ -130,7 +127,6 @@ class eZRecoInitialExport
                 );
             }
         }
-        unset( $key );
 
         $params_array['attribute'] = $attributes_section;
 

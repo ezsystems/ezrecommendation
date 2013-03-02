@@ -240,17 +240,27 @@ class eZRecommendationApi
             $elementType->appendChild( $elementPriceTypeContent);
         }
 
-        $elementVFromTypeContent = $doc->createElement( 'validfrom' );
-        $elementVFromTypeContent->appendChild( $doc->createTextNode(eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray['validfrom'],'validfrom')) );
-        $elementType->appendChild( $elementVFromTypeContent);
+        if ( $ezRecomappingArray['validfrom'] )
+        {
+            $elementVFromTypeContent = $doc->createElement( 'validfrom' );
+            $elementVFromTypeContent->appendChild(
+                $doc->createTextNode(
+                    eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray['validfrom'], 'validfrom' )
+                )
+            );
+            $elementType->appendChild( $elementVFromTypeContent);
+        }
 
-        $elementVToTypeContent = $doc->createElement( 'validto' );
-        $elementVToTypeContent->appendChild(
-            $doc->createTextNode(
-                eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray['validto'], 'validto' )
-            )
-        );
-        $elementType->appendChild( $elementVToTypeContent );
+        if ( $ezRecomappingArray['validto'] )
+        {
+            $elementVToTypeContent = $doc->createElement( 'validto' );
+            $elementVToTypeContent->appendChild(
+                $doc->createTextNode(
+                    eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecomappingArray['validto'], 'validto' )
+                )
+            );
+            $elementType->appendChild( $elementVToTypeContent );
+        }
 
         $elementTypeContent = $doc->createElement( 'categorypaths' );
         $elementType->appendChild( $elementTypeContent );

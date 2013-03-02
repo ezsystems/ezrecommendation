@@ -136,11 +136,8 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
     if ( $exportedElements == 0 )
     {
         $xmlFilePath = eZRecoInitialExport::getXmlFilePath( $path );
-
         $cli->output( "Exporting " . count( $nodeList ) . " items to $xmlFilePath...", false );
-
         eZClusterFileHandler::preFork();
-
         $pid = pcntl_fork();
 
         // re-initialize the database
@@ -197,6 +194,7 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
     }
 
     eZRecoInitialExport::writeXmlFile( $domDocument, $xmlFilePath );
+    eZClusterFileHandler::instance()->fileStore( $xmlFilePath );
 
     if ( $optMemoryDebug >= 2 )
     {
@@ -213,12 +211,10 @@ if ( $optMemoryDebug >= 1 )
     printMemoryUsageDelta( "XML export", $memoryUsageOne, $cli );
 
 // Store files to cluster, and send HTTP request
-$clusterHandler = eZClusterFileHandler::instance();
 $memoryUsageTwo = memory_get_usage( true );
 foreach ( $xmlFiles as $xmlFile )
 {
     $cli->output( "Sending $xmlFile... ", false );
-    $clusterHandler->fileStore( $xmlFile );
     try
     {
         ezRecoFunctions::send_bulk_request( $url, $path, $xmlFile );

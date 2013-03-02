@@ -231,24 +231,14 @@ class eZRecommendationType extends eZDataType
 
         $ttlValueName = $base . self::TTL_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $exportValueName = $base . self::EXPORT_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $validfromTypeValueName = $base . self::VALIDFROM_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-        $validtoTypeValueName = $base . self::VALIDTO_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $priceTypeValueName = $base . self::PRICE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $currencyTypeValueName = $base . self::CURRENCY_VALUE_VARIABLE . $classAttribute->attribute( "id" );
-
-        if ( $this->solution == 'publisher' && $http->postVariable( $exportValueName ) != '')
-        {
-            if ( $http->postVariable( $validfromTypeValueName ) == '0' ||  $http->postVariable( $validtoTypeValueName ) == '0')
-            {
-                $errors[] = '[ezrecommendation]: Missing required Field for the publisher solution.' ;
-            }
-        }
 
         if ( $this->solution == 'shop' && $http->postVariable( $exportValueName ) != '' )
         {
             if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
             {
-                $errors[] = '[ezrecommendation]: Missing required Field for the shop solution.' ;
+                $errors[] = '[ezrecommendation] Missing required Field Currency Type ' ;
             }
         }
 
