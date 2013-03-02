@@ -231,56 +231,43 @@ class eZRecommendationType extends eZDataType
         $priceTypeValueName = $base . self::PRICE_VALUE_VARIABLE . $classAttribute->attribute( "id" );
         $currencyTypeValueName = $base . self::CURRENCY_VALUE_VARIABLE . $classAttribute->attribute( "id" );
 
-
-        //check required fields
-
-        if ($this->solution == 'publisher' && $http->postVariable( $exportValueName ) != '')
+        if ( $this->solution == 'publisher' && $http->postVariable( $exportValueName ) != '')
         {
             if ( $http->postVariable( $validfromTypeValueName ) == '0' ||  $http->postVariable( $validtoTypeValueName ) == '0')
+            {
                 $flagValidation .= '[ezrecommendation]: Missing required Field for the publisher solution.' ;
-
-
+            }
         }
 
         if ($this->solution == 'shop' && $http->postVariable( $exportValueName ) != '')
         {
             if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
+            {
                 $flagValidation .= '[ezrecommendation]: Missing required Field for the shop solution.' ;
-
-
+            }
         }
 
-
-
-        //check ttl
         if ( $http->hasPostVariable( $ttlValueName ) )
         {
-
-
             $ttlValueValue = $http->postVariable( $ttlValueName );
             $ttlValueValue = str_replace(" ", "", $ttlValueValue );
-            if ( ( $ttlValueValue != "" ) )
+            if ( $ttlValueValue != "" )
             {
                 $ttl_state = $this->IntegerValidator->validate( $ttlValueValue );
                 if ( ( $ttl_state != eZInputValidator::STATE_ACCEPTED ) )
                 {
                     $flagValidation .= '[ezrecommendation]: Wrong Format (Time to trigger consumption event)';
-
                 }
-
-
             }
-
-
         }
 
-        if ($flagValidation == '')
+        if ( $flagValidation == '' )
+        {
             return eZInputValidator::STATE_ACCEPTED;
+        }
         else
         {
-            eZLog::write($flagValidation, 'error.log', 'var/log');
             eZDebug::writeError( $flagValidation );
-
             return eZInputValidator::STATE_INVALID;
         }
 
