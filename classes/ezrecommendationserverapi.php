@@ -351,7 +351,8 @@ class eZRecommendationServerAPI
 
     /**
      * Returns the list of configured scenarii on the yoochoose server
-     * @return array
+     *
+     * @return array an array, indexed by scenario ID, of hashes with 3 keys: id, title and description
      */
     public static function getScenarioList()
     {
@@ -388,9 +389,9 @@ class eZRecommendationServerAPI
             if ( $rawScenario->enabled != 'ENABLED' )
                 continue;
 
-            $scenarioList[] = array(
-                'referenceCode' => $rawScenario->referenceCode,
-                'title' => $rawScenario->title,
+            $scenarioList[$rawScenario->referenceCode] = array(
+                'id' => $rawScenario->referenceCode,
+                'title' => $rawScenario->title . " from server",
                 'description' => $rawScenario->description
             );
         }
