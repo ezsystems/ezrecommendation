@@ -78,7 +78,7 @@ class eZRecommendationFunctionCollection
      *
      * @return array an array of hashes with the keys id, title and description
      */
-    public function fetchAvailableScenario()
+    public function getAvailableScenario()
     {
         $api = new eZRecommendationAPI;
         return array( 'result' => $api->getScenarioList() );

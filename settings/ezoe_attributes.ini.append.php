@@ -14,7 +14,8 @@ Default=1
 
 [CustomAttribute_recommendations_scenario]
 Name=Scenario
-Type=select
+Type=scenario_list
+# Deprecated since eZ Publish 5.1 / eZ Recommendation 1.2
 Selection[]
 Selection[top_clicked]=Top clicked
 Selection[top_consumed]=Top consumed
