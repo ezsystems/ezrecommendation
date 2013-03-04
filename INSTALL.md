@@ -2,7 +2,8 @@ eZrecommendation extension installation documentation
 
 # Requirements
 - eZ Publish 4.6 or later version
-
+- pcntl extension
+- pecl/http extension
 
 # Installation
 
