@@ -72,21 +72,22 @@ class ezjscServerFunctionsRecommendation
             $requestParameters->isCategoryBased = false;
         }
 
-        $trackRenderedItems = (bool) array_shift( $args );
-        $createClickRecommendedEvent = (bool) array_shift( $args );
+        $trackRenderedItems = (bool)array_shift( $args );
+        $createClickRecommendedEvent = (bool)array_shift( $args );
 
         $api = new eZRecommendationApi();
         $recommendations = $api->getRecommendations( $requestParameters );
 
         $tpl = eZTemplate::factory();
         $recommendedNodes = array();
-        foreach( $recommendations as $key => $recommendation )
+        foreach( $recommendations as $recommendation )
         {
             if ( $node = eZContentObjectTreeNode::fetch( $recommendation['itemId' ] ) )
             {
                 $recommendedNodes[$recommendation['itemId']] = $node;
             }
         }
+        eZDebug::writeDebug( $recommendedNodes );
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );

@@ -621,79 +621,43 @@ class ezRecoTemplateFunctions
     function track_rendered_items( $items_array )
     {
         $sorted_array = array();
-        foreach ($items_array as $key => $value){
-            $k = str_replace("\"", "", $key);
-            $val =  str_replace("\"", "", $value);
+        foreach ( $items_array as $key => $value )
+        {
+            $key = str_replace( "\"", "", $key );
+            $val =  str_replace( "\"", "", $value );
 
-            if (empty($sorted_array[$val])){
-                $sorted_array[$val] = $k;
-            }else{
-                $sorted_array[$val] = $sorted_array[$val].','.$k;
+            if ( empty( $sorted_array[$val] ) )
+            {
+                $sorted_array[$val] = $key;
             }
-
+            else
+            {
+                $sorted_array[$val] = $sorted_array[$val] . ',' . $key;
+            }
         }
-
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
-
-            $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
-
-            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
-                $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-            }else{
-
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
-                return false;
-
-            }
-
-
-            $res = '';
-            $renderedEventsUrl = array();
-
-            $i = 0;
-            foreach ($sorted_array as $key => $value){
-
-                $recoitemtypeid = '';
-
-                $arr = ezRecommendationClassAttribute::fetchClassAttributeList($key);
-
-                if (count($arr['result']) > 0)
-                {
-                    $recoitemtypeid = $arr['result']['recoItemType'];
-
-                }
-
-                if (!empty($recoitemtypeid))
-                {
-                    $path = '/';
-                    $i++;
-
-                    $params = '?productid='.$productid.'&eventtype=rendered';
-                    $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                    $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$value;
-
-                    $renderedEventsUrl[] = $this->get_current_url() . $params;
-
-                }else{
-                    eZLog::write('[ezrecommendation] could not map classid '.$key.' to ezrecommendation itemtypeid.', 'error.log', 'var/log');
-                    continue;
-                }
-
-            }
-
-
-        }
-        else
+        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'node_id' ) || $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
         {
-
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
             return false;
+        }
 
+        $productId = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
+        $renderedEventsUrl = array();
+
+        foreach ( $sorted_array as $key => $value )
+        {
+            $classAttributeList = ezRecommendationClassAttribute::fetchClassAttributeList( $key );
+            if ( !isset( $classAttributeList['result'] ) > 0 )
+                continue;
+
+            $params = '?productid='.$productId.'&eventtype=rendered';
+            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ) . '=' . $classAttributeList['result']['recoItemType'];
+            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'node_id' ) . '=' . $value;
+
+            $renderedEventsUrl[] = $this->get_current_url() . $params;
         }
 
         if ( !empty( $renderedEventsUrl ) )
