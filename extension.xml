@@ -9,7 +9,7 @@
     </metadata>
 
     <dependencies>
-
+        <requires name="ezphttprequest" />
     </dependencies>
 
 </software>

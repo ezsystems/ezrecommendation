@@ -4,6 +4,7 @@ eZrecommendation extension installation documentation
 - eZ Publish 4.6 or later version
 - pcntl extension
 - pecl/http extension
+- ezpHttpRequest extension (http://github.com/ezsystems/ezpHttpRequest)
 
 # Installation
 
