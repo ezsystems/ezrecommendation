@@ -87,7 +87,6 @@ class ezjscServerFunctionsRecommendation
                 $recommendedNodes[$recommendation['itemId']] = $node;
             }
         }
-        eZDebug::writeDebug( $recommendedNodes );
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
