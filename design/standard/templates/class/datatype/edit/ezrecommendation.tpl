@@ -89,7 +89,7 @@
 {if ezini('SolutionSettings','solution','ezrecommendation.ini')|eq('shop')}
     <legend>{'Optional'|i18n( 'design/standard/class/datatype' )}</legend>
 {else}
-    <legend>{'Publisher solution (required)'|i18n( 'design/standard/class/datatype' )}</legend>
+    <legend>{'Publisher solution'|i18n( 'design/standard/class/datatype' )}</legend>
 {/if}
     <div class="block">
 
