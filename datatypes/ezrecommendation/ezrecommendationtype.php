@@ -480,44 +480,46 @@ class eZRecommendationType extends eZDataType
 
     function serializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
-        $itemTypeValueName = $base . self::ITEM_TYPE_VALUE_FIELD . $classAttribute->attribute( "id" );
-        $recommendValueName = $base . self::RECOMMEND_VALUE_FIELD . $classAttribute->attribute( "id" );
-        $exportValueName = $base . self::EXPORT_VALUE_FIELD . $classAttribute->attribute( "id" );
-        $ttlValueName = $base . self::TTL_VALUE_FIELD . $classAttribute->attribute( "id" );
-        $mappingValueName = $base . self::MAPPING_VALUE_FIELD . $classAttribute->attribute( "id" );
+        $content = $classAttribute->content();
+        if ( $content )
+        {
+            $itemTypeValue = $classAttribute->attribute( self::ITEM_TYPE_VALUE_FIELD );
+            $recommendValue = $classAttribute->attribute( self::RECOMMEND_VALUE_FIELD );
+            $exportValue = $classAttribute->attribute( self::EXPORT_VALUE_FIELD );
+            $ttlValue = $classAttribute->attribute( self::TTL_VALUE_FIELD );
+            $mappingValue = $classAttribute->attribute( self::MAPPING_VALUE_FIELD );
 
+            $dom = $attributeParametersNode->ownerDocument;
 
-        $dom = $attributeParametersNode->ownerDocument;
+            $itemTypeValueNode = $dom->createElement( 'item-type-value' );
+            $itemTypeValueNode->appendChild( $dom->createTextNode( $itemTypeValue ) );
+            $attributeParametersNode->appendChild( $itemTypeValueNode );
 
-        $itemTypeValueNode = $dom->createElement( 'temType-value' );
-        $itemTypeValueNode->appendChild( $dom->createTextNode( $itemTypeValueName ) );
-        $attributeParametersNode->appendChild( $itemTypeValueNode );
+            $recommendTypeValueNode = $dom->createElement( 'recommend-type-value' );
+            $recommendTypeValueNode->appendChild( $dom->createTextNode( $recommendValue ) );
+            $attributeParametersNode->appendChild( $recommendTypeValueNode );
 
-        $recommendValueNode = $dom->createElement( 'recommend-value' );
-        $recommendValueNode->setAttribute( 'is-set', $recommendValueName ? 'true' : 'false' );
-        $attributeParametersNode->appendChild( $recommendValueNode );
+            $exportTypeValueNode = $dom->createElement( 'export-type-value' );
+            $exportTypeValueNode->appendChild( $dom->createTextNode( $exportValue ) );
+            $attributeParametersNode->appendChild( $exportTypeValueNode );
 
-        $exportValueNode = $dom->createElement( 'export-value' );
-        $exportValueNode->setAttribute( 'is-set', $exportValueName ? 'true' : 'false' );
-        $attributeParametersNode->appendChild( $exportValueNode );
+            $ttlTypeValueNode = $dom->createElement( 'ttl-type-value' );
+            $ttlTypeValueNode->appendChild( $dom->createTextNode( $ttlValue ) );
+            $attributeParametersNode->appendChild( $ttlTypeValueNode );
 
-        $ttlValueNode = $dom->createElement( 'ttl-value' );
-        $ttlValueNode->appendChild( $dom->createTextNode( $ttlValueName ) );
-        $attributeParametersNode->appendChild( $ttlValueNode );
-
-        $mappingValueNode = $dom->createElement( 'title-map-value' );
-        $mappingValueNode->appendChild( $dom->createTextNode( $mappingValueName ) );
-        $attributeParametersNode->appendChild( $mappingValueNode );
-
+            $mappingTypeValueNode = $dom->createElement( 'mapping-type-value' );
+            $mappingTypeValueNode->appendChild( $dom->createTextNode( $mappingValue ) );
+            $attributeParametersNode->appendChild( $mappingTypeValueNode );
+        }
     }
 
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
-        $itemTypeValueName = $attributeParametersNode->getElementsByTagName( 'temType-value' )->item( 0 )->textContent;
-        $recommendValueName = strtolower( $attributeParametersNode->getElementsByTagName( 'recommend-value' )->item( 0 )->getAttribute( 'is-set' ) )== 'true';
-        $exportValueName = strtolower( $attributeParametersNode->getElementsByTagName( 'export-value' )->item( 0 )->getAttribute( 'is-set' ) )== 'true';
-        $ttlValueName = $attributeParametersNode->getElementsByTagName( 'ttl-value' )->item( 0 )->textContent;
-        $mappingValueName = $attributeParametersNode->getElementsByTagName( 'title-map-value' )->item( 0 );
+        $itemTypeValueName = $attributeParametersNode->getElementsByTagName( 'item-type-value' )->item( 0 )->textContent;
+        $recommendValueName = ($attributeParametersNode->getElementsByTagName( 'recommend-type-value' )->item( 0 )->textContent ) == '1';
+        $exportValueName = ($attributeParametersNode->getElementsByTagName( 'export-type-value' )->item( 0 )->textContent )== '1';
+        $ttlValueName = $attributeParametersNode->getElementsByTagName( 'ttl-type-value' )->item( 0 )->textContent;
+        $mappingValueName = $attributeParametersNode->getElementsByTagName( 'mapping-type-value' )->item( 0 )->textContent;
 
         $classAttribute->setAttribute( self::ITEM_TYPE_VALUE_FIELD, $itemTypeValueName );
         $classAttribute->setAttribute( self::RECOMMEND_VALUE_FIELD, $recommendValueName );
