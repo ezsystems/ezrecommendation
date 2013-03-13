@@ -21,6 +21,7 @@ class eZRecoExportEventType extends eZWorkflowEventType
             eZRecoExportEventType::EZ_WORKFLOW_TYPE_EZRECOEXPORTEVENTTYPE,
             "ezrecommendation export object event"
         );
+        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'after' ) ) ) );
     }
 
 
