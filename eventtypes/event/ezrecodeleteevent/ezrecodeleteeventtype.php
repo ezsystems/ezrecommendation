@@ -24,7 +24,11 @@ class eZRecoDeleteEventType extends eZWorkflowEventType
     function eZRecoDeleteEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( eZRecoDeleteEventType::EZ_WORKFLOW_TYPE_EZRECODELETEEVENT, "ezrecommendation delete object event" );
+        $this->eZWorkflowEventType(
+            eZRecoDeleteEventType::EZ_WORKFLOW_TYPE_EZRECODELETEEVENT,
+            "ezrecommendation delete object event"
+        );
+        $this->setTriggerTypes( array( 'content' => array( 'delete' => array( 'before' ) ) ) );
     }
 
     function execute( $process, $event )

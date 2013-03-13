@@ -25,7 +25,11 @@ class eZRecoExportEventType extends eZWorkflowEventType
     function eZRecoExportEventType()
     {
         // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( eZRecoExportEventType::EZ_WORKFLOW_TYPE_EZRECOEXPORTEVENTTYPE, "ezrecommendation export object event" );
+        $this->eZWorkflowEventType(
+            eZRecoExportEventType::EZ_WORKFLOW_TYPE_EZRECOEXPORTEVENTTYPE,
+            "ezrecommendation export object event"
+        );
+        $this->setTriggerTypes( array( 'content' => array( 'publish' => array( 'after' ) ) ) );
     }
 
 

@@ -24,8 +24,11 @@ class eZRecoBuyEventType extends eZWorkflowEventType
      */
     function eZRecoBuyEventType()
     {
-        // Human readable name of the event displayed in admin interface
-        $this->eZWorkflowEventType( eZRecoBuyEventType::EZ_WORKFLOW_TYPE_EZRECOBUYEVENT, "ezrecommendation buy object event" );
+        $this->eZWorkflowEventType(
+            eZRecoBuyEventType::EZ_WORKFLOW_TYPE_EZRECOBUYEVENT,
+            "ezrecommendation buy object event"
+        );
+        $this->setTriggerTypes( array( 'shop' => array( 'confirmorder' => array( 'before' ) ) ) );
     }
 
     function execute( $process, $event )
