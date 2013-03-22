@@ -199,9 +199,6 @@ class eZRecommendationApi
                 }
         */
 //
-
-        $ezCategoryPath = $contentObject->mainNode()->PathString;
-
         //get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
         $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $classID );
         if ( isset( $classIDArray['result'] ) )
@@ -265,13 +262,17 @@ class eZRecommendationApi
         $elementTypeContent = $doc->createElement( 'categorypaths' );
         $elementType->appendChild( $elementTypeContent );
 
-        $elementTypeCategoryChild = $doc->createElement( 'categorypath' );
-        $elementTypeCategoryChild->appendChild(
-            $doc->createTextNode(
-                ezRecoTemplateFunctions::getCategoryPath( $ezCategoryPath )
-            )
-        );
-        $elementTypeContent->appendChild( $elementTypeCategoryChild );
+        foreach ( $contentObject->assignedNodes() as $node )
+        {
+            $elementTypeCategoryChild = $doc->createElement( 'categorypath' );
+            $elementTypeCategoryChild->appendChild(
+                $doc->createTextNode(
+                    ezRecoTemplateFunctions::getCategoryPath( $node->attribute( 'path_string' ) )
+                )
+            );
+            $elementTypeContent->appendChild( $elementTypeCategoryChild );
+        }
+
         //
         $createContentParentNode = 0;
         for ( $i = 0, $recoXmlContentSectionCount = count( $recoXmlContentSection ); $i < $recoXmlContentSectionCount ; ++$i )

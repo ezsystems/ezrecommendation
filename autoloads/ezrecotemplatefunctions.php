@@ -268,7 +268,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -284,7 +284,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -299,9 +299,9 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
-                $categorypath = $node->PathString;
+                $categorypath = $node->attribute( 'path_string' );
 
                 $mynodeArray = $node->attribute( 'data_map' );
 
@@ -317,7 +317,7 @@ class ezRecoTemplateFunctions
 
                 $params = '?productid='.$productid.'&eventtype=consume';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
                 $res = '<div id="ezreco-consume-event">'.$this->get_url_for_consume_event( $params ).'</div>';
@@ -347,7 +347,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -364,7 +364,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -379,13 +379,13 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
-                $categorypath = $node->PathString;
+                $categorypath = $node->attribute( 'path_string' );
 
                 $params = '?productid='.$productid.'&eventtype='.$event_type;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
                 $res = $this->get_html_for_event( $params );
@@ -412,7 +412,7 @@ class ezRecoTemplateFunctions
     {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -434,7 +434,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -449,12 +449,12 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
 
                 $params = '?productid='.$productid.'&eventtype=buy';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'quantity' ).'='.$quantity;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'price' ).'='.$price;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'currency' ).'='.$currency;
@@ -483,7 +483,7 @@ class ezRecoTemplateFunctions
     {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -505,7 +505,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -519,12 +519,12 @@ class ezRecoTemplateFunctions
 
             if (!empty($recoitemtypeid))
             {
-                $itemid = $node->NodeID;
-                $categorypath = $node->PathString;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
+                $categorypath = $node->attribute( 'path_string' );
 
                 $params = '?productid='.$productid.'&eventtype=rate';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'rating' ).'='.$rating;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
@@ -553,15 +553,15 @@ class ezRecoTemplateFunctions
 
             $ini = eZINI::instance('ezrecommendation.ini');
 
-            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
+            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
 
                 $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
-                $content_info = $module_result['content_info'];
+                $contentInfo = $module_result['content_info'];
 
-                if ( $content_info )
+                if ( $contentInfo )
                 {
-                    $itemtypeid = $content_info['class_id'];
+                    $itemtypeid = $contentInfo['class_id'];
 
 
                     $recoitemtypeid = '';
@@ -576,20 +576,17 @@ class ezRecoTemplateFunctions
 
                     if (!empty($recoitemtypeid))
                     {
-
-                        $itemid = $content_info['node_id'];
-
-                        $item_node = eZContentObjectTreeNode::fetch($itemid);
-                        $categorypath = $item_node->PathString;
+                        $node = eZContentObjectTreeNode::fetch( $contentInfo['node_id'] );
+                        $categoryPath = $node->attribute( 'path_string' );
 
                         $current_user = eZUser::currentUser ();
                         $current_user_id = $current_user->attribute( 'contentobject_id' );
 
                         $params = '?productid='.$productid.'&eventtype='.$event_type;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'=' . $recoitemtypeid;
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'=' . $contentInfo['object_id'];
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'=' . $current_user_id;
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categoryPath);
 
                         $res = $this->get_html( $params );
                     }else{
@@ -638,7 +635,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'node_id' ) || $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
         {
             eZDebug::writeError('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
             return false;
@@ -655,7 +652,7 @@ class ezRecoTemplateFunctions
 
             $params = '?productid='.$productId.'&eventtype=rendered';
             $params .= '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ) . '=' . $classAttributeList['result']['recoItemType'];
-            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'node_id' ) . '=' . $value;
+            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'object_id' ) . '=' . $value;
 
             $renderedEventsUrl[] = $this->get_current_url() . $params;
         }
