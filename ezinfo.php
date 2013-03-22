@@ -12,7 +12,7 @@ class ezRecommendationInfo
 {
     static function info()
     {
-        return array( 'Name' => 'eZRecommendation',
+        return array( 'Name' => 'eZRecommendation LS',
                       'Version' => '//autogen//',
                       'Copyright' => '//autogen//',
                       'License' => '//autogen//',
