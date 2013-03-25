@@ -201,7 +201,7 @@ class eZRecommendationApi
 //
         //get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
         $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $classID );
-        if ( isset( $classIDArray['result'] ) )
+        if ( !isset( $classIDArray['result'] ) )
             return false;
 
         $XmlDataText = $classIDArray['result']['recoXmlMap'];
