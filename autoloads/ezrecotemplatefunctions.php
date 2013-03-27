@@ -635,7 +635,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || !$ini->hasVariable( 'ParameterMapSettings', 'class_id' ) )
         {
             eZDebug::writeError('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
             return false;
