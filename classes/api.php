@@ -30,7 +30,7 @@ class eZRecommendationApi
             $userId = $currentUser->attribute( 'contentobject_id' );
 
         }
-        elseif ( isset( $_COOKIE['ezreco'] ) )
+        else if ( isset( $_COOKIE['ezreco'] ) )
         {
             $userId = $_COOKIE['ezreco'];
         }
@@ -62,10 +62,13 @@ class eZRecommendationApi
         $path .= '&' . $ini->variable( 'ParameterMapSettings', 'path_string' ) . '=' . urlencode( ezRecoTemplateFunctions::getCategoryPath( $categorypath ) );
         $path .= '&recommendCategory=true';
 
-        try {
+        try
+        {
             $recommendations = ezRecoFunctions::send_reco_request( $ini->variable( 'URLSettings', 'RecoURL' ), $path );
             return self::processRawRecommendations( $recommendations );
-        } catch( eZRecommendationException $e ) {
+        }
+        catch ( eZRecommendationException $e )
+        {
             throw new eZRecommendationApiException( $e->getMessage() );
         }
 
@@ -79,7 +82,7 @@ class eZRecommendationApi
         $classId = eZContentClass::classIDByIdentifier( $classIdentifier );
         $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $classId );
 
-        return count($arr['result'] ) > 0 ? $arr['result']['recoItemType'] : false;
+        return count( $arr['result'] ) > 0 ? $arr['result']['recoItemType'] : false;
     }
 
     /**
@@ -91,16 +94,16 @@ class eZRecommendationApi
     {
         $recommendations = array();
 
-        foreach( $rawRecommendations as $rec )
+        foreach ( $rawRecommendations as $rec )
         {
-            foreach( $rec as $rec2 )
+            foreach ( $rec as $rec2 )
             {
                 $row = array(
                     'reason' => $rec2->reason,
                     'itemType' => $rec2->itemType,
                     'itemId' => $rec2->itemId,
                     'relevance' => $rec2->relevance,
-                    'category' => $rec2->category
+                    'category' => property_exists( $rec2, 'category' ) ? $rec2->category : null
                 );
                 $recommendations[] = $row;
             }
@@ -151,7 +154,7 @@ class eZRecommendationApi
         $classID = $contentObject->attribute( 'contentclass_id' );
 
         //get content object in the default language
-        $dataMap = $contentObject->attribute('data_map');
+        $dataMap = $contentObject->attribute( 'data_map' );
 
         //or get content object in the actually language
         /*
@@ -219,16 +222,24 @@ class eZRecommendationApi
         $elementType->setAttribute( 'type', $recoitemtypeid );
         $root->appendChild( $elementType );
         //
-        $recoXmlContentSection = array('title','abstract','tags');
-        $recoXmlAttributesSection = array('author','agency','geolocation','newsagency','vendor','date');
+        $recoXmlContentSection = array( 'title', 'abstract', 'tags' );
+        $recoXmlAttributesSection = array( 'author', 'agency', 'geolocation', 'newsagency', 'vendor', 'date' );
 
         if ( $solution == 'shop' )
         {
-
             $elementPriceTypeContent = $doc->createElement( 'price' );
             $elementPriceTypeContent->setAttribute( 'currency', $ezRecomappingArray['currency'] );
-            $elementPriceTypeContent->appendChild( $doc->createTextNode(eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray['price'],$ezRecomappingArray['currency'] )) );
-            $elementType->appendChild( $elementPriceTypeContent);
+            $elementPriceTypeContent->appendChild(
+                $doc->createTextNode(
+                    eZRecoDataTypeContent::checkDatatypeString(
+                        $classID,
+                        $dataMap,
+                        $ezRecomappingArray['price'],
+                        $ezRecomappingArray['currency']
+                    )
+                )
+            );
+            $elementType->appendChild( $elementPriceTypeContent );
         }
 
         if ( $ezRecomappingArray['validfrom'] )
@@ -269,7 +280,7 @@ class eZRecommendationApi
 
         //
         $createContentParentNode = 0;
-        for ( $i = 0, $recoXmlContentSectionCount = count( $recoXmlContentSection ); $i < $recoXmlContentSectionCount ; ++$i )
+        for ( $i = 0, $recoXmlContentSectionCount = count( $recoXmlContentSection ); $i < $recoXmlContentSectionCount; ++$i )
         {
             $key = $recoXmlContentSection[$i];
             if ( array_key_exists( $key, $ezRecomappingArray ) and $ezRecomappingArray[$key] != '0' )
@@ -288,11 +299,11 @@ class eZRecommendationApi
                 $elementTypeContentChild->appendChild(
                     $doc->createCDATASection(
                         htmlentities(
-                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray[$key] )
+                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecomappingArray[$key] )
                         )
                     )
                 );
-                $elementTypeContent->appendChild( $elementTypeContentChild);
+                $elementTypeContent->appendChild( $elementTypeContentChild );
             }
         }
         //-attributes-
@@ -301,7 +312,7 @@ class eZRecommendationApi
         {
             $addedOptAttributes = $ezRecomappingArray['counter'];
             $createAttributeParentNode = 0;
-            for ( $i = 1; $i < $addedOptAttributes ; ++$i )
+            for ( $i = 1; $i < $addedOptAttributes; ++$i )
             {
                 if ( !isset($ezRecomappingArray['addtomap' . $i] ) )
                     continue;
@@ -315,11 +326,18 @@ class eZRecommendationApi
                 }
                 $elementTypeAttributeChild = $doc->createElement( 'attribute' );
                 $elementTypeAttributeChild->setAttribute( 'key', $ezRecomappingArray['addtomap'.$i] );
-                $elementTypeAttributeChild->setAttribute( 'value', eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray['addtomap'.$i]) );
+                $elementTypeAttributeChild->setAttribute(
+                    'value',
+                    eZRecoDataTypeContent::checkDatatypeString(
+                        $classID,
+                        $dataMap,
+                        $ezRecomappingArray['addtomap'.$i]
+                    )
+                );
                 $elementTypeAttributes->appendChild( $elementTypeAttributeChild );
             }
 
-            for ( $i = 0, $recoXmlAttributesSectionCount = count( $recoXmlAttributesSection ); $i < $recoXmlAttributesSectionCount ; ++$i )
+            for ( $i = 0, $recoXmlAttributesSectionCount = count( $recoXmlAttributesSection ); $i < $recoXmlAttributesSectionCount; ++$i )
             {
                 $key = $recoXmlAttributesSection[$i];
                 if ( !isset( $ezRecomappingArray[$key] ) || $ezRecomappingArray[$key] == '0' )
@@ -339,7 +357,7 @@ class eZRecommendationApi
                     $elementTypeAttributeChild->setAttribute( 'key', $key );
                     $elementTypeAttributeChild->setAttribute(
                         'value',
-                        eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap , $ezRecomappingArray[$key] )
+                        eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecomappingArray[$key] )
                     );
                     $elementTypeAttributes->appendChild( $elementTypeAttributeChild );
                 }
