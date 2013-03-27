@@ -6,7 +6,6 @@
     {node_view_gui content_node=$node view='line' create_clickrecommended_event=$create_clickrecommended_event}
 {/foreach}
 
-
 {if and( gt( $nodes_array|count(), 0 ), $track_rendered_items )}
     {track_rendered_items( $nodes_array )}
 {/if}

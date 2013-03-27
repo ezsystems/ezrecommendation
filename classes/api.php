@@ -21,7 +21,7 @@ class eZRecommendationApi
         // item type id
         $itemTypeId = $this->getItemTypeId( $parameters->node->attribute( 'class_identifier' ) );
 
-        $itemId = $parameters->node->attribute( 'node_id' );
+        $itemId = $parameters->object->attribute( 'id' );
 
         // user ID
         $currentUser = eZUser::currentUser();
@@ -50,7 +50,7 @@ class eZRecommendationApi
         $productId = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
         $path = "/$productId/$clientId/$userId/{$parameters->scenario}.$extension";
-        $path .= '?' . $ini->variable( 'ParameterMapSettings', 'node_id' ).'=' . urlencode( $itemId );
+        $path .= '?' . $ini->variable( 'ParameterMapSettings', 'object_id' ).'=' . urlencode( $itemId );
 
         if ( $parameters->limit && $ini->hasVariable( 'ParameterMapSettings', 'numrecs' ) )
             $path .= '&' . $ini->variable( 'ParameterMapSettings', 'numrecs' ) . '=' . urlencode( $parameters->limit );
@@ -58,15 +58,9 @@ class eZRecommendationApi
         if ( $ini->hasVariable( 'ParameterMapSettings', 'class_id' ) )
             $path .= '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ).'=' . urlencode( $itemTypeId );
 
-        if ( $parameters->isCategoryBased )
-        {
-            $categorypath = $node->attribute( 'path_string' );
-            if  (!empty( $categorypath ) )
-            {
-                $path .= '&' . $ini->variable( 'ParameterMapSettings', 'path_string' )
-                    . '=' . urlencode( ezRecoTemplateFunctions::getCategoryPath( $categorypath ) );
-            }
-        }
+        $categorypath = $parameters->node->attribute( 'path_string' );
+        $path .= '&' . $ini->variable( 'ParameterMapSettings', 'path_string' ) . '=' . urlencode( ezRecoTemplateFunctions::getCategoryPath( $categorypath ) );
+        $path .= '&recommendCategory=true';
 
         try {
             $recommendations = ezRecoFunctions::send_reco_request( $ini->variable( 'URLSettings', 'RecoURL' ), $path );
@@ -105,7 +99,8 @@ class eZRecommendationApi
                     'reason' => $rec2->reason,
                     'itemType' => $rec2->itemType,
                     'itemId' => $rec2->itemId,
-                    'relevance' => $rec2->relevance
+                    'relevance' => $rec2->relevance,
+                    'category' => $rec2->category
                 );
                 $recommendations[] = $row;
             }
@@ -154,7 +149,6 @@ class eZRecommendationApi
         //get the data map from objectID
         $contentObject = eZContentObject::fetch( $objectID );
         $classID = $contentObject->attribute( 'contentclass_id' );
-        $nodeID = $contentObject->attribute( 'main_node_id' );
 
         //get content object in the default language
         $dataMap = $contentObject->attribute('data_map');
@@ -219,7 +213,7 @@ class eZRecommendationApi
         $root->setAttribute( 'version', 1 );
 
         $elementType = $doc->createElement( 'item' );
-        $elementType->setAttribute( 'id', $nodeID );
+        $elementType->setAttribute( 'id', $objectID );
 
         $root->appendChild( $elementType );
         $elementType->setAttribute( 'type', $recoitemtypeid );
