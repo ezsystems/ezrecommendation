@@ -130,7 +130,7 @@ class eZRecommendationApi
             $classAttributesList = ezRecommendationClassAttribute::fetchClassAttributeList( $node->ContentObject->ClassID );
             if ( !isset( $classAttributesList['result']['recoItemType'] )  )
                 return false;
-            ezRecoFunctions::sendDeleteItemRequest( $classAttributesList['result']['recoItemType'] . '/' . $nodeID );
+            ezRecoFunctions::sendDeleteItemRequest( $classAttributesList['result']['recoItemType'] . '/' . $node->attribute( 'object' )->attribute( 'id' ) );
             eZDebugSetting::writeDebug( 'ezrecommendation-extension', 'Delete event on node $nodeID executed' );
             return true;
         }
