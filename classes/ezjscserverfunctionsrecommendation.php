@@ -12,6 +12,8 @@ class ezjscServerFunctionsRecommendation
     /**
      * Fetches recommendations for a node
      * @param array $args array( node id, scenario, limit, category_based(true|false, defaut false), track_rendered_items(true|false, default false), create_clickrecommended_event(true|false, default false) )
+     * @throws InvalidArgumentException
+     * @return string
      */
     public static function getRecommendations( $args )
     {
@@ -76,7 +78,7 @@ class ezjscServerFunctionsRecommendation
 
         $tpl = eZTemplate::factory();
         $recommendedNodes = array();
-        foreach( $recommendations as $recommendation )
+        foreach ( $recommendations as $recommendation )
         {
             if ( $object = eZContentObject::fetch( $recommendation['itemId' ] ) )
             {
@@ -84,11 +86,11 @@ class ezjscServerFunctionsRecommendation
                 {
                     $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
                 }
-                else 
+                else
                 {
-                    foreach( $object->assignedNodes() as $node )
+                    foreach ( $object->assignedNodes() as $node )
                     {
-                        if ( strpos( $node->attribute('path_string'), $recommendation['category' ] )  !== false )
+                        if ( strpos( $node->attribute( 'path_string' ), $recommendation['category' ] ) !== false )
                         {
                             $recommendedNodes[$recommendation['itemId']] = $node;
                             break;
