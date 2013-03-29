@@ -101,6 +101,7 @@ class ezjscServerFunctionsRecommendation
         }
 
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
+        $tpl->setVariable( 'scenario', $requestParameters->scenario );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
         return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
