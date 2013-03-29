@@ -103,10 +103,12 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
             $http->hasGetVariable( 'map' ) &&
             $http->getVariable( 'map' ) == 1 &&
             $http->hasGetVariable( 'sid' ) &&
-            $_COOKIE['ezreco_usr'] != $userid
+            ( !$http->hasSessionVariable( 'eZRecoTransfer' ) || $http->sessionVariable( 'eZRecoTransfer' ) != $userid )
         )
         {
+            // Update cookie with current user ID
             $_COOKIE['ezreco_usr'] = $userid;
+            $http->setSessionVariable( 'eZRecoTransfer', $userid );
 
             $sid = $http->getVariable( 'sid' );
 
