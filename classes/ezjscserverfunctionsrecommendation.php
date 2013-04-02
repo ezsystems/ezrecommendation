@@ -12,6 +12,8 @@ class ezjscServerFunctionsRecommendation
     /**
      * Fetches recommendations for a node
      * @param array $args array( node id, scenario, limit, category_based(true|false, defaut false), track_rendered_items(true|false, default false), create_clickrecommended_event(true|false, default false) )
+     * @throws InvalidArgumentException
+     * @return string
      */
     public static function getRecommendations( $args )
     {
@@ -45,18 +47,19 @@ class ezjscServerFunctionsRecommendation
             );
         }
         $requestParameters->node = $node;
+        $requestParameters->object = $node->attribute( 'object' );
 
         // scenario argument
         $requestParameters->scenario = array_shift( $args );
-        $availableScenarii = $recommendationIni->variable( 'BackendSettings', 'AvailableScenarios' );
-        if ( !in_array( $requestParameters->scenario, array_keys( $availableScenarii ) ) )
+        $availableScenario = $recommendationIni->variable( 'BackendSettings', 'AvailableScenarios' );
+        if ( !in_array( $requestParameters->scenario, array_keys( $availableScenario ) ) )
         {
             throw new InvalidArgumentException(
                 ezpI18n::tr(
                     'extension/ezrecommendation',
                     'Unknown scenario %scenario. Available scenarios: %available_scenarii',
                     null,
-                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => implode( ', ', $availableScenarii ) )
+                    array( '%scenario' => $requestParameters->scenario, '%available_scenarii' => implode( ', ', $availableScenario ) )
                 )
             );
         }
@@ -67,11 +70,6 @@ class ezjscServerFunctionsRecommendation
             $requestParameters->limit = 3;
         }
 
-        if ( !$requestParameters->isCategoryBased = array_shift( $args ) )
-        {
-            $requestParameters->isCategoryBased = false;
-        }
-
         $trackRenderedItems = (bool)array_shift( $args );
         $createClickRecommendedEvent = (bool)array_shift( $args );
 
@@ -80,14 +78,30 @@ class ezjscServerFunctionsRecommendation
 
         $tpl = eZTemplate::factory();
         $recommendedNodes = array();
-        foreach( $recommendations as $recommendation )
+        foreach ( $recommendations as $recommendation )
         {
-            if ( $node = eZContentObjectTreeNode::fetch( $recommendation['itemId' ] ) )
+            if ( $object = eZContentObject::fetch( $recommendation['itemId' ] ) )
             {
-                $recommendedNodes[$recommendation['itemId']] = $node;
+                if ( empty( $recommendation['category' ] ) )
+                {
+                    $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
+                }
+                else
+                {
+                    foreach ( $object->assignedNodes() as $node )
+                    {
+                        if ( strpos( $node->attribute( 'path_string' ), $recommendation['category' ] ) !== false )
+                        {
+                            $recommendedNodes[$recommendation['itemId']] = $node;
+                            break;
+                        }
+                    }
+                }
             }
         }
+
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
+        $tpl->setVariable( 'scenario', $requestParameters->scenario );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
         return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );

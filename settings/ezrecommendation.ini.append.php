@@ -42,6 +42,7 @@ ConfigURL=admin.yoochoose.net
 [ParameterMapSettings]
 class_id=itemtypeid
 node_id=itemid
+object_id=itemid
 path_string=categorypath
 user_id=userid
 quantity=quantity

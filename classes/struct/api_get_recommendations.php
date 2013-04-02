@@ -24,6 +24,12 @@ class eZRecommendationApiGetRecommendationsStruct
     public $node;
 
     /**
+     * Content object to get recommendations for
+     * @var eZContentObject
+     */
+    public $object;
+
+    /**
      * How many recommendations should be returned
      */
     public $limit = 3;
@@ -33,6 +39,4 @@ class eZRecommendationApiGetRecommendationsStruct
      * @var integer
      */
     public $itemTypeId;
-
-    public $isCategoryBased = false;
 }

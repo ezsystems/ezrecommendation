@@ -36,59 +36,90 @@ class ezRecoTemplateFunctions
 
     function namedParameterList()
     {
-        return array(     'generate_html' => array(
-                            'module_result' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'event_type' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' )
-                                ),
-                        'generate_common_event' => array(
-                            'node' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'event_type' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' )
-                                ),
-                        'generate_consume_event' => array(
-                            'node' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' )
-                                ),
-                        'generate_buy_event' => array(
-                            'node' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'quantity' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'price' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'currency' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' )
-                                ),
-                        'generate_rate_event' => array(
-                            'node' => array( 'type' => 'array',
-                                                'required' => true,
-                                                'default' => '' ),
-                            'rating' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' )
-                                ),
-                            'track_rendered_items' => array(
-                                    'itemtypeid' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' ),
-                                    'items' => array( 'type' => 'string',
-                                                'required' => true,
-                                                'default' => '' )
-                                    )
-
-                                );
+        return array(
+            'generate_html' => array(
+                'module_result' => array(
+                    'type' => 'array',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'event_type' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                )
+            ),
+            'generate_common_event' => array(
+                'node' => array(
+                    'type' => 'array',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'event_type' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'scenario' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                )
+            ),
+            'generate_consume_event' => array(
+                'node' => array(
+                    'type' => 'array',
+                    'required' => true,
+                    'default' => ''
+                )
+            ),
+            'generate_buy_event' => array(
+                'node' => array(
+                    'type' => 'array',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'quantity' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'price' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'currency' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                )
+            ),
+            'generate_rate_event' => array(
+                'node' => array(
+                    'type' => 'array',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'rating' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                )
+            ),
+            'track_rendered_items' => array(
+                'itemtypeid' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                ),
+                'items' => array(
+                    'type' => 'string',
+                    'required' => true,
+                    'default' => ''
+                )
+            )
+        );
     }
 
     function modify( $tpl, $operatorName, $operatorParameters, $rootNamespace, $currentNamespace, &$operatorValue, $namedParameters )
@@ -98,53 +129,52 @@ class ezRecoTemplateFunctions
             case 'generate_html':
                 {
                     $operatorValue = $this->generate_html_from_module_result(
-                                                                $namedParameters['module_result'],
-                                                                $namedParameters['event_type']
-                                                     );
+                        $namedParameters['module_result'],
+                        $namedParameters['event_type']
+                    );
                 } break;
             case 'generate_common_event':
                 {
                     $operatorValue = $this->generate_common_event(
-                                                                $namedParameters['node'],
-                                                                $namedParameters['event_type']
-                                                     );
+                        $namedParameters['node'],
+                        $namedParameters['event_type'],
+                        $namedParameters['scenario']
+                    );
                 } break;
             case 'generate_consume_event':
                 {
-                    $operatorValue = $this->generate_consume_event(
-                                                                $namedParameters['node']
-                                                     );
+                    $operatorValue = $this->generate_consume_event( $namedParameters['node'] );
                 } break;
             case 'generate_buy_event':
                 {
                     $operatorValue = $this->generate_buy_event(
-                                                                $namedParameters['node'],
-                                                                $namedParameters['quantity'],
-                                                                $namedParameters['price'],
-                                                                $namedParameters['currency']
-                                                     );
+                        $namedParameters['node'],
+                        $namedParameters['quantity'],
+                        $namedParameters['price'],
+                        $namedParameters['currency']
+                    );
                 } break;
             case 'generate_rate_event':
                 {
                     $operatorValue = $this->generate_rate_event(
-                                                                $namedParameters['node'],
-                                                                $namedParameters['rating']
-                                                     );
+                        $namedParameters['node'],
+                        $namedParameters['rating']
+                    );
                 } break;
             case 'track_rendered_items':
                 {
                     $operatorValue = $this->track_rendered_items(
-                                                                $namedParameters['itemtypeid'],
-                                                                $namedParameters['items']
-                                                     );
+                        $namedParameters['itemtypeid'],
+                        $namedParameters['items']
+                    );
                 } break;
 
         }
     }
 
 
-    function get_server_url() {
-
+    function getServerUrl()
+    {
         $ezurlop = new eZURLOperator();
 
         $sys = $ezurlop->Sys;
@@ -153,36 +183,32 @@ class ezRecoTemplateFunctions
 
         $siteaccess_url = $access_path['siteaccess']['url'];
 
-        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on'){
-
+        if ( !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' )
+        {
             $path = 'https://';
-
-        }else{
-
+        }
+        else
+        {
             $path = 'http://';
-
         }
 
         $path = $path.$_SERVER['HTTP_HOST'];
 
-        if ($sys->WWWDir != ''){
-
+        if ( $sys->WWWDir != '' )
+        {
             $www_dir = $sys->WWWDir;
             $path = $path.$www_dir;
-
         }
 
-        if ($sys->IndexFile != ''){
-
+        if ( $sys->IndexFile != '' )
+        {
             $index_file = $sys->IndexFile;
             $path = $path.$index_file;
-
         }
 
-        if (count($siteaccess_url)>0){
-
+        if ( count( $siteaccess_url ) > 0 )
+        {
             $path = $path.'/'.$siteaccess_url[0];
-
         }
 
         return $path;
@@ -192,7 +218,7 @@ class ezRecoTemplateFunctions
     function get_current_url() {
 
         $moduleURL = '/ezrecommendation/request';
-        $serverURL = $this->get_server_url();
+        $serverURL = $this->getServerUrl();
 
         return $serverURL.$moduleURL;
     }
@@ -268,7 +294,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -284,7 +310,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -299,28 +325,42 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
-                $categorypath = $node->PathString;
+                $categorypath = $node->attribute( 'path_string' );
 
                 $mynodeArray = $node->attribute( 'data_map' );
+                $contentClass = $node->attribute( 'object' )->attribute( 'content_class' );
+
+                foreach ( $contentClass->attribute( 'data_map' ) as $contentClassAttrib )
+                {
+                    if ( $contentClassAttrib->attribute( 'data_type_string' ) === 'ezrecommendation' )
+                    {
+                        $triggerTime = $contentClassAttrib->attribute( 'data_int4' );
+                        break;
+                    }
+                }
 
                 foreach ($mynodeArray as $contentObjectAttr)
                 {
-                    if($contentObjectAttr->DataTypeString == "ezrecommendation"){
+                    if( $contentObjectAttr->DataTypeString == "ezrecommendation" )
+                    {
                             $dataTextXml = $contentObjectAttr->DataText;
-                             $isEnableReco = ezRecommendationXml::getNodeAttributeValue($dataTextXml, 'recommendation-enable')    ;
-                            break 1;
+                             $isEnableReco = ezRecommendationXml::getNodeAttributeValue(
+                                 $dataTextXml,
+                                 'recommendation-enable'
+                             );
+                            break;
                     }
 
                 }
 
                 $params = '?productid='.$productid.'&eventtype=consume';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
-                $res = '<div id="ezreco-consume-event">'.$this->get_url_for_consume_event( $params ).'</div>';
+                $res = '<div id="ezreco-consume-event" data-trigger-time="' . $triggerTime . '">'.$this->get_url_for_consume_event( $params ).'</div>';
 
             }
             else
@@ -342,12 +382,12 @@ class ezRecoTemplateFunctions
 
 
 
-    function generate_common_event( $node, $event_type )
+    function generate_common_event( $node, $event_type, $scenario = '' )
     {
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -364,7 +404,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -379,14 +419,15 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
-                $categorypath = $node->PathString;
+                $categorypath = $node->attribute( 'path_string' );
 
                 $params = '?productid='.$productid.'&eventtype='.$event_type;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
+                $params .= '&scenario=' . $scenario;
 
                 $res = $this->get_html_for_event( $params );
             }
@@ -412,7 +453,7 @@ class ezRecoTemplateFunctions
     {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -434,7 +475,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -449,12 +490,12 @@ class ezRecoTemplateFunctions
             if (!empty($recoitemtypeid))
             {
 
-                $itemid = $node->NodeID;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
 
 
                 $params = '?productid='.$productid.'&eventtype=buy';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'quantity' ).'='.$quantity;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'price' ).'='.$price;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'currency' ).'='.$currency;
@@ -483,7 +524,7 @@ class ezRecoTemplateFunctions
     {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
@@ -505,7 +546,7 @@ class ezRecoTemplateFunctions
 
             }
 
-            $itemtypeid = eZContentClass::classIDByIdentifier($node->ClassIdentifier);
+            $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
@@ -519,12 +560,12 @@ class ezRecoTemplateFunctions
 
             if (!empty($recoitemtypeid))
             {
-                $itemid = $node->NodeID;
-                $categorypath = $node->PathString;
+                $itemid = $node->attribute( 'object' )->attribute( 'id' );
+                $categorypath = $node->attribute( 'path_string' );
 
                 $params = '?productid='.$productid.'&eventtype=rate';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'rating' ).'='.$rating;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
@@ -553,15 +594,15 @@ class ezRecoTemplateFunctions
 
             $ini = eZINI::instance('ezrecommendation.ini');
 
-            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'node_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
+            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
 
                 $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
-                $content_info = $module_result['content_info'];
+                $contentInfo = $module_result['content_info'];
 
-                if ( $content_info )
+                if ( $contentInfo )
                 {
-                    $itemtypeid = $content_info['class_id'];
+                    $itemtypeid = $contentInfo['class_id'];
 
 
                     $recoitemtypeid = '';
@@ -576,20 +617,17 @@ class ezRecoTemplateFunctions
 
                     if (!empty($recoitemtypeid))
                     {
-
-                        $itemid = $content_info['node_id'];
-
-                        $item_node = eZContentObjectTreeNode::fetch($itemid);
-                        $categorypath = $item_node->PathString;
+                        $node = eZContentObjectTreeNode::fetch( $contentInfo['node_id'] );
+                        $categoryPath = $node->attribute( 'path_string' );
 
                         $current_user = eZUser::currentUser ();
                         $current_user_id = $current_user->attribute( 'contentobject_id' );
 
                         $params = '?productid='.$productid.'&eventtype='.$event_type;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'node_id' ).'='.$itemid;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'='.$current_user_id;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'=' . $recoitemtypeid;
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'=' . $contentInfo['object_id'];
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'=' . $current_user_id;
+                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categoryPath);
 
                         $res = $this->get_html( $params );
                     }else{
@@ -638,7 +676,7 @@ class ezRecoTemplateFunctions
 
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'node_id' ) || $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || !$ini->hasVariable( 'ParameterMapSettings', 'class_id' ) )
         {
             eZDebug::writeError('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
             return false;
@@ -655,7 +693,7 @@ class ezRecoTemplateFunctions
 
             $params = '?productid='.$productId.'&eventtype=rendered';
             $params .= '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ) . '=' . $classAttributeList['result']['recoItemType'];
-            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'node_id' ) . '=' . $value;
+            $params .= '&' . $ini->variable( 'ParameterMapSettings', 'object_id' ) . '=' . $value;
 
             $renderedEventsUrl[] = $this->get_current_url() . $params;
         }
