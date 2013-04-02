@@ -94,6 +94,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
         $userid = $http->getVariable( 'sid' );
         $path .= '/'.$userid;
 
+        $http->setSessionVariable( 'eZRecoTransfer', $userid );
     }
     else if ( $user->isLoggedIn() && $http->hasGetVariable( 'userid' ) )
     {
