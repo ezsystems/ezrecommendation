@@ -10,7 +10,6 @@ $(document).ready(function () {ldelim}
             {$node.node_id},
             '{$scenario_name|wash( 'javascript' )}',
             {$numrecs|int},
-            {cond( is_set( $category_based ), $category_based|int, 0 )},
             {cond( is_set( $track_rendered_items ), $track_rendered_items|int, 0 )},
             {cond( is_set( $create_clickrecommended_event ), $create_clickrecommended_event|int, 0 )}
         ],
