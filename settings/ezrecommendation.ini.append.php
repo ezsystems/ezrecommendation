@@ -1,3 +1,5 @@
+<?php /*
+
 # Choose the ezrecommendation solution for your site between shop and publisher
 # Do not forget to clear template cache if you change the solution
 [SolutionSettings]
@@ -95,3 +97,5 @@ Map[2]=Article
 Map[3]=Image
 Map[4]=Media
 Map[5]=User generated content
+
+*/ ?>

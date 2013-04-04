@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * File containing fetch functions definition
+ *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//

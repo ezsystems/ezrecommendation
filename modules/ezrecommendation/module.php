@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * File containing ezrecommendation module definition
+ *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//

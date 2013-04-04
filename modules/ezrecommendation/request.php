@@ -1,7 +1,6 @@
 <?php
-
 /**
- * File containing the eZRecommendationFunctions request implementation
+ * File containing ezrecommendation/request view implementation
  *
  * @copyright //autogen//
  * @license //autogen//

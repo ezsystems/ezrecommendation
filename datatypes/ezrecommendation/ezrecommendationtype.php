@@ -2,7 +2,7 @@
 /**
  * File containing the ezrecommendationFunctions class for generating the html output
  *
- * @copyright Copyright (C) 2010-2011 yoochoose GmbH. All rights reserved.
+ * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
  * @package ezrecommendation
