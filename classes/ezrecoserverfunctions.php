@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the ezRecommendationJsCoreServer class.
+ * File containing the ezRecoServerFunctions class.
  *
  * @copyright //autogen//
  * @license //autogen//
@@ -8,7 +8,7 @@
  * @package ezrecommendation
  */
 
-class ezjscServerFunctionsRecommendation
+class ezRecoServerFunctions
 {
     /**
      * Fetches recommendations for a node
