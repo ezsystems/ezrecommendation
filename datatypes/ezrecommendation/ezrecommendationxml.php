@@ -1,6 +1,7 @@
 <?php
-
 /**
+ * File containing the ezRecommendationXml class
+ *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//

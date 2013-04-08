@@ -1,5 +1,7 @@
 <?php
 /**
+ * File containing the eZRecoDataTypeContent class
+ *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//

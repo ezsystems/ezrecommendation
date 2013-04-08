@@ -1,6 +1,6 @@
 <?php /*
 
 [ezjscServer_ezrecommendation]
-Class=ezjscServerFunctionsRecommendation
+Class=ezRecoServerFunctions
 
 */ ?>

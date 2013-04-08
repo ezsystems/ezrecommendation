@@ -1,5 +1,6 @@
 <?php
 /**
+ * File containing the ezRecommendationInfo class implementation
  *
  * @copyright //autogen//
  * @license //autogen//

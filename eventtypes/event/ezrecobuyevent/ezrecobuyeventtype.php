@@ -1,7 +1,7 @@
 <?php
-
-
 /**
+ * File containing the eZRecoBuyEventType class
+ *
  * @copyright //autogen//
  * @license //autogen//
  * @version //autogen//
