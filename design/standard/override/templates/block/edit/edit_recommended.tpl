@@ -126,13 +126,11 @@
                         <input id="block-custom_attribute-{$block_id}-{$loop_count}" class="textfield block-control" type="text" name="ContentObjectAttribute_ezpage_block_custom_attribute_{$attribute.id}[{$zone_id}][{$block_id}][{$custom_attrib}]" value="{$block.custom_attributes[$custom_attrib]}" />
                         {/case}
                         {case match = 'scenarios'}
-                        {def $available_scenarios = ezini( 'BackendSettings', 'AvailableScenarios', 'ezrecommendation.ini' )}
                         <select id="block-custom_attribute-{$block_id}-{$loop_count}" class="textfield block-control" name="ContentObjectAttribute_ezpage_block_custom_attribute_{$attribute.id}[{$zone_id}][{$block_id}][{$custom_attrib}]">
-                            {foreach $available_scenarios as $value => $name}
-                                <option value="{$value}"{if eq( $value, $block.custom_attributes[$custom_attrib] )} selected="selected"{/if}>{$name}</option>
+                            {foreach fetch( 'ezrecommendation', 'scenario_list' ) as $scenario}
+                                <option value="{$scenario.id|wash}"{if $scenario.id|eq( $block.custom_attributes[$custom_attrib] )} selected="selected"{/if} title="{$scenario.description|wash}">{$scenario.title|wash}</option>
                             {/foreach}
                         </select>
-                        {undef $available_scenarios}
                         {/case}
                         {case match = 'limit'}
                         {def $default_item_limit = ezini( 'BackendSettings', 'DefaultItemLimit', 'ezrecommendation.ini' )}
