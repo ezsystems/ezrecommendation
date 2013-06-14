@@ -85,7 +85,14 @@ class eZRecommendationServerAPI
         $classId = eZContentClass::classIDByIdentifier( $classIdentifier );
         $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $classId );
 
-        return count( $arr['result'] ) > 0 ? $arr['result']['recoItemType'] : false;
+        if ( !isset( $arr['result']['recoItemType'] ) )
+        {
+            return false;
+        }
+        else
+        {
+            return count( $arr['result'] ) > 0 ? $arr['result']['recoItemType'] : false;
+        }
     }
 
     /**
