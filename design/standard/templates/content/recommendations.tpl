@@ -1,5 +1,6 @@
 {def $scenario_name = cond( $scenario|eq( '' ), ezini( 'RecommendationSettings', 'DefaultScenario', 'ezrecommendation.ini' ), $scenario )
-     $div_id = concat( 'ezrecommendation-recommendations', $node.node_id )}
+     $div_id_hash = concat( $node.node_id, $scenario, $numrecs, $output_itemtypeid, $category_based, $create_clickrecommended_event, $track_rendered_items )|md5
+     $div_id = concat( 'ezreco-reco-', $div_id_hash )}
 <script type="text/javascript">
 $(document).ready(function () {ldelim}
 
