@@ -21,8 +21,20 @@ class eZRecommendationServerAPI
     {
         $ini = eZINI::instance( 'ezrecommendation.ini' );
 
-        // item type id
-        $itemTypeId = $this->getItemTypeId( $parameters->node->attribute( 'class_identifier' ) );
+        if ( $parameters->itemTypeId == -1 )
+        {
+            $parameters->itemTypeId = $this->getItemTypeId( $parameters->node->attribute( 'class_identifier' ) );
+        }
+        else if ( is_numeric( $parameters->itemTypeId ) )
+        {
+            $configuredTypesIds = array_keys(
+                eZINI::instance( 'ezrecommendation.ini' )->variable( 'TypeSettings', 'Map' )
+            );
+            if ( !in_array( $parameters->itemTypeId, $configuredTypesIds ) )
+            {
+                throw new eZRecommendationApiException( "Unknown item type id {$parameters->itemTypeId}" );
+            }
+        }
 
         $itemId = $parameters->object->attribute( 'id' );
 
@@ -31,7 +43,6 @@ class eZRecommendationServerAPI
         if ( !$currentUser->isAnonymous() )
         {
             $userId = $currentUser->attribute( 'contentobject_id' );
-
         }
         else if ( isset( $_COOKIE['ezreco'] ) )
         {
@@ -58,8 +69,8 @@ class eZRecommendationServerAPI
         if ( $parameters->limit && $ini->hasVariable( 'ParameterMapSettings', 'numrecs' ) )
             $path .= '&' . $ini->variable( 'ParameterMapSettings', 'numrecs' ) . '=' . urlencode( $parameters->limit );
 
-        if ( $ini->hasVariable( 'ParameterMapSettings', 'class_id' ) )
-            $path .= '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ).'=' . urlencode( $itemTypeId );
+        if ( $parameters->itemTypeId )
+            $path .= '&outputtypeid=' . urlencode( $parameters->itemTypeId );
 
         $categorypath = $parameters->node->attribute( 'path_string' );
         $path .= '&' . $ini->variable( 'ParameterMapSettings', 'path_string' ) . '=' . urlencode( ezRecoTemplateFunctions::getCategoryPath( $categorypath ) );

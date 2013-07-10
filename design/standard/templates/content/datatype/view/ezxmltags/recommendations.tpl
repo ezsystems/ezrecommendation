@@ -23,6 +23,7 @@ flyout: {$flyout}
         numrecs=$limit
         output_itemtypeid=cond( is_set( $output_itemtypeid ), $output_itemtypeid, 0 )
         category_based=cond( is_set( $category_based ), $category_based, 0 )
+        item_type_id=$item_type_id
         create_clickrecommended_event=true()
         track_rendered_items=true()}
 </div>

@@ -37,7 +37,8 @@ class eZRecommendationApiGetRecommendationsStruct
 
     /**
      * Item type id (1 = product, 2 = article...)
+     * -1 = same as content being viewed  (::node/::object)
      * @var integer
      */
-    public $itemTypeId;
+    public $itemTypeId = -1;
 }
