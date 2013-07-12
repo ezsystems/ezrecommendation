@@ -417,7 +417,7 @@ class eZRecommendationServerAPI
 
             $scenarioList[$rawScenario->referenceCode] = array(
                 'id' => $rawScenario->referenceCode,
-                'title' => $rawScenario->title . " from server",
+                'title' => $rawScenario->title,
                 'description' => $rawScenario->description
             );
         }
@@ -431,4 +431,3 @@ class eZRecommendationServerAPI
      */
     private $ini;
 }
-?>
