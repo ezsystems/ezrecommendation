@@ -83,43 +83,41 @@ class eZRecoInitialExportProvider
     /**
      * Returns a batch of up to $split items. Each call to the method advances the pointer.
      * @param int $split
-     * @return array
+     * @return eZContentObject[]
      */
     public function getNextBatch( $split )
     {
         static $batchIndex = 0;
-
         $offset = $batchIndex * $split;
 
-        $classIdList = implode( ',', $this->classIdArray );
-        $rows = $this->db->arrayQuery(
-            "SELECT node_id, contentobject_id, path_string, contentclass_id
-            FROM ezcontentobject_tree, ezcontentobject
-            WHERE ezcontentobject_tree.contentobject_id = ezcontentobject.id
-              AND contentclass_id IN ($classIdList)",
+        $rows = eZContentObjectTreeNode::subTreeByNodeID(
             array(
-                'offset' => $offset,
-                'limit' => $split
-            )
+                'ClassFilterType' => 'include',
+                'ClassFilterArray' => $this->classIdArray,
+                'MainNodeOnly' => true,
+                'Offset' => $offset,
+                'Limit' => $split
+            ),
+            2
         );
-
         $batchIndex++;
 
         if ( empty( $rows ) )
-        {
             return false;
+
+        /** @var $rows eZContentObjectTreeNode[] */
+        $return = array();
+        foreach ( $rows as $row )
+        {
+            $return[] = $row->attribute( 'object' );
         }
 
-        return $rows;
+        return $return;
     }
 
     public function getItemsCount()
     {
-        $classIdList = implode( ',', $this->classIdArray );
-        $countRows = $this->db->arrayQuery(
-            "SELECT COUNT(*) AS count FROM ezcontentobject_tree WHERE contentobject_id in (SELECT id FROM ezcontentobject where contentclass_id IN ($classIdList))"
-        );
-        return $countRows[0]['count'];
+        return eZContentObject::fetchSameClassListCount( array( $this->classIdArray ) );
     }
 
     private function getNextItem()
@@ -140,17 +138,17 @@ class eZRecoInitialExportProvider
      */
     private function fetchNextRows()
     {
-        $classIdList = implode( ',', $this->classIdArray );
-        $this->rows = $this->db->arrayQuery(
-            "SELECT node_id, contentobject_id, path_string, contentclass_id
-            FROM ezcontentobject_tree, ezcontentobject
-            WHERE ezcontentobject_tree.contentobject_id = ezcontentobject.id
-              AND contentclass_id IN ($classIdList)",
+        $this->rows = $rows = eZContentObjectTreeNode::subTreeByNodeID(
             array(
-                'offset' => $this->offset,
-                'limit' => $this->limit
-            )
+                'ClassFilterType' => 'include',
+                'ClassFilterArray' => $this->classIdArray,
+                'MainNodeOnly' => true,
+                'Offset' => $this->offset,
+                'Limit' => $this->limit
+            ),
+            2
         );
+
         $this->offset += $this->limit;
 
         return count( $this->rows );
