@@ -40,7 +40,7 @@ class eZRecommendationCacheManager
         }
 
         $expiryHandler = eZExpiryHandler::instance();
-        eZExpiryHandler::registerShutdownFunction();
         $expiryHandler->setTimestamp( $key, time() );
+        $expiryHandler->store();
     }
 }
