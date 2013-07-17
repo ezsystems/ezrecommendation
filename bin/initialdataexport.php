@@ -130,14 +130,14 @@ $cli->output( "Generating XML file(s)" );
 $exportedElements = 0;
 $xmlFiles = array();
 $memoryUsageOne = $memoryUsageTwo = memory_get_usage( true );
-while ( $nodeList = $provider->getNextBatch( $split ) )
+while ( $contentObjectList = $provider->getNextBatch( $split ) )
 {
     // we fork the process to handle the loop
     // $exportedElements is only incremented by the child process, and always has the value 0 in the parent
     if ( $exportedElements == 0 )
     {
         $xmlFilePath = eZRecoInitialExport::getXmlFilePath( $path );
-        $cli->output( "Exporting " . count( $nodeList ) . " items to $xmlFilePath...", false );
+        $cli->output( "Exporting " . count( $contentObjectList ) . " items to $xmlFilePath...", false );
         eZClusterFileHandler::preFork();
         $pid = pcntl_fork();
 
@@ -167,34 +167,24 @@ while ( $nodeList = $provider->getNextBatch( $split ) )
 
     // START CHILD PROCESS
     $initialMemoryUsage = memory_get_usage( true );
-    $domDocument = new DOMDocument( '1.0', 'utf-8' );
-    $domDocumentRoot = $domDocument->createElement( 'items' );
-    $domDocumentRoot->setAttribute( 'version', 1 );
-    $domDocument->appendChild( $domDocumentRoot );
-
     $iterationMemoryUsage = memory_get_usage( true );
-    // the child process iterates until a file has been written, or until it runs out of objects
-    foreach ( $nodeList as $node )
+
+    $xmlHandler = new eZRecoXMLHandler();
+    try
     {
-        try
-        {
-            $objectData = eZRecoInitialExport::generateNodeData( $node, $solution, $cli );
-            $domNode = $domDocument->createElement( 'item' );
-            $domDocumentRoot->appendChild( $domNode );
-            eZRecoInitialExport::generateDOMNode( $objectData, $domDocument, $domNode );
-            $exportedElements++;
-            if ( $optMemoryDebug >= 3 )
-                printMemoryUsageDelta( "export child iteration", $iterationMemoryUsage, $cli, true );
-        }
-        catch ( Exception $e )
-        {
-            $cli->error( "Export child: an exception has occured: " . $e->getMessage() );
-            $script->shutdown( 1 );
-            exit;
-        }
+        $xml = $xmlHandler->generateContentObjectXML( $contentObjectList );
+        $exportedElements += count( $contentObjectList );
+        if ( $optMemoryDebug >= 3 )
+            printMemoryUsageDelta( "export child iteration", $iterationMemoryUsage, $cli, true );
+    }
+    catch ( Exception $e )
+    {
+        $cli->error( "Export child: an exception has occured: " . $e->getMessage() );
+        $script->shutdown( 1 );
+        exit;
     }
 
-    eZRecoInitialExport::writeXmlFile( $domDocument, $xmlFilePath );
+    eZRecoInitialExport::writeXmlFile( $xml, $xmlFilePath );
     eZClusterFileHandler::instance()->fileStore( $xmlFilePath );
 
     if ( $optMemoryDebug >= 2 )
