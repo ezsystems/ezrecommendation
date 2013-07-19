@@ -12,5 +12,6 @@ CustomAttributes[]=name
 CustomAttributes[]=scenario
 CustomAttributes[]=limit
 CustomAttributes[]=flyout
+CustomAttributes[]=item_type_id
 
 */ ?>

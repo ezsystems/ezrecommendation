@@ -12,7 +12,12 @@ class ezRecoServerFunctions
 {
     /**
      * Fetches recommendations for a node
-     * @param array $args array( node id, scenario, limit, category_based(true|false, defaut false), track_rendered_items(true|false, default false), create_clickrecommended_event(true|false, default false) )
+     * @param array $args
+     *              array(
+     *                  node id, scenario, limit,
+     *                  category_based(true|false, defaut false),
+     *                  track_rendered_items(true|false, default false),
+     *                  create_clickrecommended_event(true|false, default false) )
      * @throws InvalidArgumentException
      * @return string
      */
@@ -74,6 +79,9 @@ class ezRecoServerFunctions
         {
             $requestParameters->limit = 3;
         }
+
+        if ( ( $itemTypeId = array_shift( $args ) ) )
+            $requestParameters->itemTypeId = $itemTypeId;
 
         $trackRenderedItems = (bool)array_shift( $args );
         $createClickRecommendedEvent = (bool)array_shift( $args );
