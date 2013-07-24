@@ -89,7 +89,11 @@ class eZRecoInitialExport
                     $tagsObject = "tags";
 
                 $content_section[] = array(
-                    $key => htmlentities( eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray[$key], $tagsObject ) )
+                    $key => htmlentities(
+                        eZRecoDataTypeContent::checkDatatypeString( $class_id, $dataMap, $ezRecomappingArray[$key], $tagsObject ),
+                        ENT_COMPAT | ENT_HTML401,
+                        'UTF-8'
+                    )
                 );
             }
         }
