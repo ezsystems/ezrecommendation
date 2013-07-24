@@ -302,7 +302,9 @@ class eZRecommendationApi
                 $elementTypeContentChild->appendChild(
                     $doc->createCDATASection(
                         htmlentities(
-                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecomappingArray[$key] )
+                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecomappingArray[$key] ),
+                            ENT_COMPAT | ENT_HTML401,
+                            'UTF-8'
                         )
                     )
                 );
