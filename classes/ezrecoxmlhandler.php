@@ -145,7 +145,9 @@ class eZRecoXMLHandler
                 $elementTypeContentChild->appendChild(
                     $doc->createCDATASection(
                         htmlentities(
-                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecoMappingArray[$key] )
+                            eZRecoDataTypeContent::checkDatatypeString( $classID, $dataMap, $ezRecoMappingArray[$key] ),
+                            ENT_COMPAT | ENT_HTML401,
+                            'UTF-8'
                         )
                     )
                 );
