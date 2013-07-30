@@ -24,7 +24,15 @@ class eZRecoXMLHandler
 
         foreach ( $contentObjectsArray as $contentObject )
         {
-            $root->appendChild( $this->generateContentObjectDOMNode( $contentObject, $doc) );
+            if ( $domNode = $this->generateContentObjectDOMNode( $contentObject, $doc ) )
+            {
+                $root->appendChild( $domNode );
+            }
+        }
+
+        if ( !$root->hasChildNodes() )
+        {
+            return false;
         }
 
         $doc->appendChild( $root );
