@@ -164,10 +164,16 @@ class eZRecommendationServerAPI
 
         $contentObject = eZContentObject::fetch( $objectID );
         $xmlhandler = new eZRecoXMLHandler;
-        $xml = $xmlhandler->generateContentObjectXML( $contentObject );
-        ezRecoFunctions::sendExportContent( $xml, $solution );
+        if ( $xml = $xmlhandler->generateContentObjectXML( $contentObject ) )
+        {
+            ezRecoFunctions::sendExportContent( $xml, $solution );
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
-        return true;
     }
 
     /**
