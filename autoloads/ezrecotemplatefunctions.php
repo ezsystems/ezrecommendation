@@ -591,68 +591,52 @@ class ezRecoTemplateFunctions
 
     function generate_html_from_module_result( $module_result, $event_type )
     {
+        $ini = eZINI::instance('ezrecommendation.ini');
 
-            $ini = eZINI::instance('ezrecommendation.ini');
+        if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || !$ini->hasVariable( 'ParameterMapSettings', 'path_string' ) || !$ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        {
+            eZDebug::writeError(
+                'Missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.',
+                '[ezrecommendation] generate_html operator'
+            );
+            return false;
+        }
+        $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
+        $contentInfo = $module_result['content_info'];
 
-            if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ) {
+        if ( !$contentInfo )
+        {
+            eZDebug::writeError(
+                'Could not generate ezrecommendation-pixel. please check the include call in your pagelayout.tpl.',
+                '[ezrecommendation] generate_html'
+            );
+            return false;
+        }
 
-                $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
+        $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $contentInfo['class_id'] );
 
-                $contentInfo = $module_result['content_info'];
+        if ( !isset( $arr['result']['recoItemType'] ) && !empty( $arr['result']['recoItemType'] ) )
+        {
+            eZDebug::writeError(
+                'ezpublish class id could not be mapped to a ezrecommendation item type id. Please make sure to add the recommendation attribute to the class and to map the class with a ezrecommendation type.',
+                '[ezrecommendation] generate_html'
+            );
+            return false;
+        }
 
-                if ( $contentInfo )
-                {
-                    $itemtypeid = $contentInfo['class_id'];
+        $node = eZContentObjectTreeNode::fetch( $contentInfo['node_id'] );
+        $categoryPath = $node->attribute( 'path_string' );
 
+        $current_user = eZUser::currentUser ();
+        $current_user_id = $current_user->attribute( 'contentobject_id' );
 
-                    $recoitemtypeid = '';
+        $params = '?productid=' . $productid . '&eventtype=' . $event_type
+                . '&' . $ini->variable( 'ParameterMapSettings', 'class_id' ) . '=' . urlencode( $arr['result']['recoItemType'] )
+                . '&' . $ini->variable( 'ParameterMapSettings', 'object_id' ) . '=' . urlencode( $contentInfo['object_id'] )
+                . '&' . $ini->variable( 'ParameterMapSettings', 'user_id' ) . '=' . urlencode( $current_user_id )
+                . '&' . $ini->variable( 'ParameterMapSettings', 'path_string' ) . '=' . ezRecoTemplateFunctions::getCategoryPath( $categoryPath );
 
-                    $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
-
-                    if (count($arr['result']) > 0)
-                    {
-                        $recoitemtypeid = $arr['result']['recoItemType'];
-
-                    }
-
-                    if (!empty($recoitemtypeid))
-                    {
-                        $node = eZContentObjectTreeNode::fetch( $contentInfo['node_id'] );
-                        $categoryPath = $node->attribute( 'path_string' );
-
-                        $current_user = eZUser::currentUser ();
-                        $current_user_id = $current_user->attribute( 'contentobject_id' );
-
-                        $params = '?productid='.$productid.'&eventtype='.$event_type;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'=' . $recoitemtypeid;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'=' . $contentInfo['object_id'];
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'user_id' ).'=' . $current_user_id;
-                        $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categoryPath);
-
-                        $res = $this->get_html( $params );
-                    }else{
-                        eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
-
-                        return false;
-                    }
-
-                }else{
-                    eZLog::write('[ezrecommendation] could not generate ezrecommendation-pixel. please check the include call in your pagelayout.tpl.', 'error.log', 'var/log');
-
-                    $res = false;
-
-                }
-
-            }else{
-
-                eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
-                return false;
-
-
-            }
-
-        return $res;
-
+        return $this->get_html( $params );
     }
 
 
