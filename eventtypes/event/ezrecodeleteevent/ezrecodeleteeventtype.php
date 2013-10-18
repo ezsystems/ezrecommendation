@@ -8,13 +8,6 @@
  * @package ezrecommendation
  */
 
-include_once( 'kernel/classes/ezworkflowtype.php' );
-
-
-/**
- * Class definition of the custom event called
- * "My first event".
- */
 class eZRecoDeleteEventType extends eZWorkflowEventType
 {
     const EZ_WORKFLOW_TYPE_EZRECODELETEEVENT = "ezrecodeleteevent";

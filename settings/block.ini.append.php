@@ -28,4 +28,4 @@ UseBrowseMode[node_id]=true
 ViewList[]=recommended
 ViewName[recommended]=recommended items
 
-*/
+*/ ?>

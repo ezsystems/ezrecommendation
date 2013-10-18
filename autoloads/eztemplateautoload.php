@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File containing the eZTemplateOperatorArray
  *
@@ -8,7 +7,6 @@
  * @version //autogen//
  * @package ezrecommendation
  */
-
 
 $eZTemplateOperatorArray = array();
 $eZTemplateOperatorArray[] =

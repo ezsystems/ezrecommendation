@@ -38,7 +38,7 @@ class eZRecoInitialExportProvider
     private $limit = 100;
 
     /**
-    * @param $classIdArray
+     * @param $classIdArray
      * @param $rootPathString
      */
     public function __construct( $classIdArray, $rootPathString, eZCli $cli, eZDBInterface $db )
@@ -103,7 +103,9 @@ class eZRecoInitialExportProvider
         $batchIndex++;
 
         if ( empty( $rows ) )
+        {
             return false;
+        }
 
         /** @var $rows eZContentObjectTreeNode[] */
         $return = array();
@@ -123,11 +125,15 @@ class eZRecoInitialExportProvider
     private function getNextItem()
     {
         if ( !is_array( $this->rows ) )
+        {
             $this->fetchNextRows();
+        }
 
         $return = current( $this->rows );
         if ( !next( $this->rows ) )
+        {
             $this->rows = null;
+        }
 
         return $return;
     }

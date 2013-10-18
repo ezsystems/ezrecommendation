@@ -1,4 +1,4 @@
-<?php /* #?ini charset="utf-8"?
+<?php /*
 
 [block_recommended]
 Source=block/view/view.tpl
@@ -18,4 +18,5 @@ Source=node/view/flyout.tpl
 MatchFile=flyout/article.tpl
 Subdir=templates
 Match[class_identifier]=article
+
 */ ?>

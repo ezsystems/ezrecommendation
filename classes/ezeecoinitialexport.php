@@ -7,6 +7,7 @@
  * @version //autogen//
  * @package ezrecommendation
  */
+
 class eZRecoInitialExport
 {
     /**

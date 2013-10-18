@@ -9,7 +9,6 @@
  * @package ezrecommendation
  */
 
-
 class ezRecoFunctions
 {
     /*
@@ -74,7 +73,6 @@ class ezRecoFunctions
         $url = $ini->variable( 'URLSettings', 'ExportURL' );
         $mapSetting = $ini->variable( 'SolutionMapSettings', $solution );
         $path = "/$mapSetting/$customerID/item";
-
 
         $request = new ezpHttpRequest( "https://{$url}{$path}", HTTP_METH_POST );
         $request->addHeaders(
@@ -145,10 +143,6 @@ class ezRecoFunctions
         }
     }
 
-
-    /*
-     *
-     */
     public static function get_stats_request()
     {
 
@@ -216,9 +210,6 @@ class ezRecoFunctions
         }
     }
 
-    /*
-     *
-     */
     public static function send_bulk_request( $xml_url, $xml_path, $xml_file )
     {
         $ini = eZINI::instance( 'ezrecommendation.ini' );

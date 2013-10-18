@@ -1,4 +1,4 @@
-<?php /* #?ini charset="utf8"?
+<?php /*
 
 [TemplateSettings]
 ExtensionAutoloadPath[]=ezrecommendation
@@ -16,3 +16,5 @@ isClustered=false
 tags[]=ini
 expiryKey=ezrecommendation-cache
 path=ezrecommendation/
+
+*/ ?>
