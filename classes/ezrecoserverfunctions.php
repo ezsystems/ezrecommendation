@@ -79,7 +79,53 @@ class ezRecoServerFunctions
         $createClickRecommendedEvent = (bool)array_shift( $args );
 
         $api = new eZRecommendationServerAPI();
+
+        $time = microtime( true );
+
         $recommendations = $api->getRecommendations( $requestParameters );
+
+        $time = microtime( true ) - $time;
+        $debugInfo = array(
+            'request_parameters' => (array)$requestParameters,
+            'request_time' => $time,
+            'response' => $recommendations
+        );
+
+        /// to speed up the process a bit, we add a cache here, based on
+        //       - scenario
+        //       - returned data (excluding reason, relevance...)
+        //       - current user policies
+        $ttl = $recommendationIni->variable( 'PerformanceSettings', 'RecommendationTTL' );
+        if ( $ttl )
+        {
+            /// @todo read this path from site.ini
+            $cacheDir = eZSys::cacheDirectory() . '/ezrecommendation/blocks';
+            $cacheHashArray = array();
+            $cacheHashArray[0] = $requestParameters->scenario;
+            $cacheHashArray[1] = implode( '.', $user->roleIDList() );
+            $cacheHashArray[2] = implode( '.', $user->limitValueList() );
+            /// @todo allow user via ini settings to set cache tweaks: fe:
+            ///       - include reason, relevance in key calculation
+            ///       - add in cache key calculation something related to eZRecommendationApi::getValidityByNode
+            $cacheHashArray[3] = '';
+            foreach ( $recommendations as $recommendation )
+            {
+                $cacheHashArray[3] .= $recommendation['itemId'] . ':' . $recommendation['category'] . '.';
+            }
+            $cacheFile = md5( implode( '-', $cacheHashArray ) ) . '.cache';
+            // we split path to file on multiple levels, in case many are generated
+            $cacheFile = $cacheDir . '/' . $cacheFile[0] . '/' . $cacheFile[1] . '/' . $cacheFile;
+
+            $clusterFile = eZClusterFileHandler::instance( $cacheFile );
+            if ( $clusterFile->exists() )
+            {
+                $cacheDate = $clusterFile->mtime();
+                if ( $cacheDate + $ttl >= time() )
+                {
+                    return $clusterFile->fetchContents();
+                }
+            }
+        }
 
         $tpl = eZTemplate::factory();
         $recommendedNodes = array();
@@ -109,6 +155,15 @@ class ezRecoServerFunctions
         $tpl->setVariable( 'scenario', $requestParameters->scenario );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
-        return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
+        $tpl->setVariable( 'debug_info', $debugInfo );
+
+        $out = $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
+
+        if ( $ttl )
+        {
+            $clusterFile->storeContents( $out );
+        }
+
+        return $out;
     }
 }

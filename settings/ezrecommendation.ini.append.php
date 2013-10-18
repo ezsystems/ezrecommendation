@@ -79,4 +79,10 @@ Map[3]=Image
 Map[4]=Media
 Map[5]=User generated content
 
+[PerformanceSettings]
+# Set to > 0 to activate a local cache of recommendations gotten from service (expressed in seconds).
+# The reco service will always be contacted, but the results will be cached, based on user-perms, scenario id and recommended items.
+# This is a good idea performance-wise, but beware if you base your recommendation-display templates on other data as well.
+# (also, you might get in the recommendations some objects which have been deleted from content)
+RecommendationTTL=0
 */ ?>
