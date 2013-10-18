@@ -17,10 +17,9 @@ if ( $ini->hasVariable( 'URLSettings', 'RequestURL' ) )
 }
 else
 {
-    eZLog::write(
+    eZDebug::writeError(
         '[ezrecommendation] no url found for ezrecommendation extension in ezrecommendation.ini.',
-        'error.log',
-        'var/log'
+        __METHOD__
     );
     return false;
 }
@@ -36,10 +35,9 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
     }
     else
     {
-        eZLog::write(
+        eZDebug::writeError(
             '[ezrecommendation] no CustomerID found for ezrecommendation extension in ezrecommendation.ini.',
-            'error.log',
-            'var/log'
+            __METHOD__
         );
         return false;
     }
@@ -65,7 +63,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
             $ttl = $arr['result']['recoTimeTrigger'];
             if ( $elapsedtime < $ttl )
             {
-                eZLog::write(
+                eZDebug::writeError(
                     '[ezrecommendation] consume-event not triggered because of to low elapsed time.',
                     'debug.log',
                     'var/log'
@@ -76,7 +74,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
         }
         else
         {
-            eZLog::write(
+            eZDebug::writeError(
                 '[ezrecommendation] customer-event not triggered because of no elapsed time.',
                 'debug.log',
                 'var/log'
@@ -184,10 +182,9 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
 }
 else
 {
-    eZLog::write(
+    eZDebug::writeError(
         '[ezrecommendation] required variable not set in request.',
-        'error.log',
-        'var/log'
+        __METHOD__
     );
     return false;
 }

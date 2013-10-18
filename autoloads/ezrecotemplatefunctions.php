@@ -283,7 +283,7 @@ class ezRecoTemplateFunctions
         }
         else
         {
-            eZLog::write('[ezrecommendation] no recommendations received.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] no recommendations received.', __METHOD__ );
             return false;
         }
     }
@@ -305,7 +305,7 @@ class ezRecoTemplateFunctions
 
             }else{
 
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', __METHOD_ );
                 return false;
 
             }
@@ -365,13 +365,13 @@ class ezRecoTemplateFunctions
             }
             else
             {
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', __METHOD__ );
                 return false;
 
             }
 
         }else{
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', __METHOD__ );
             return false;
 
         }
@@ -399,7 +399,7 @@ class ezRecoTemplateFunctions
 
             }else{
 
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', __METHOD__ );
                 return false;
 
             }
@@ -433,13 +433,13 @@ class ezRecoTemplateFunctions
             }
             else
             {
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', __METHOD__ );
                 return false;
 
             }
 
         }else{
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', __METHOD__ );
             return false;
 
         }
@@ -463,14 +463,14 @@ class ezRecoTemplateFunctions
 
             }else{
 
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', __METHOD__ );
                 return false;
 
             }
 
             if (!is_int($price)){
 
-                eZLog::write('[ezrecommendation] use only integer for price', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] use only integer for price', __METHOD__ );
                 return false;
 
             }
@@ -504,13 +504,13 @@ class ezRecoTemplateFunctions
                 $res = $this->get_html_for_event( $params );
 
             }else{
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', __METHOD__ );
 
                 return false;
             }
         }else{
 
-            eZLog::write('[ezrecommendation]: missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation]: missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', __METHOD__ );
             return false;
 
         }
@@ -534,14 +534,14 @@ class ezRecoTemplateFunctions
 
             }else{
 
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', __METHOD__ );
                 return false;
 
             }
 
             if ( !is_int( $rating ) || ( $rating <= 0 ) || ( $rating>=100 ) ) {
 
-                eZLog::write('[ezrecommendation] use only integer between 0 and 100 for rating', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] use only integer between 0 and 100 for rating', __METHOD__ );
                 return false;
 
             }
@@ -571,13 +571,13 @@ class ezRecoTemplateFunctions
 
                 $res = $this->get_html_for_event( $params );
             }else{
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', __METHOD__ );
 
                 return false;
             }
         }else{
 
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', __METHOD__ );
             return false;
 
         }
@@ -662,7 +662,7 @@ class ezRecoTemplateFunctions
 
         if ( !$ini->hasVariable( 'SolutionSettings', 'solution' ) || !$ini->hasVariable( 'ParameterMapSettings', 'object_id' ) || !$ini->hasVariable( 'ParameterMapSettings', 'class_id' ) )
         {
-            eZDebug::writeError('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
+            eZDebug::writeError( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.' );
             return false;
         }
 

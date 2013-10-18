@@ -44,7 +44,7 @@ class eZRecoBuyEventType extends eZWorkflowEventType
             $this->get_products_for_order($order_id, $user_id);
             eZDebug::writeDebug('[ezrecommendation] buy event executed.');
         }else{
-            eZLog::write('[ezrecommendation] buy event could not be executed. Missing orderid or userid.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] buy event could not be executed. Missing orderid or userid.', __METHOD__ );
             eZDebug::writeDebug('[ezrecommendation] buy event could not be executed. Missing orderid or userid.');
         }
 
@@ -123,13 +123,13 @@ class eZRecoBuyEventType extends eZWorkflowEventType
 
 
             }else{
-                eZLog::write('[ezrecommendation] missing setting in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] missing setting in ezrecommendation.ini.', __METHOD__ );
                 return false;
             }
 
         }else{
 
-            eZLog::write('[ezrecommendation] missing setting in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZDebug::writeError( '[ezrecommendation] missing setting in ezrecommendation.ini.', __METHOD__ );
             return false;
 
         }
