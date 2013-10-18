@@ -110,9 +110,9 @@ class eZRecoBuyEventType extends eZWorkflowEventType
                     if (!empty($recoitemtypeid))
                     {
                         $count = $row['item_count'];
-                        $price = $row['price']*100;
+                        $price = sprintf( '%.2F', $row['price'] / $count ). $currency_code;
 
-                        $path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$recoitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&price='.$price.'&currency='.$currency_code.'&timestamp='.$timestamp.'&categorypath='.$pathString;
+                        $path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$recoitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&fullprice='.$price.'&timestamp='.$timestamp.'&categorypath='.$pathString;
 
                         ezRecoFunctions::send_http_request($url, $path);
                     }else{

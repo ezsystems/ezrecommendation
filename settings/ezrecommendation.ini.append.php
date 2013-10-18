@@ -53,6 +53,7 @@ currency=currency
 timestamp=timestamp
 rating=rating
 numrecs=numrecs
+fullprice=fullprice
 
 # Maps the site or item context to the yoochoose solution name.
 [SolutionMapSettings]
