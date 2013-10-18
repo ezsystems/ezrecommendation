@@ -43,8 +43,8 @@ class eZRecoExportEventType extends eZWorkflowEventType
     {
         $db = eZDB::instance();
 
-        $query = "SELECT node_id FROM ezcontentobject_tree WHERE contentobject_id = $obj_id ORDER BY modified_subnode DESC limit 0,1";
-        $rows = $db -> arrayQuery( $query );
+        $query = "SELECT node_id FROM ezcontentobject_tree WHERE contentobject_id = $obj_id ORDER BY modified_subnode DESC";
+        $rows = $db -> arrayQuery( $query, array( 'offset' => 0, 'limit' => 1 ) );
         return $rows[0]['node_id'];
     }
 }

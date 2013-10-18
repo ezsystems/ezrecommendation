@@ -35,16 +35,15 @@ class eZRecoDataTypeContent
             case 'ezkeyword':
                 if ( $key == "tags" )
                 {
-                    //dataMap don t contain the tags as KeywordArray
+                    //dataMap doesn't contain the tags as KeywordArray
                     //used from Bulk Interface
                     // also Using current language
                     $db = eZDB::instance();
-                    $query = "select keyword from ezkeyword
-                            left join ezkeyword_attribute_link ON (ezkeyword_attribute_link.objectattribute_id = " . $dataMap[$attributeIdentifier]->ID . ")
-                            where
-                            ezkeyword_attribute_link.keyword_id = ezkeyword.id and
-                            class_id = " . $classID . "
-                            Group By ezkeyword.id";
+                    $query = "SELECT keyword
+                              FROM ezkeyword
+                              LEFT JOIN ezkeyword_attribute_link ON (ezkeyword_attribute_link.objectattribute_id = " . $dataMap[$attributeIdentifier]->ID . ")
+                              WHERE ezkeyword_attribute_link.keyword_id = ezkeyword.id AND class_id = " . $classID . "
+                              GROUP BY ezkeyword.id";
 
                     $keywordsArray = array();
                     foreach ( $db->arrayQuery( $query ) as $row )
@@ -57,7 +56,7 @@ class eZRecoDataTypeContent
                 }
                 else
                 {
-                    //dataMap contain the tags as KeywordArray
+                    //dataMap contains the tags as KeywordArray
                     //used by one content export
                     $ContentArray = $dataMap[$attributeIdentifier]->Content;
                     $keywords = implode( ',', $ContentArray->KeywordArray );
@@ -75,7 +74,7 @@ class eZRecoDataTypeContent
                     {
                         case 'validfrom';
                             $db = eZDB::instance();
-                            $query = "select published from  ezcontentobject where id = " . $dataMap[$attributeIdentifier]->ContentObjectID . " and current_version = " . $dataMap[$attributeIdentifier]->Version;
+                            $query = "SELECT published FROM ezcontentobject WHERE id = " . $dataMap[$attributeIdentifier]->ContentObjectID . " AND current_version = " . $dataMap[$attributeIdentifier]->Version;
                             $rows = $db->arrayQuery( $query );
                             $unixDate = $rows[0]['published'];
 
@@ -103,8 +102,8 @@ class eZRecoDataTypeContent
                 $contentObjectAttrID = $dataMap[$attributeIdentifier]->ID;
 
                 $db = eZDB::instance();
-                $query = "    SELECT value FROM ezmultipricedata
-                            WHERE contentobject_attr_id = " . $contentObjectAttrID . " AND contentobject_attr_version = " . $contentObjectAttrVersion . " AND currency_code = '" . $datatypeCurrencySetting . "'";
+                $query = "SELECT value FROM ezmultipricedata
+                          WHERE contentobject_attr_id = " . $contentObjectAttrID . " AND contentobject_attr_version = " . $contentObjectAttrVersion . " AND currency_code = '" . $datatypeCurrencySetting . "'";
 
                 $rows = $db->arrayQuery( $query );
                 $return = $rows[0]['value'] * 100;
