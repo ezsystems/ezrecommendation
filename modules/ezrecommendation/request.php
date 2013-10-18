@@ -49,10 +49,10 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
 
     $path .= $productid;
 
-    $path .= '/'.$client_id;
+    $path .= '/' . $client_id;
 
     $eventtype = $http->getVariable( 'eventtype' );
-    $path .= '/'.$eventtype;
+    $path .= '/' . $eventtype;
 
     $itemtypeid = $http->getVariable( 'itemtypeid' );
 
@@ -91,7 +91,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
     if ( $user->isAnonymous() && $http->hasGetVariable( 'sid' ) )
     {
         $userid = $http->getVariable( 'sid' );
-        $path .= '/'.$userid;
+        $path .= '/' . $userid;
 
         $http->setSessionVariable( 'eZRecoTransfer', $userid );
     }

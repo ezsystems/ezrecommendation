@@ -13,19 +13,19 @@ class ezRecommendationClassAttribute
 {
     private static $classAttributeList = array();
 
-    function ezRecommendationClassAttribute()
-    {
-    }
-
     static function  fetchClassAttributeList( $classID )
     {
         if ( !isset( self::$classAttributeList[$classID] ) )
         {
             $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_MODIFIED );
             if ( !is_object( $contentClass ) )
+            {
                 $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_TEMPORARY );
+            }
             if ( !is_object( $contentClass ) )
+            {
                 $contentClass = eZContentClass::fetch( $classID, true, eZContentClass::VERSION_STATUS_DEFINED );
+            }
 
             if ( is_object( $contentClass ) )
             {

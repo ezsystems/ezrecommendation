@@ -67,10 +67,14 @@ class eZRecommendationServerAPI
         $path .= '?' . $ini->variable( 'ParameterMapSettings', 'object_id' ).'=' . urlencode( $itemId );
 
         if ( $parameters->limit && $ini->hasVariable( 'ParameterMapSettings', 'numrecs' ) )
+        {
             $path .= '&' . $ini->variable( 'ParameterMapSettings', 'numrecs' ) . '=' . urlencode( $parameters->limit );
+        }
 
         if ( $parameters->itemTypeId )
+        {
             $path .= '&outputtypeid=' . urlencode( $parameters->itemTypeId );
+        }
 
         $categorypath = $parameters->node->attribute( 'path_string' );
         $path .= '&' . $ini->variable( 'ParameterMapSettings', 'path_string' ) . '=' . urlencode( ezRecoTemplateFunctions::getCategoryPath( $categorypath ) );
@@ -208,13 +212,17 @@ class eZRecommendationServerAPI
 
         $rawScenarioList = json_decode( $response->getBody() );
         if ( !is_object( $rawScenarioList ) || !count( $rawScenarioList->scenarioInfoList ) )
+        {
             return array();
+        }
 
         $scenarioList = array();
         foreach ( $rawScenarioList->scenarioInfoList as $rawScenario )
         {
             if ( $rawScenario->enabled != 'ENABLED' )
+            {
                 continue;
+            }
 
             $scenarioList[$rawScenario->referenceCode] = array(
                 'id' => $rawScenario->referenceCode,

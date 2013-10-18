@@ -38,7 +38,6 @@ class eZRecommendationType extends eZDataType
 
     function eZRecommendationType()
     {
-
         $this->eZDataType( self::DATA_TYPE_STRING, ezpI18n::tr( 'kernel/classes/datatypes', "Recommendation", 'Datatype name' ),
                            array( 'serialize_supported' => true ) );
         $this->IntegerValidator = new eZIntegerValidator();
@@ -56,7 +55,6 @@ class eZRecommendationType extends eZDataType
     */
     function validateObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
-
         $classAttribute = $contentObjectAttribute->contentClassAttribute();
         if ( $contentObjectAttribute->validateIsRequired() and
              !$classAttribute->attribute( 'is_information_collector' ) )
@@ -65,9 +63,9 @@ class eZRecommendationType extends eZDataType
             {
                 $data = $http->postVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) );
                 if ( isset( $data ) )
-
+                {
                     return eZInputValidator::STATE_ACCEPTED;
-
+                }
             }
             else
             {
@@ -90,7 +88,6 @@ class eZRecommendationType extends eZDataType
     */
     function initializeObjectAttribute( $contentObjectAttribute, $currentVersion, $originalContentObjectAttribute )
     {
-
         if ( $currentVersion != false )
         {
             $dataText = $originalContentObjectAttribute->attribute( "data_text" );
@@ -106,14 +103,15 @@ class eZRecommendationType extends eZDataType
 
     function validateCollectionAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
-
         if ( $contentObjectAttribute->validateIsRequired() )
         {
             if ( $http->hasPostVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) ) )
             {
                 $data = $http->postVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) );
                 if ( isset( $data ) )
+                {
                     return eZInputValidator::STATE_ACCEPTED;
+                }
             }
             else
             {
@@ -123,63 +121,65 @@ class eZRecommendationType extends eZDataType
             }
         }
 
-
     }
+
     /*!
      Fetches the http post var integer input and stores it in the data instance.
     */
     function fetchObjectAttributeHTTPInput( $http, $base, $contentObjectAttribute )
     {
-
-        if ( $http->hasPostVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) ))
+        if ( $http->hasPostVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) );
             if ( isset( $data ) && $data !== '0' && $data !== 'false' )
+            {
                 $data = 1;
+            }
             else
+            {
                 $data = 0;
+            }
         }
         else
         {
             $data = 0;
         }
 
-         $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
-         $newXml = ezRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)    ;
+        $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
+        $newXml = ezRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable', $data );
 
-        $contentObjectAttribute->setAttribute( 'data_text' , $newXml );
+        $contentObjectAttribute->setAttribute( 'data_text', $newXml );
 
         return true;
     }
-
-
 
     /*!
      Fetches the http post variables for collected information
     */
     function fetchCollectionAttributeHTTPInput( $collection, $collectionAttribute, $http, $base, $contentObjectAttribute )
     {
-        if ( $http->hasPostVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) ))
+        if ( $http->hasPostVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) ) )
         {
             $data = $http->postVariable( $base . "_data_recommendation_" . $contentObjectAttribute->attribute( "id" ) );
             if ( isset( $data ) && $data !== '0' && $data !== 'false' )
+            {
                 $data = 1;
+            }
             else
+            {
                 $data = 0;
+            }
         }
         else
         {
             $data = 0;
         }
-         $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
-         $newXml = ezRecommendationXml::setNodeAttributeValue($xmlDataText, 'recommendation-enable',$data)    ;
-
+        $xmlDataText = $contentObjectAttribute->attribute( 'data_text' );
+        $newXml = ezRecommendationXml::setNodeAttributeValue( $xmlDataText, 'recommendation-enable', $data );
 
         $contentObjectAttribute->setAttribute( 'data_text' , $newXml );
         return true;
     }
-
-
 
     /*!
      Does nothing, the data is already present in the attribute.
@@ -194,14 +194,15 @@ class eZRecommendationType extends eZDataType
     function storeDefinedClassAttribute( $attribute )
     {
     }
+
     function storeClassAttribute( $attribute, $version )
     {
     }
 
     function fixupClassAttributeHTTPInput( $http, $base, $classAttribute )
     {
-
     }
+
     /*!
      Set class attribute value for template version
     */
@@ -236,7 +237,7 @@ class eZRecommendationType extends eZDataType
 
         if ( $this->solution == 'shop' && $http->postVariable( $exportValueName ) != '' )
         {
-            if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '')
+            if ( $http->postVariable( $priceTypeValueName ) == '0' ||  $http->postVariable( $currencyTypeValueName ) == '' )
             {
                 $errors[] = '[ezrecommendation] Missing required Field Currency Type ' ;
             }
@@ -295,7 +296,6 @@ class eZRecommendationType extends eZDataType
             $classAttribute->setAttribute( self::ITEM_TYPE_VALUE_FIELD, $itemTypeValueNameValue  );
         }
 
-
         //check recommend (enable/disable)
         if ( $http->hasPostVariable( $base . self::RECOMMEND_VALUE_VARIABLE . $classAttribute->attribute( 'id' ) . '_exists' ) )
         {
@@ -353,7 +353,7 @@ class eZRecommendationType extends eZDataType
         //get attribute mapping
         $countAttr = $base . '_ezrecommendation_attribute_mapping_counter_' . $classAttribute->attribute( 'id' ) ;
 
-        if ( $http->hasPostVariable( $countAttr ))
+        if ( $http->hasPostVariable( $countAttr ) )
         {
             $doc = new DOMDocument( '1.0', 'utf-8' );
             $root = $doc->createElement( 'mapping' );
@@ -414,12 +414,12 @@ class eZRecommendationType extends eZDataType
 
         return true;
     }
-    function contentObjectArrayXMLMap($countAdded)
+
+    function contentObjectArrayXMLMap( $countAdded )
     {
         $addToMap = array();
-        for ($i = 1 ; $i <= $countAdded ; ++$i)
+        for ( $i = 1 ; $i <= $countAdded ; ++$i )
         {
-
             $addToMap ['addtomap'.$i] = 'addtomap'.$i ;
         }
 
@@ -436,26 +436,22 @@ class eZRecommendationType extends eZDataType
                           'geolocation' => 'geolocation',
                           'date' => 'date',
                           'tags' => 'tags',
-                    );
+        );
         $FinalxmlArray = array_merge($addToMap, $Mapped);
 
         return $FinalxmlArray ;
     }
-
 
     function classAttributeContent( $classAttribute )
     {
         $xmlText = $classAttribute->attribute( 'data_text5' );
         if ( trim( $xmlText ) == '' )
         {
-
             $classAttrContent = eZRecommendationType::defaultClassAttributeContent();
 
             return $classAttrContent;
-
         }
-        $xmlMapContent = ezRecommendationXml::ezRecommendationArrContent($xmlText);
-
+        $xmlMapContent = ezRecommendationXml::ezRecommendationArrContent( $xmlText );
 
         return $xmlMapContent;
     }
@@ -516,8 +512,8 @@ class eZRecommendationType extends eZDataType
     function unserializeContentClassAttribute( $classAttribute, $attributeNode, $attributeParametersNode )
     {
         $itemTypeValueName = $attributeParametersNode->getElementsByTagName( 'item-type-value' )->item( 0 )->textContent;
-        $recommendValueName = ($attributeParametersNode->getElementsByTagName( 'recommend-type-value' )->item( 0 )->textContent ) == '1';
-        $exportValueName = ($attributeParametersNode->getElementsByTagName( 'export-type-value' )->item( 0 )->textContent )== '1';
+        $recommendValueName = ( $attributeParametersNode->getElementsByTagName( 'recommend-type-value' )->item( 0 )->textContent ) == '1';
+        $exportValueName = ( $attributeParametersNode->getElementsByTagName( 'export-type-value' )->item( 0 )->textContent ) == '1';
         $ttlValueName = $attributeParametersNode->getElementsByTagName( 'ttl-type-value' )->item( 0 )->textContent;
         $mappingValueName = $attributeParametersNode->getElementsByTagName( 'mapping-type-value' )->item( 0 )->textContent;
 
@@ -535,13 +531,11 @@ class eZRecommendationType extends eZDataType
     */
     function objectAttributeContent( $contentObjectAttribute )
     {
-
          return $contentObjectAttribute->attribute( "data_text" );
     }
 
     /*!
      \return string representation of an contentobjectattribute data for simplified export
-
     */
     function toString( $contentObjectAttribute )
     {
@@ -589,10 +583,8 @@ class eZRecommendationType extends eZDataType
          return 'int';
     }
 
-
     function batchInitializeObjectAttributeData( $classAttribute )
     {
-
         $default =  $classAttribute->attribute( "data_text5" );
         $db = eZDB::instance();
         $xmlText = "'" . $db->escapeString( $default ) . "'";

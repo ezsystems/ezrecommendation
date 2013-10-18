@@ -81,7 +81,9 @@ class ezRecoServerFunctions
         }
 
         if ( ( $itemTypeId = array_shift( $args ) ) )
+        {
             $requestParameters->itemTypeId = $itemTypeId;
+        }
 
         $trackRenderedItems = (bool)array_shift( $args );
         $createClickRecommendedEvent = (bool)array_shift( $args );

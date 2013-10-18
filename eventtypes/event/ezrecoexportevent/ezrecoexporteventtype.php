@@ -9,9 +9,6 @@
  */
 
 
-include_once( 'kernel/classes/ezworkflowtype.php' );
-
-
 class eZRecoExportEventType extends eZWorkflowEventType
 {
     const EZ_WORKFLOW_TYPE_EZRECOEXPORTEVENTTYPE = "ezrecoexportevent";

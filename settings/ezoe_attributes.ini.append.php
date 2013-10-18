@@ -26,3 +26,5 @@ Selection[2]=Article
 Selection[3]=Image
 Selection[4]=Media
 Selection[5]=User generated content
+
+ */ ?>

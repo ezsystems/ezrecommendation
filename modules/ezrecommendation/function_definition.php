@@ -8,7 +8,6 @@
  * @package ezrecommendation
  */
 
-
 $FunctionList = array();
 
 $FunctionList['attribute_list'] = array( 'name' => 'attribute_list',

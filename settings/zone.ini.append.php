@@ -10,5 +10,5 @@ ZoneName[right]=Right zone
 ZoneThumbnail=1zones_layout1.gif
 Template=1zoneslayout1.tpl
 AvailableForClasses[]=article
-*/
-?>
+
+*/ ?>

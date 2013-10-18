@@ -168,7 +168,6 @@ class ezRecoTemplateFunctions
                         $namedParameters['items']
                     );
                 } break;
-
         }
     }
 
@@ -215,15 +214,17 @@ class ezRecoTemplateFunctions
     }
 
 
-    function get_current_url() {
+    function get_current_url()
+    {
 
         $moduleURL = '/ezrecommendation/request';
         $serverURL = $this->getServerUrl();
 
         return $serverURL.$moduleURL;
     }
-    static function getCategoryPath($ezCat){
 
+    static function getCategoryPath( $ezCat )
+    {
         $ezCategoryArray = explode("/",$ezCat);
         $count_ezCategoryArray = count($ezCategoryArray);
         /*e.g /1/2/174/262/ -> /2/174/ */
@@ -233,7 +234,6 @@ class ezRecoTemplateFunctions
             $toRecoCategoryPath .= $ezCategoryArray[$i].'/';
         }
         return $toRecoCategoryPath;
-
     }
 
     function get_html( $params )
@@ -241,8 +241,8 @@ class ezRecoTemplateFunctions
         return "/ezrecommendation/request$params";
     }
 
-    function get_url_for_consume_event( $params ) {
-
+    function get_url_for_consume_event( $params )
+    {
         $serverURL = $this->get_current_url();
 
         $res = $serverURL.$params;
@@ -251,8 +251,8 @@ class ezRecoTemplateFunctions
     }
 
 
-    function get_html_for_event( $params ) {
-
+    function get_html_for_event( $params )
+    {
         $serverURL = $this->get_current_url();
 
         $res = 'onclick="ezreco.evt(\''.$serverURL.$params.'\')"';
@@ -290,39 +290,38 @@ class ezRecoTemplateFunctions
 
 
 
-    function generate_consume_event( $node ){
-
+    function generate_consume_event( $node )
+    {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
-
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        {
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
 
-            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
+            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) )
+            {
                 $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-            }else{
-
+            }
+            else
+            {
                 eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
                 return false;
-
             }
 
             $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
-            $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+            $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $itemtypeid );
 
-            if (count($arr['result']) > 0)
+            if ( count( $arr['result'] ) > 0 )
             {
                 $recoitemtypeid = $arr['result']['recoItemType'];
 
             }
 
-            if (!empty($recoitemtypeid))
+            if ( !empty( $recoitemtypeid ) )
             {
 
                 $itemid = $node->attribute( 'object' )->attribute( 'id' );
@@ -345,14 +344,13 @@ class ezRecoTemplateFunctions
                 {
                     if( $contentObjectAttr->DataTypeString == "ezrecommendation" )
                     {
-                            $dataTextXml = $contentObjectAttr->DataText;
-                             $isEnableReco = ezRecommendationXml::getNodeAttributeValue(
-                                 $dataTextXml,
-                                 'recommendation-enable'
-                             );
-                            break;
+                        $dataTextXml = $contentObjectAttr->DataText;
+                        $isEnableReco = ezRecommendationXml::getNodeAttributeValue(
+                            $dataTextXml,
+                            'recommendation-enable'
+                        );
+                        break;
                     }
-
                 }
 
                 $params = '?productid='.$productid.'&eventtype=consume';
@@ -365,15 +363,15 @@ class ezRecoTemplateFunctions
             }
             else
             {
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZLog::write( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log' );
                 return false;
-
             }
 
-        }else{
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+        }
+        else
+        {
+            eZLog::write( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log' );
             return false;
-
         }
 
         return $res;
@@ -384,39 +382,35 @@ class ezRecoTemplateFunctions
 
     function generate_common_event( $node, $event_type, $scenario = '' )
     {
-
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'path_string' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        {
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
-
-
-            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
+            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) )
+            {
                 $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-            }else{
-
+            }
+            else
+            {
                 eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
                 return false;
-
             }
 
             $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
-            $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+            $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $itemtypeid );
 
-            if (count($arr['result']) > 0)
+            if ( count($arr['result'] ) > 0 )
             {
                 $recoitemtypeid = $arr['result']['recoItemType'];
-
             }
 
-            if (!empty($recoitemtypeid))
+            if ( !empty( $recoitemtypeid ) )
             {
 
                 $itemid = $node->attribute( 'object' )->attribute( 'id' );
@@ -433,65 +427,59 @@ class ezRecoTemplateFunctions
             }
             else
             {
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+                eZLog::write( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log' );
                 return false;
-
             }
 
-        }else{
-            eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+        }
+        else
+        {
+            eZLog::write( '[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log' );
             return false;
-
         }
 
         return $res;
-
     }
 
 
     function generate_buy_event( $node, $quantity, $price, $currency )
     {
-        $ini = eZINI::instance('ezrecommendation.ini');
+        $ini = eZINI::instance( 'ezrecommendation.ini' );
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
-
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        {
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
-            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
+            if ( $ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) )
+            {
                 $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-            }else{
-
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+            }
+            else
+            {
+                eZLog::write( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log' );
                 return false;
-
             }
 
-            if (!is_int($price)){
-
-                eZLog::write('[ezrecommendation] use only integer for price', 'error.log', 'var/log');
+            if ( !is_int( $price ) )
+            {
+                eZLog::write( '[ezrecommendation] use only integer for price', 'error.log', 'var/log' );
                 return false;
-
             }
 
             $itemtypeid = eZContentClass::classIDByIdentifier( $node->attribute( 'class_identifier' ) );
 
             $recoitemtypeid = '';
 
-            $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+            $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $itemtypeid );
 
-            if (count($arr['result']) > 0)
+            if ( count( $arr['result'] ) > 0 )
             {
                 $recoitemtypeid = $arr['result']['recoItemType'];
-
             }
 
-            if (!empty($recoitemtypeid))
+            if ( !empty( $recoitemtypeid ) )
             {
-
                 $itemid = $node->attribute( 'object' )->attribute( 'id' );
-
 
                 $params = '?productid='.$productid.'&eventtype=buy';
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
@@ -503,45 +491,47 @@ class ezRecoTemplateFunctions
 
                 $res = $this->get_html_for_event( $params );
 
-            }else{
-                eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
+            }
+            else
+            {
+                eZLog::write( '[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log' );
 
                 return false;
             }
-        }else{
+        }
+        else
+        {
 
-            eZLog::write('[ezrecommendation]: missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
+            eZLog::write( '[ezrecommendation]: missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log' );
             return false;
-
         }
 
         return $res;
 
     }
 
-
     function generate_rate_event( $node, $rating )
     {
         $ini = eZINI::instance('ezrecommendation.ini');
 
-        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) ){
+        if ( $ini->hasVariable( 'SolutionSettings', 'solution' ) && $ini->hasVariable( 'ParameterMapSettings', 'object_id' ) && $ini->hasVariable( 'ParameterMapSettings', 'user_id' ) )
+        {
 
             $productid = $ini->variable( 'SolutionMapSettings', $ini->variable( 'SolutionSettings', 'solution' ) );
 
-            if ($ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) ){
-
+            if ( $ini->hasVariable( 'ClientIdSettings', 'CustomerID' ) )
+            {
                 $client_id = $ini->variable( 'ClientIdSettings', 'CustomerID' );
-
-            }else{
-
-                eZLog::write('[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log');
+            }
+            else
+            {
+                eZLog::write( '[ezrecommendation] missing CustomerID in ClientIdSettings in ezrecommendation.ini.', 'error.log', 'var/log' );
                 return false;
-
             }
 
             if ( !is_int( $rating ) || ( $rating <= 0 ) || ( $rating>=100 ) ) {
 
-                eZLog::write('[ezrecommendation] use only integer between 0 and 100 for rating', 'error.log', 'var/log');
+                eZLog::write( '[ezrecommendation] use only integer between 0 and 100 for rating', 'error.log', 'var/log' );
                 return false;
 
             }
@@ -550,15 +540,14 @@ class ezRecoTemplateFunctions
 
             $recoitemtypeid = '';
 
-            $arr = ezRecommendationClassAttribute::fetchClassAttributeList($itemtypeid);
+            $arr = ezRecommendationClassAttribute::fetchClassAttributeList( $itemtypeid );
 
-            if (count($arr['result']) > 0)
+            if ( count( $arr['result'] ) > 0 )
             {
                 $recoitemtypeid = $arr['result']['recoItemType'];
-
             }
 
-            if (!empty($recoitemtypeid))
+            if ( !empty( $recoitemtypeid ) )
             {
                 $itemid = $node->attribute( 'object' )->attribute( 'id' );
                 $categorypath = $node->attribute( 'path_string' );
@@ -570,16 +559,18 @@ class ezRecoTemplateFunctions
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'path_string' ).'='.ezRecoTemplateFunctions::getCategoryPath($categorypath);
 
                 $res = $this->get_html_for_event( $params );
-            }else{
+            }
+            else
+            {
                 eZLog::write('[ezrecommendation] ez-classid could not be mapped to a ezrecommendation-itemtypeid. please make sure that to add the recommendation attribute to the class and to map the class with a ezrecommendation type.', 'error.log', 'var/log');
 
                 return false;
             }
-        }else{
-
+        }
+        else
+        {
             eZLog::write('[ezrecommendation] missing MapSettings in generate_html_from_module_result function for ezrecommendation extension in ezrecommendation.ini.', 'error.log', 'var/log');
             return false;
-
         }
 
         return $res;

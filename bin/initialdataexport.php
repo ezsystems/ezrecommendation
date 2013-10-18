@@ -7,10 +7,10 @@
  * @version //autogen//
  * @package ezrecommendation
  */
+
 $initialMemoryUsage = memory_get_usage( true );
 
 require 'autoload.php';
-require_once 'extension/ezrecommendation/classes/ezrecommendationclassattribute.php';
 
 $cli = eZCLI::instance();
 $endl = $cli->endlineString();
@@ -121,7 +121,9 @@ foreach ( $classRows as $classRow )
 }
 unset( $classRows, $classRow );
 if ( $optMemoryDebug >= 1 )
+{
     printMemoryUsageDelta( "bootstrap ", $previousMemoryUsage, $cli );
+}
 
 $cli->output( "Exporting objects" );
 $provider = new eZRecoInitialExportProvider( $classArray, $parentTree, $cli, $db );
@@ -219,7 +221,9 @@ foreach ( $xmlFiles as $xmlFile )
         printMemoryUsageDelta( "HTTP sending of $xmlFile", $memoryUsageTwo, $cli, true );
 }
 if ( $optMemoryDebug >= 1 )
+{
     printMemoryUsageDelta( "HTTP sending total", $memoryUsageOne, $cli, true );
+}
 
 $cli->output( 'Script finished successfully.' );
 $script->shutdown();
@@ -252,8 +256,9 @@ function printMemoryUsageDelta( $label, &$previousMemoryUsage, eZCli $cli, $forc
     $memoryUsageDelta = $memoryUsage - $previousMemoryUsage;
 
     if ( !$force && $memoryUsageDelta == 0 )
+    {
         return;
-
+    }
 
     $usagePrefix =  ( $memoryUsageDelta >= 0 ) ? '+' : '';
     $memoryUsageDelta = $usagePrefix . convertMemory( $memoryUsageDelta );

@@ -2,10 +2,12 @@
 /**
  * File containing the eZRecoXMLHandler class.
  *
- * @copyright Copyright (C) 2013 eZ Systems AS. All rights reserved.
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version //autogentag//
+ * @copyright //autogen//
+ * @license //autogen//
+ * @version //autogen//
+ * @package ezrecommendation
  */
+
 class eZRecoXMLHandler
 {
     /**
@@ -20,7 +22,9 @@ class eZRecoXMLHandler
         $root->setAttribute( 'version', 1 );
 
         if ( !is_array( $contentObjectsArray ) )
+        {
             $contentObjectsArray = array( $contentObjectsArray );
+        }
 
         foreach ( $contentObjectsArray as $contentObject )
         {
@@ -59,7 +63,9 @@ class eZRecoXMLHandler
         //get the xmlMap from ezcontentclass_attribute (All datatype information are retrieved from the Class. The recommendation(enable/disable) is the only parameter taken from Object )
         $classIDArray = ezRecommendationClassAttribute::fetchClassAttributeList( $classID );
         if ( !isset( $classIDArray['result'] ) )
+        {
             return false;
+        }
 
         $XmlDataText = $classIDArray['result']['recoXmlMap'];
         $recoItemTypeId = $classIDArray['result']['recoItemType'];
@@ -68,8 +74,9 @@ class eZRecoXMLHandler
 
         //Check if export is enable for this class
         if ( $ezRecoMappingArray['export-enable'] == 0 )
+        {
             return false;
-
+        }
 
         $itemNode = $doc->createElement( 'item' );
         $itemNode->setAttribute( 'id', $contentObject->attribute( 'id' ) );

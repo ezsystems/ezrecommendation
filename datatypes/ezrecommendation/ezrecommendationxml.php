@@ -11,7 +11,6 @@
 class ezRecommendationXml
 {
 
-
     static function ezRecommendationArrContent ($xmlText)
     {
 
@@ -101,17 +100,14 @@ class ezRecommendationXml
         if ( $type )
         {
             $content['counter'] = $type->getAttribute( 'value' );
-
-
         }
-        for ($i = 1 ; $i <= $content['counter'] ; ++$i)
+        for ( $i = 1 ; $i <= $content['counter'] ; ++$i )
         {
             $type = $root->getElementsByTagName( 'addtomap'.$i )->item( 0 );
             if ( $type )
             {
                 $content['addtomap'.$i] = $type->getAttribute( 'value' );
             }
-
         }
          return $content;
     }
@@ -119,7 +115,9 @@ class ezRecommendationXml
     static function getNodeAttributeValue($xml, $node)
     {
         if ( trim( $xml ) == '' )
+        {
             return false;
+        }
 
         $doc = ezRecommendationXml::parseXML( $xml );
         $root = $doc->documentElement;
@@ -135,7 +133,9 @@ class ezRecommendationXml
     static function setNodeAttributeValue($xml, $node, $value)
     {
         if ( !$doc = ezRecommendationXml::parseXML( $xml ) )
+        {
             return false;
+        }
 
         $root = $doc->documentElement;
         $type = $root->getElementsByTagName( $node )->item( 0 );
@@ -148,11 +148,12 @@ class ezRecommendationXml
 
     }
 
-
     static function parseXML( $xml )
     {
         if ( trim( $xml ) == '' )
+        {
             return false;
+        }
 
         $dom = new DOMDocument;
         $dom->loadXML( $xml );
