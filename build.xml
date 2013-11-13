@@ -70,7 +70,7 @@
     <property     name="version.alias"   value="${version.major}.${version.minor}"/>
 
     <!-- the following properties are normally not overridden -->
-    <property     name="releasenr.separator" value="-"/>
+    <property     name="releasenr.separator" value="."/>
     <property     name="license.repository"  value="git@github.com:ezmarket/licenses.git" />
     <property     name="license.file"        value="ezttlv2.txt" />
     <property     name="license.target"      value="${build.dir}/${extension.name}/TRIAL_LICENSE" />
