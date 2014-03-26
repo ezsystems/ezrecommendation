@@ -56,15 +56,15 @@ class eZRecoBuyEventType extends eZWorkflowEventType
 
         $db = eZDB::instance();
 
-        $query = "SELECT `productcollection_id` FROM `ezorder` WHERE `id` = $orderid";
+        $query = "SELECT productcollection_id FROM ezorder WHERE id = $orderid";
         $rows = $db -> arrayQuery( $query );
            $productcollection_id = $rows[0]['productcollection_id'];
 
-        $query = "SELECT `currency_code` FROM `ezproductcollection` WHERE `id` = $productcollection_id";
+        $query = "SELECT currency_code FROM ezproductcollection WHERE id = $productcollection_id";
         $rows = $db -> arrayQuery( $query );
         $currency_code = $rows[0]['currency_code'];
 
-        $query = "SELECT * FROM `ezproductcollection_item` WHERE `productcollection_id` = $productcollection_id";
+        $query = "SELECT * FROM ezproductcollection_item WHERE productcollection_id = $productcollection_id";
         $product_rows = $db -> arrayQuery( $query );
 
         $ini = eZINI::instance('ezrecommendation.ini');
@@ -85,13 +85,13 @@ class eZRecoBuyEventType extends eZWorkflowEventType
                      $object_id = $row['contentobject_id'];
 
 
-                    $main_node_id_query = "SELECT `main_node_id`, `path_string` FROM `ezcontentobject_tree` WHERE `contentobject_id` = $object_id";
-                    $main_node_id_rows = $db -> arrayQuery( $main_node_id_query );
+                    $main_node_id_query = "SELECT main_node_id, path_string FROM ezcontentobject_tree WHERE contentobject_id = $object_id";
+                    $main_node_id_rows = $db -> arrayQuery( $main_node_id_query, array ( 'offset' => 0, 'limit' => 1 ) );
                     $main_node_id = $main_node_id_rows[0]['main_node_id'];
                     $pathString = urlencode(ezRecoTemplateFunctions::getCategoryPath($main_node_id_rows[0]['path_string']));
 
 
-                     $class_id_query = "SELECT `contentclass_id` FROM `ezcontentobject` WHERE `id` = $object_id";
+                     $class_id_query = "SELECT contentclass_id FROM ezcontentobject WHERE id = $object_id";
                     $class_id_rows = $db -> arrayQuery( $class_id_query );
                     $class_id = $class_id_rows[0]['contentclass_id'];
 
