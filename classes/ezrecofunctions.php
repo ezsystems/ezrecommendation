@@ -31,7 +31,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed" );
         }
 
@@ -58,7 +58,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( $url, "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed", $e );
         }
     }
@@ -97,7 +97,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed" );
         }
     }
@@ -140,7 +140,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed" );
         }
     }
@@ -211,7 +211,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed" );
         }
     }
@@ -250,7 +250,7 @@ class ezRecoFunctions
         }
         catch ( Exception $e )
         {
-            eZDebug::writeError( $url, '<ezrecommendation> Could not connect to server' );
+            eZDebug::writeError( "<ezrecommendation> Could not connect to server at $url : " . $e->getMessage(), __METHOD__ );
             throw new eZRecommendationApiException( "Connection failed" );
         }
     }
