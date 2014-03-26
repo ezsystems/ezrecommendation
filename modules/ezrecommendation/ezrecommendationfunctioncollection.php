@@ -57,7 +57,7 @@ class eZRecommendationFunctionCollection
                 $systemCurrency = array ('0' => $ini->variable( 'ShopPriceCurrency', 'defaultCurrency' ) );
             else
             {
-                eZLog::write('[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.', 'error.log', 'var/log');
+                eZDebug::writeError( '[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini.' );
                 eZDebug::writeWarning( "[ezrecommendation] Missing defaultCurrency in ezrecommendation.ini." );
             }
         }
