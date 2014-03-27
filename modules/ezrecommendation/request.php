@@ -21,7 +21,7 @@ else
         '[ezrecommendation] no url found for ezrecommendation extension in ezrecommendation.ini.',
         __METHOD__
     );
-    return false;
+    eZExecution::cleanExit();
 }
 
 
@@ -39,7 +39,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
             '[ezrecommendation] no CustomerID found for ezrecommendation extension in ezrecommendation.ini.',
             __METHOD__
         );
-        return false;
+        eZExecution::cleanExit();
     }
 
     $path = '/';
@@ -68,7 +68,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
                     'debug.log',
                     'var/log'
                 );
-                return false;
+                eZExecution::cleanExit();
             }
 
         }
@@ -79,7 +79,7 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
                 'debug.log',
                 'var/log'
             );
-            return false;
+            eZExecution::cleanExit();
         }
 
     }
@@ -183,7 +183,15 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
         $params_data .= implode( "&", $params_array );
     }
 
+    try
+    {
     ezRecoFunctions::send_http_request( $url, $path.$params_data );
+    }
+    catch( \Exception $e )
+    {
+        eZDebug::writeError( $e->getMessage(), __METHOD__ );
+        eZExecution::cleanExit();
+    }
 
 }
 else
@@ -192,7 +200,10 @@ else
         '[ezrecommendation] required variable not set in request.',
         __METHOD__
     );
-    return false;
+    eZExecution::cleanExit();
 }
+
+header( 'Content-type: image/gif' );
+readfile( 'extension/ezrecommendation/design/standard/images/ezreco.gif' );
 
 eZExecution::cleanExit();
