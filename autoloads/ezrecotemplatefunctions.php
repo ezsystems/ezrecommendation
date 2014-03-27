@@ -497,8 +497,7 @@ class ezRecoTemplateFunctions
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'class_id' ).'='.$recoitemtypeid ;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'object_id' ).'='.$itemid;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'quantity' ).'='.$quantity;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'price' ).'='.$price;
-                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'currency' ).'='.$currency;
+                $params .= '&'.$ini->variable( 'ParameterMapSettings', 'fullprice' ).'='.sprintf( '%.2F', $price/$quantity ) . $currency;
                 $params .= '&'.$ini->variable( 'ParameterMapSettings', 'timestamp' ).'='.time();
 
                 $res = $this->get_html_for_event( $params );

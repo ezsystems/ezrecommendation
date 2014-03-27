@@ -143,15 +143,21 @@ if ( $http->hasGetVariable( 'productid' ) && $http->hasGetVariable( 'eventtype' 
     {
         $params['quantity'] = $http->getVariable( 'quantity' );
     }
-
-    if ( $http->hasGetVariable( 'price' ) )
+    if ( $http->hasGetVariable( 'fullprice' ) )
     {
-        $params['price'] = $http->getVariable( 'price' );
+        $params['fullprice'] = $http->getVariable( 'fullprice' );
     }
-
-    if ( $http->hasGetVariable( 'currency' ) )
+    else
     {
-        $params['currency'] = $http->getVariable( 'currency' );
+        if ( $http->hasGetVariable( 'price' ) )
+        {
+            $params['price'] = $http->getVariable( 'price' );
+        }
+
+        if ( $http->hasGetVariable( 'currency' ) )
+        {
+            $params['currency'] = $http->getVariable( 'currency' );
+        }
     }
 
     if ( $http->hasGetVariable( 'timestamp' ) )
