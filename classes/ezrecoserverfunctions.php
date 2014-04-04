@@ -89,30 +89,34 @@ class ezRecoServerFunctions
         $api = new eZRecommendationServerAPI();
         $recommendations = $api->getRecommendations( $requestParameters );
 
-        $tpl = eZTemplate::factory();
         $recommendedNodes = array();
-        foreach ( $recommendations as $recommendation )
+
+        if ( $recommendations !== false )
         {
-            if ( $object = eZContentObject::fetch( $recommendation['itemId' ] ) )
+            foreach ( $recommendations as $recommendation )
             {
-                if ( empty( $recommendation['category' ] ) )
+                if ( $object = eZContentObject::fetch( $recommendation['itemId'] ) )
                 {
-                    $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
-                }
-                else
-                {
-                    foreach ( $object->assignedNodes() as $node )
+                    if ( empty( $recommendation['category'] ) )
                     {
-                        if ( strpos( $node->attribute( 'path_string' ), $recommendation['category' ] ) !== false )
+                        $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
+                    }
+                    else
+                    {
+                        foreach ( $object->assignedNodes() as $node )
                         {
-                            $recommendedNodes[$recommendation['itemId']] = $node;
-                            break;
+                            if ( strpos( $node->attribute( 'path_string' ), $recommendation['category'] ) !== false )
+                            {
+                                $recommendedNodes[$recommendation['itemId']] = $node;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
 
+        $tpl = eZTemplate::factory();
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
         $tpl->setVariable( 'scenario', $requestParameters->scenario );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
