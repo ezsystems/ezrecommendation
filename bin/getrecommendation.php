@@ -4,7 +4,7 @@ require 'autoload.php';
 
 $script = eZScript::instance(
     array(
-        'description' => ( "Gets recommendations for a content id" ),
+        'description' => ( "Test script that gets recommendations for a content id" ),
         'use-session' => false,
         'use-modules' => true,
         'use-extensions' => true

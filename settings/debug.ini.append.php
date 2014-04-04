@@ -2,5 +2,6 @@
 
 [GeneralCondition]
 extension-ezrecommendation=disabled
+extension-ezrecommendation-cache=disabled
 
 */
