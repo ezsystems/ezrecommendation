@@ -28,6 +28,16 @@ SiteURL=
 BulkPath=
 # Default bulk XML entrys
 XmlEntries=1000
+
+[PerformanceSettings]
+# Set to > 0 to activate a local cache of recommendations gotten from service (expressed in seconds).
+# The reco service will always be contacted, but the processed results will be cached,
+# based on user-perms, scenario id and recommended items.
+# This is a good idea performance-wise, but beware if you base your recommendation-display templates on other data as well.
+# (also, you might get in the recommendations some objects which have been deleted from content)
+# This cache can be purged by purging cache blocks the usual way.
+RecommendationTTL=0
+
 #################################################################
 # The following are settings which are controlled by yoochoose	#
 # and should only be changed in consultation with yoochoose.	#

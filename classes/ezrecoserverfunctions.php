@@ -87,36 +87,99 @@ class ezRecoServerFunctions
         $createClickRecommendedEvent = (bool)array_shift( $args );
 
         $api = new eZRecommendationServerAPI();
-        $recommendations = $api->getRecommendations( $requestParameters );
-
-        $tpl = eZTemplate::factory();
-        $recommendedNodes = array();
-        foreach ( $recommendations as $recommendation )
+        if ( ( $recommendations = $api->getRecommendations( $requestParameters ) ) === false )
         {
-            if ( $object = eZContentObject::fetch( $recommendation['itemId' ] ) )
+            return '';
+        }
+
+        $recommendedNodes = array();
+
+        /** @var eZClusterFileHandlerInterface $handler */
+        $cacheTTL = $recommendationIni->variable( 'PerformanceSettings', 'RecommendationTTL' );
+        if ( $cacheTTL > 0 )
+        {
+            $recommendedItems = array();
+            foreach ( $recommendations as $recommendation )
             {
-                if ( empty( $recommendation['category' ] ) )
+                $recommendedItems[] .= $recommendation['itemId'] . ':' . $recommendation['category'] . '.';
+            }
+
+            $user = eZUser::currentUser();
+            $cacheKeys = array(
+                $requestParameters->scenario,
+                implode( ':', $user->roleIDList() ),
+                implode( ';', $user->limitValueList() ),
+                $recommendedItems
+            );
+
+            list( $handler, $data ) = eZTemplateCacheBlock::retrieve( $cacheKeys, $nodeId, $cacheTTL );
+
+            // We have cached data, return it
+            if ( !$data instanceof eZClusterFileFailure )
+            {
+                eZDebugSetting::writeNotice(
+                    "extension-ezrecommendation-cache",
+                    $cacheKeys,
+                    "Recommendation cache HIT for node " . $node->attribute( 'node_id' ). " with keys"
+                );
+                return $data;
+            }
+            eZDebugSetting::writeNotice(
+                "extension-ezrecommendation-cache",
+                $cacheKeys,
+                "recommendations cache MISS for node " . $node->attribute( 'node_id' ). " with keys"
+            );
+        }
+
+        if ( $recommendations !== false )
+        {
+            foreach ( $recommendations as $recommendation )
+            {
+                if ( $object = eZContentObject::fetch( $recommendation['itemId'] ) )
                 {
-                    $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
-                }
-                else
-                {
-                    foreach ( $object->assignedNodes() as $node )
+                    if ( empty( $recommendation['category'] ) )
                     {
-                        if ( strpos( $node->attribute( 'path_string' ), $recommendation['category' ] ) !== false )
+                        $recommendedNodes[$recommendation['itemId']] = $object->attribute( 'main_node' );
+                    }
+                    else
+                    {
+                        foreach ( $object->assignedNodes() as $node )
                         {
-                            $recommendedNodes[$recommendation['itemId']] = $node;
-                            break;
+                            if ( strpos( $node->attribute( 'path_string' ), $recommendation['category'] ) !== false )
+                            {
+                                $recommendedNodes[$recommendation['itemId']] = $node;
+                                break;
+                            }
                         }
                     }
                 }
             }
         }
 
+        // Render recommendations using eZTemplate, and store cached file
+        $tpl = eZTemplate::factory();
         $tpl->setVariable( 'recommended_nodes', $recommendedNodes );
         $tpl->setVariable( 'scenario', $requestParameters->scenario );
         $tpl->setVariable( 'track_rendered_items', $trackRenderedItems );
         $tpl->setVariable( 'create_clickrecommended_event', $createClickRecommendedEvent );
-        return $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
+        $output = $tpl->fetch( 'design:ezrecommendation/getrecommendations.tpl' );
+
+        // $handler is only set if cache is enabled
+        if ( isset( $handler ) )
+        {
+            eZDebugSetting::writeNotice(
+                "extension-ezrecommendation-cache",
+                $cacheKeys,
+                "Recommendation cache STORE for node " . $node->attribute( 'node_id' ). " with keys"
+            );
+            $handler->storeCache(
+                array(
+                    'scope' => 'ezrecommendation-cache',
+                    'binarydata' => $output
+                )
+            );
+        }
+
+        return $output;
     }
 }
