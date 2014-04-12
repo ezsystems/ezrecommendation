@@ -47,8 +47,7 @@ class eZRecommendationFunctionCollection
 
         $systemCurrency = array();
         $db = eZDB::instance();
-        $3  = "SELECT code FROM ezcurrencydata";
-        $row = $db -> arrayQuery( $query, array( 'column' => 'code' ) );
+        $row = $db -> arrayQuery( "SELECT code FROM ezcurrencydata", array( 'column' => 'code' ) );
         $rowCount = count($row);
         if ($rowCount == 0)
         {
