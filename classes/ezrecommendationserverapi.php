@@ -163,8 +163,13 @@ class eZRecommendationServerAPI
         $solution = eZINI::instance( 'ezrecommendation.ini' )->variable( 'SolutionSettings', 'solution' );
 
         $contentObject = eZContentObject::fetch( $objectID );
+        $contentObjectsArray = array( $contentObject );
+        foreach($contentObject->reverseRelatedObjectList() as $related) {
+            $contentObjectsArray[] = $related;
+        }
+
         $xmlhandler = new eZRecoXMLHandler;
-        if ( $xml = $xmlhandler->generateContentObjectXML( $contentObject ) )
+        if ( $xml = $xmlhandler->generateContentObjectXML( $contentObjectsArray ) )
         {
             ezRecoFunctions::sendExportContent( $xml, $solution );
             return true;
