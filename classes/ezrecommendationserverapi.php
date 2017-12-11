@@ -145,6 +145,17 @@ class eZRecommendationServerAPI
             if ( !isset( $classAttributesList['result']['recoItemType'] )  )
                 return false;
             ezRecoFunctions::sendDeleteItemRequest( $classAttributesList['result']['recoItemType'] . '/' . $node->attribute( 'object' )->attribute( 'id' ) );
+
+            $contentObject = eZContentObject::fetchByNodeID($nodeID);
+            $contentObjectsArray = array();
+            foreach($contentObject->reverseRelatedObjectList() as $related) {
+                $contentObjectsArray[] = $related;
+            }
+
+            if ( !empty($contentObjectsArray) ) {
+                $this->doExportObjects($contentObjectsArray);
+            }
+
             eZDebugSetting::writeDebug( 'ezrecommendation-extension', 'Delete event on node $nodeID executed' );
             return true;
         }
@@ -160,13 +171,18 @@ class eZRecommendationServerAPI
 
     public function exportObject( $objectID )
     {
-        $solution = eZINI::instance( 'ezrecommendation.ini' )->variable( 'SolutionSettings', 'solution' );
-
         $contentObject = eZContentObject::fetch( $objectID );
         $contentObjectsArray = array( $contentObject );
         foreach($contentObject->reverseRelatedObjectList() as $related) {
             $contentObjectsArray[] = $related;
         }
+
+        return $this->doExportObjects($contentObjectsArray);
+    }
+
+    private function doExportObjects( array $contentObjectsArray )
+    {
+        $solution = eZINI::instance( 'ezrecommendation.ini' )->variable( 'SolutionSettings', 'solution' );
 
         $xmlhandler = new eZRecoXMLHandler;
         if ( $xml = $xmlhandler->generateContentObjectXML( $contentObjectsArray ) )
@@ -178,7 +194,6 @@ class eZRecommendationServerAPI
         {
             return false;
         }
-
     }
 
     /**
