@@ -44,9 +44,16 @@ class eZRecoDeleteEventType extends eZWorkflowEventType
         else
         {
             $api = new eZRecommendationServerAPI();
-            foreach ( $parameters['node_id_list'] as $nodeID )
+            try
             {
-                $api->deleteItem( $nodeID );
+                foreach ( $parameters['node_id_list'] as $nodeID )
+                {
+                        $api->deleteItem( $nodeID );
+                }
+            }
+            catch ( eZRecommendationApiException $e )
+            {
+                return eZWorkflowType::STATUS_REJECTED;
             }
         }
         return eZWorkflowType::STATUS_ACCEPTED;

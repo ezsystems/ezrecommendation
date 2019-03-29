@@ -114,7 +114,15 @@ class eZRecoBuyEventType extends eZWorkflowEventType
 
                         $path = '/'.$solution.'/'.$client_id.'/buy'.'/'.$userid.'/'.$recoitemtypeid.'/'.$main_node_id.'?quantity='.$count.'&fullprice='.$price.'&timestamp='.$timestamp.'&categorypath='.$pathString;
 
-                        ezRecoFunctions::send_http_request($url, $path);
+                        try
+                        {
+                            ezRecoFunctions::send_http_request($url, $path);
+                        }
+                        catch ( eZRecommendationApiException $e )
+                        {
+                            eZDebug::writeError( '[ezrecommendation] http request failed', $path );
+                            return false;
+                        }
                     }else{
                         continue;
                     }

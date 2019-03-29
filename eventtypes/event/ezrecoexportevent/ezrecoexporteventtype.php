@@ -34,7 +34,15 @@ class eZRecoExportEventType extends eZWorkflowEventType
         $objectID = $processParameters['object_id'];
 
         $api = new eZRecommendationServerAPI();
-        $api->exportObject( $objectID );
+        try
+        {
+            $api->exportObject( $objectID );
+        }
+        catch ( eZRecommendationApiException $e )
+        {
+            return eZWorkflowType::STATUS_REJECTED;
+        }
+
         return eZWorkflowType::STATUS_ACCEPTED;
     }
 
